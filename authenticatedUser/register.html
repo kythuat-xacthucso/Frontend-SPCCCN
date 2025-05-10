@@ -1,0 +1,58 @@
+<!-- Modal Popup for Registering SPCCCN Subject -->
+<div class="modal fade" id="registerSubjectModal" tabindex="-1" aria-labelledby="registerSubjectModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="registerSubjectModalLabel">Gửi hồ sơ đăng ký Chủ thể SPCCCN</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="registerSubjectForm">
+                    <!-- Tên đơn vị -->
+                    <div class="mb-3">
+                        <label for="unitName" class="form-label">Tên đơn vị</label>
+                        <input type="text" class="form-control" id="unitName" name="unitName" required>
+                    </div>
+                    <!-- Mã số thuế -->
+                    <div class="mb-3">
+                        <label for="taxCode" class="form-label">Mã số thuế</label>
+                        <input type="text" class="form-control" id="taxCode" name="taxCode" required>
+                    </div>
+                    <!-- Thông tin người đại diện -->
+                    <div class="mb-3">
+                        <label class="form-label">Thông tin người đại diện</label>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <input type="text" class="form-control" id="repName" name="repName" placeholder="Tên" required>
+                            </div>
+                            <div class="col-md-6">
+                                <input type="tel" class="form-control" id="repPhone" name="repPhone" placeholder="Số điện thoại" required>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Người quản lý Zalo -->
+                    <div class="mb-3">
+                        <label class="form-label">Người quản lý Zalo</label>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <input type="text" class="form-control" id="zaloName" name="zaloName" placeholder="Tên" required>
+                            </div>
+                            <div class="col-md-6">
+                                <input type="tel" class="form-control" id="zaloPhone" name="zaloPhone" placeholder="Số điện thoại" required>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Upload file giấy phép kinh doanh -->
+                    <div class="mb-3">
+                        <label for="businessLicense" class="form-label">Giấy phép kinh doanh (PDF/JPG/PNG)</label>
+                        <input type="file" class="form-control" id="businessLicense" name="businessLicense" accept=".pdf,.jpg,.png" required>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                <button type="submit" form="registerSubjectForm" class="btn btn-primary">Gửi</button>
+            </div>
+        </div>
+    </div>
+</div>
