@@ -1,0 +1,80 @@
+<div class="container-fluid py-3">
+    <h2 class="mb-4">Chi tiết hồ sơ</h2>
+    <div class="row">
+        <!-- Section 1: Thông tin hồ sơ đề nghị -->
+        <div class="col-md-6 mb-4">
+            <div class="card h-100">
+                <div class="card-header">Thông tin hồ sơ đề nghị</div>
+                <div class="card-body">
+                    <div class="row mb-3">
+                        <label class="col-sm-4 col-form-label">Tên đơn vị</label>
+                        <div class="col-sm-8">
+                            <p class="form-control-plaintext" id="unitName"></p>
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <label class="col-sm-4 col-form-label">Mã số thuế</label>
+                        <div class="col-sm-8">
+                            <p class="form-control-plaintext" id="taxCode"></p>
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <label class="col-sm-4 col-form-label">Người đại diện</label>
+                        <div class="col-sm-8">
+                            <p class="form-control-plaintext" id="representative"></p>
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <label class="col-sm-4 col-form-label">Người quản lý Zalo</label>
+                        <div class="col-sm-8">
+                            <p class="form-control-plaintext" id="zaloManager"></p>
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <label class="col-sm-4 col-form-label">Trạng thái</label>
+                        <div class="col-sm-8">
+                            <p class="form-control-plaintext" id="status"></p>
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <label class="col-sm-4 col-form-label">Ngày gửi</label>
+                        <div class="col-sm-8">
+                            <p class="form-control-plaintext" id="submittedDate"></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Section 2: Xử lý hồ sơ -->
+        <div class="col-md-6 mb-4">
+            <div class="card h-100">
+                <div class="card-header">Xử lý hồ sơ</div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <label class="col-form-label">Tài liệu đính kèm</label>
+                        <div class="list-group" id="attachments">
+                            <!-- Attachments will be loaded dynamically -->
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="reason" class="col-form-label">Lý do xử lý</label>
+                        <textarea class="form-control" id="reason" rows="3" placeholder="Nhập lý do từ chối ..." disabled></textarea>
+                        <div class="invalid-feedback" id="reasonError">Vui lòng nhập lý do từ chối.</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Fixed buttons at the bottom -->
+    <div class="fixed-bottom bg-light py-3 border-top">
+        <div class="container-fluid">
+            <div class="d-flex justify-content-end gap-2">
+                <button class="btn btn-secondary" id="backBtn">Quay lại</button>
+                <button class="btn btn-success" id="acceptBtn" disabled>Chấp nhận</button>
+                <button class="btn btn-danger" id="rejectBtn" disabled>Từ chối</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Add padding to the bottom to prevent content from being hidden under fixed buttons -->
+<div style="height: 80px;"></div>

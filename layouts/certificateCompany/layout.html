@@ -15,13 +15,6 @@
         .user-area:active, .user-area.active {
             background-color: #d1e0ff;
         }
-        .sidebar-link:hover {
-            background-color: #e6f0ff;
-        }
-        .sidebar-link.active {
-            background-color: #d1e0ff;
-            font-weight: bold;
-        }
     </style>
 </head>
 <body>
@@ -30,10 +23,25 @@
         <div class="container-fluid">
             <div class="d-flex align-items-center">
                 <!-- Logo -->
-                <div class="d-flex align-items-center me-4">
+                <div class="d-flex align-items-center me-4 position-absolute">
                     <img src="https://via.placeholder.com/30" alt="Logo" class="me-2">
                     <span class="fw-medium fs-6">Công ty test 1</span>
                 </div>
+                <!-- Menu -->
+                <ul class="nav justify-content-start" style="margin-left: 250px;">
+                    <li class="nav-item">
+                        <a class="nav-link active text-dark fw-medium fs-6" href="#" data-menu="overview">TỔNG QUAN</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-dark fw-medium fs-6" href="#" data-menu="traceability">TRUY XUẤT</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-dark fw-medium fs-6" href="#" data-menu="services">DỊCH VỤ</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-dark fw-medium fs-6" href="#" data-menu="administration">QUẢN TRỊ</a>
+                    </li>
+                </ul>
                 <!-- User Avatar Dropdown -->
                 <div class="dropdown ms-auto">
                     <a class="d-flex align-items-center text-dark text-decoration-none user-area px-2 py-1 rounded" href="#" role="button" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false">
@@ -43,11 +51,6 @@
                     </a>
                     <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
                         <li><a class="dropdown-item fs-6" href="#">Hồ sơ người dùng</a></li>
-                        <li><a class="dropdown-item fs-6" href="#">Đăng ký chủ thể</a></li>
-                        <li><a class="dropdown-item fs-6" id="registerSpcccnOption" href="#">Đăng ký chủ thể SPCCCN</a></li>
-                        <li><a class="dropdown-item fs-6" href="#">Danh sách chủ thể sở hữu</a></li>
-                        <li><a class="dropdown-item fs-6" href="#">Danh sách chủ thể liên kết</a></li>
-                        <li><a class="dropdown-item fs-6" href="#">Danh sách lời mời liên kết</a></li>
                         <li><hr class="dropdown-divider"></li>
                         <li><a class="dropdown-item fs-6" href="#">Đăng xuất</a></li>
                     </ul>
@@ -62,26 +65,9 @@
         <div class="border-end" style="width: 250px; min-height: 100vh; background-color: #f8faff;">
             <div class="p-3">
                 <button class="btn btn-outline-primary w-100 mb-3 fs-6">Đổi chủ thể</button>
-                <ul class="nav flex-column" id="sidebar-menu">
-                    <li class="nav-item">
-                        <a class="nav-link text-dark fs-6 sidebar-link" href="#" data-menu="home">Trang chủ</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link text-dark fs-6 sidebar-link" href="#" data-menu="product-management">Quản lý sản phẩm</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link text-dark fs-6 sidebar-link" href="#" data-menu="nsxkd-approval">Duyệt NSXKD</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link text-dark fs-6 sidebar-link" href="#" data-menu="media-management">Quản lý truyền thông</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link text-dark fs-6 sidebar-link" href="#" data-menu="resource-management">Quản lý tài nguyên</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link text-dark fs-6 sidebar-link" href="#" data-menu="internal-users">Người nội bộ</a>
-                    </li>
-                </ul>
+                <div id="sidebar-menu">
+                    <!-- Sidebar content will be dynamically loaded -->
+                </div>
             </div>
         </div>
         <!-- Main Content -->

@@ -31,10 +31,10 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // Function to load content dynamically
-    function loadContent(menuType) {
+    function loadContent(menuType, params = {}) {
         let pagePath, cssPath, scriptPath;
 
-        // Define paths based on menu type (to be filled by user)
+        // Define paths based on menu type
         switch (menuType) {
             case 'home':
                 pagePath = '../../admin/index.html'; // Path to home.html
@@ -49,7 +49,12 @@ document.addEventListener('DOMContentLoaded', () => {
             case 'subject-approval':
                 pagePath = '../../admin/approvalCompany/list/list.html'; // Path to subject-approval.html
                 cssPath = '';  // Path to subject-approval.css
-                scriptPath = ''; // Path to subject-approval.js
+                scriptPath = '../../admin/approvalCompany/list/list.js'; // Path to subject-approval.js
+                break;
+            case 'subject-details':
+                pagePath = '../../admin/approvalCompany/detail/detail.html'; // Path to detail.html
+                cssPath = '';  // Path to detail.css
+                scriptPath = '../../admin/approvalCompany/detail/detail.js'; // Path to detail.js
                 break;
             case 'resource-monitoring':
                 pagePath = ''; // Path to resource-monitoring.html
@@ -60,6 +65,16 @@ document.addEventListener('DOMContentLoaded', () => {
                 pagePath = ''; // Path to payment-management.html
                 cssPath = '';  // Path to payment-management.css
                 scriptPath = ''; // Path to payment-management.js
+                break;
+            case 'company-management':
+                pagePath = '../../admin/company/list/list.html'; // Path to company-management.html
+                cssPath = '';  // Path to company-management.css
+                scriptPath = '../../admin/company/list/list.js'; // Path to company-management.js
+                break;
+            case 'company-details':
+                pagePath = '../../admin/company/detail/detail.html'; // Path to detail.html
+                cssPath = '';  // Path to detail.css
+                scriptPath = '../../admin/company/detail/detail.js'; // Path to detail.js
                 break;
             default:
                 console.error('Unknown menu type:', menuType);
@@ -96,6 +111,18 @@ document.addEventListener('DOMContentLoaded', () => {
                     const script = document.createElement('script');
                     script.src = scriptPath;
                     script.setAttribute('data-content-js', menuType);
+                    script.onload = () => {
+                        // Call initialization functions based on menuType
+                        if (menuType === 'subject-approval' && typeof initProfileList === 'function') {
+                            initProfileList();
+                        } else if (menuType === 'subject-details' && typeof initDetailPage === 'function') {
+                            initDetailPage(params.profileId); // Pass profileId to detail page
+                        } else if (menuType === 'company-management' && typeof initCompanyList === 'function') {
+                            initCompanyList();
+                        } else if (menuType === 'company-details' && typeof initCompanyDetailPage === 'function') {
+                            initCompanyDetailPage(params.entityId); // Pass entityId to detail page
+                        }
+                    };
                     document.body.appendChild(script);
                 }
             })
@@ -104,6 +131,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 mainContent.innerHTML = '<p>Lỗi khi tải nội dung. Vui lòng thử lại.</p>';
             });
     }
+
+    // Expose loadContent globally so it can be called from other scripts
+    window.loadContent = loadContent;
 
     // Load default content (Home)
     const defaultLink = document.querySelector('.sidebar-link[data-menu="home"]');

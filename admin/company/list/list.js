@@ -1,5 +1,5 @@
-function initProfileList() {
-    const profileTableBody = document.getElementById('profileTableBody');
+(function initCompanyList() {
+    const entityTableBody = document.getElementById('entityTableBody');
     const searchInput = document.getElementById('searchInput');
     const searchBtn = document.getElementById('searchBtn');
     const clearFilterBtn = document.getElementById('clearFilterBtn');
@@ -8,71 +8,52 @@ function initProfileList() {
     const resultCount = document.getElementById('resultCount');
 
     // Sample data (replace with API call if needed)
-    const profiles = [
-        { id: 1, unitName: 'Công ty TNHH ABC', taxCode: '1234567890', status: 'Chờ duyệt', submittedDate: '2025-05-01' },
-        { id: 2, unitName: 'Công ty CP XYZ', taxCode: '0987654321', status: 'Chờ duyệt', submittedDate: '2025-05-02' },
-        { id: 3, unitName: 'Công ty TNHH DEF', taxCode: '1122334455', status: 'Chờ duyệt', submittedDate: '2025-05-03' },
-        { id: 4, unitName: 'Công ty CP GHI', taxCode: '5566778899', status: 'Chờ duyệt', submittedDate: '2025-05-04' },
+    const entities = [
+        { id: 1, entityName: 'Chủ thể A', entityCode: 'CT001', phone: '0912345678', status: 'Hoạt động', createdDate: '2025-05-01' },
+        { id: 2, entityName: 'Chủ thể B', entityCode: 'CT002', phone: '0987654321', status: 'Khóa', createdDate: '2025-05-02' },
+        { id: 3, entityName: 'Chủ thể C', entityCode: 'CT003', phone: '0931234567', status: 'Hoạt động', createdDate: '2025-05-03' },
+        { id: 4, entityName: 'Chủ thể D', entityCode: 'CT004', phone: '0978765432', status: 'Hoạt động', createdDate: '2025-05-04' },
     ];
 
-    let filteredProfiles = [...profiles];
-    const itemsPerPage = 2;
+    let filteredEntities = [...entities];
     let currentPage = 1;
+    const itemsPerPage = 10; // Fixed value
 
     // Function to render table data
     function renderTable(data, page) {
-        profileTableBody.innerHTML = '';
+        entityTableBody.innerHTML = '';
         const start = (page - 1) * itemsPerPage;
         const end = start + itemsPerPage;
         const paginatedData = data.slice(start, end);
 
-        paginatedData.forEach((profile, index) => {
+        paginatedData.forEach((entity, index) => {
             const row = document.createElement('tr');
             row.innerHTML = `
                 <td class="text-center">${start + index + 1}</td>
-                <td>${profile.unitName}</td>
-                <td>${profile.taxCode}</td>
-                <td><span class="badge bg-warning text-dark">${profile.status}</span></td>
-                <td>${profile.submittedDate}</td>
+                <td>${entity.entityName}</td>
+                <td>${entity.entityCode}</td>
+                <td>${entity.phone}</td>
+                <td><span class="badge ${entity.status === 'Hoạt động' ? 'bg-success' : 'bg-danger'}">${entity.status}</span></td>
+                <td>${entity.createdDate}</td>
                 <td class="text-center">
-                    <button class="btn btn-sm btn-outline-primary me-1 view-details-btn" title="Xem chi tiết" data-id="${profile.id}">
+                    <button class="btn btn-sm btn-outline-primary view-details-btn" title="Xem chi tiết" data-id="${entity.id}">
                         <i class="bi bi-eye"></i>
-                    </button>
-                    <button class="btn btn-sm btn-outline-success me-1 approve-btn" title="Duyệt" data-id="${profile.id}">
-                        <i class="bi bi-check-circle"></i>
-                    </button>
-                    <button class="btn btn-sm btn-outline-danger reject-btn" title="Từ chối" data-id="${profile.id}">
-                        <i class="bi bi-x-circle"></i>
                     </button>
                 </td>
             `;
-            profileTableBody.appendChild(row);
+            entityTableBody.appendChild(row);
         });
 
         // Add event listeners for action buttons
         document.querySelectorAll('.view-details-btn').forEach(btn => {
             btn.addEventListener('click', () => {
-                const profileId = btn.getAttribute('data-id');
-                loadDetails(profileId);
-            });
-        });
-
-        document.querySelectorAll('.approve-btn').forEach(btn => {
-            btn.addEventListener('click', () => {
-                const profileId = btn.getAttribute('data-id');
-                alert(`Duyệt hồ sơ ID: ${profileId}`); // Replace with actual approval logic
-            });
-        });
-
-        document.querySelectorAll('.reject-btn').forEach(btn => {
-            btn.addEventListener('click', () => {
-                const profileId = btn.getAttribute('data-id');
-                alert(`Từ chối hồ sơ ID: ${profileId}`); // Replace with actual rejection logic
+                const entityId = btn.getAttribute('data-id');
+                loadDetails(entityId);
             });
         });
 
         renderPagination(data.length);
-        resultCount.textContent = `${data.length}/${profiles.length} kết quả`;
+        resultCount.textContent = `${data.length}/${entities.length} kết quả`;
     }
 
     // Function to render pagination
@@ -92,7 +73,7 @@ function initProfileList() {
             e.preventDefault();
             if (currentPage > 1) {
                 currentPage--;
-                renderTable(filteredProfiles, currentPage);
+                renderTable(filteredEntities, currentPage);
             }
         });
         pagination.appendChild(prevLi);
@@ -105,7 +86,7 @@ function initProfileList() {
             pageLi.addEventListener('click', (e) => {
                 e.preventDefault();
                 currentPage = i;
-                renderTable(filteredProfiles, currentPage);
+                renderTable(filteredEntities, currentPage);
             });
             pagination.appendChild(pageLi);
         }
@@ -122,17 +103,16 @@ function initProfileList() {
             e.preventDefault();
             if (currentPage < totalPages) {
                 currentPage++;
-                renderTable(filteredProfiles, currentPage);
+                renderTable(filteredEntities, currentPage);
             }
         });
         pagination.appendChild(nextLi);
     }
 
     // Function to load details page
-    function loadDetails(profileId) {
-        // Use layout.js's loadContent to load the details page
+    function loadDetails(entityId) {
         if (typeof window.loadContent === 'function') {
-            window.loadContent('subject-details', { profileId: profileId });
+            window.loadContent('company-details', { entityId: entityId });
         } else {
             console.error('loadContent function not found in layout.js');
         }
@@ -140,9 +120,8 @@ function initProfileList() {
 
     // Function to load add new page
     function loadAddNewPage() {
-        // Use layout.js's loadContent to load the add new page
         if (typeof window.loadContent === 'function') {
-            window.loadContent('subject-add-new'); // Define this in layout.js
+            window.loadContent('company-add-new');
         } else {
             console.error('loadContent function not found in layout.js');
         }
@@ -151,20 +130,21 @@ function initProfileList() {
     // Search functionality
     searchBtn.addEventListener('click', () => {
         const searchTerm = searchInput.value.trim().toLowerCase();
-        filteredProfiles = profiles.filter(profile =>
-            profile.unitName.toLowerCase().includes(searchTerm) ||
-            profile.taxCode.toLowerCase().includes(searchTerm)
+        filteredEntities = entities.filter(entity =>
+            entity.entityName.toLowerCase().includes(searchTerm) ||
+            entity.entityCode.toLowerCase().includes(searchTerm) ||
+            entity.phone.toLowerCase().includes(searchTerm)
         );
         currentPage = 1;
-        renderTable(filteredProfiles, currentPage);
+        renderTable(filteredEntities, currentPage);
     });
 
     // Clear filter functionality
     clearFilterBtn.addEventListener('click', () => {
         searchInput.value = '';
-        filteredProfiles = [...profiles];
+        filteredEntities = [...entities];
         currentPage = 1;
-        renderTable(filteredProfiles, currentPage);
+        renderTable(filteredEntities, currentPage);
     });
 
     // Add new button functionality
@@ -173,5 +153,5 @@ function initProfileList() {
     });
 
     // Initial render
-    renderTable(filteredProfiles, currentPage);
-}
+    renderTable(filteredEntities, currentPage);
+})();

@@ -1,0 +1,104 @@
+<div class="container-fluid py-3">
+    <h2 class="mb-4">Chi tiết chủ thể</h2>
+    <div class="row">
+        <!-- Section 1: Thông tin Chủ thể -->
+        <div class="col-md-6 mb-4">
+            <div class="card h-100">
+                <div class="card-header">Thông tin Chủ thể</div>
+                <div class="card-body">
+                    <div class="row mb-3">
+                        <label class="col-sm-4 col-form-label">Tên chủ thể</label>
+                        <div class="col-sm-8">
+                            <p class="form-control-plaintext" id="entityName"></p>
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <label class="col-sm-4 col-form-label">Mã chủ thể</label>
+                        <div class="col-sm-8">
+                            <p class="form-control-plaintext" id="entityCode"></p>
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <label class="col-sm-4 col-form-label">Số điện thoại</label>
+                        <div class="col-sm-8">
+                            <p class="form-control-plaintext" id="phone"></p>
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <label class="col-sm-4 col-form-label">Địa chỉ</label>
+                        <div class="col-sm-8">
+                            <p class="form-control-plaintext" id="address"></p>
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <label class="col-sm-4 col-form-label">Số đăng ký kinh doanh</label>
+                        <div class="col-sm-8">
+                            <p class="form-control-plaintext" id="businessRegNumber"></p>
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <label class="col-sm-4 col-form-label">Trạng thái</label>
+                        <div class="col-sm-8">
+                            <p class="form-control-plaintext" id="status"></p>
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <label class="col-sm-4 col-form-label">Ngày tạo</label>
+                        <div class="col-sm-8">
+                            <p class="form-control-plaintext" id="createdDate"></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Section 2: Thông tin người được giao quyền -->
+        <div class="col-md-6 mb-4">
+            <div class="card h-100">
+                <div class="card-header">Thông tin người được giao quyền</div>
+                <div class="card-body">
+                    <div class="row mb-3">
+                        <label class="col-sm-4 col-form-label">Email người quản trị</label>
+                        <div class="col-sm-8">
+                            <div id="adminEmailContainer" class="d-flex align-items-center">
+                                <p class="form-control-plaintext mb-0 d-none" id="adminEmailText"></p>
+                                <input type="email" class="form-control d-none" id="adminEmailInput" placeholder="Nhập email người quản trị">
+                                <button class="btn btn-sm btn-outline-primary ms-2 d-none" id="editEmailBtn" title="Chỉnh sửa email">
+                                    <i class="bi bi-pencil"></i>
+                                </button>
+                                <div class="d-none gap-2 ms-2" id="emailActionButtons">
+                                    <button class="btn btn-sm btn-success" id="confirmEmailBtn">Xác nhận</button>
+                                    <button class="btn btn-sm btn-secondary" id="cancelEmailBtn">Hủy</button>
+                                </div>
+                            </div>
+                            <div class="invalid-feedback" id="emailError">Vui lòng nhập email hợp lệ.</div>
+                        </div>
+                    </div>
+                    <div class="row mb-3" id="adminNameRow">
+                        <label class="col-sm-4 col-form-label">Tên người quản trị</label>
+                        <div class="col-sm-8">
+                            <p class="form-control-plaintext d-none" id="adminNameText"></p>
+                            <input type="text" class="form-control d-none" id="adminNameInput" placeholder="Nhập tên người quản trị">
+                        </div>
+                    </div>
+                    <div class="row mb-3" id="adminPhoneRow">
+                        <label class="col-sm-4 col-form-label">Số điện thoại người quản trị</label>
+                        <div class="col-sm-8">
+                            <p class="form-control-plaintext d-none" id="adminPhoneText"></p>
+                            <input type="text" class="form-control d-none" id="adminPhoneInput" placeholder="Nhập số điện thoại">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Fixed button at the bottom -->
+    <div class="fixed-bottom bg-light py-3 border-top">
+        <div class="container-fluid">
+            <div class="d-flex justify-content-end gap-2">
+                <button class="btn btn-secondary" id="backBtn">Quay lại</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Add padding to the bottom to prevent content from being hidden under fixed button -->
+<div style="height: 80px;"></div>
