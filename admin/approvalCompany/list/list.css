@@ -1,0 +1,23 @@
+.card-list .card {
+    margin-bottom: 1rem;
+}
+
+@media (max-width: 767.98px) {
+    .table-responsive {
+        display: none;
+    }
+
+    .card-list {
+        display: block;
+    }
+}
+
+@media (min-width: 768px) {
+    .card-list {
+        display: none;
+    }
+
+    .table-responsive {
+        display: block;
+    }
+}

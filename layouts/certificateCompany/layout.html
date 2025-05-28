@@ -6,29 +6,26 @@
     <title>Certificate Company Layout</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+    <link rel="stylesheet" href="layout.css">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script src="layout.js" defer></script>
-    <style>
-        .user-area:hover {
-            background-color: #e6f0ff;
-        }
-        .user-area:active, .user-area.active {
-            background-color: #d1e0ff;
-        }
-    </style>
 </head>
 <body>
     <!-- Header -->
     <header class="py-2" style="background-color: #f2f8ff; border-bottom: 1px solid #dee2e6;">
         <div class="container-fluid">
             <div class="d-flex align-items-center">
-                <!-- Logo -->
-                <div class="d-flex align-items-center me-4 position-absolute">
-                    <img src="https://via.placeholder.com/30" alt="Logo" class="me-2">
+                <!-- Hamburger Icon (visible on mobile) -->
+                <button class="btn d-md-none me-3" id="hamburgerBtn" aria-label="Toggle sidebar">
+                    <i class="bi bi-list fs-4"></i>
+                </button>
+                <!-- Logo (hidden on mobile) -->
+                <div class="d-flex align-items-center me-4 d-none d-md-flex">
+                    <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSXPAKF0yrzL00Y2amdFjlFzHQpRukwbBqXIg&s" alt="Logo" class="me-2" style="height: 32px; width: 32px;">
                     <span class="fw-medium fs-6">Công ty test 1</span>
                 </div>
-                <!-- Menu -->
-                <ul class="nav justify-content-start" style="margin-left: 250px;">
+                <!-- Menu (visible on desktop) -->
+                <ul class="nav justify-content-start ms-md-5 d-none d-md-flex">
                     <li class="nav-item">
                         <a class="nav-link active text-dark fw-medium fs-6" href="#" data-menu="overview">TỔNG QUAN</a>
                     </li>
@@ -42,10 +39,10 @@
                         <a class="nav-link text-dark fw-medium fs-6" href="#" data-menu="administration">QUẢN TRỊ</a>
                     </li>
                 </ul>
-                <!-- User Avatar Dropdown -->
-                <div class="dropdown ms-auto">
+                <!-- User Avatar Dropdown (hidden on mobile) -->
+                <div class="dropdown ms-auto d-none d-md-block">
                     <a class="d-flex align-items-center text-dark text-decoration-none user-area px-2 py-1 rounded" href="#" role="button" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false">
-                        <img src="https://via.placeholder.com/30" alt="Avatar" class="rounded-circle me-2">
+                        <img src="https://img.freepik.com/free-vector/smiling-young-man-illustration_1308-173524.jpg" alt="Avatar" class="rounded-circle me-2" style="height: 32px; width: 32px;">
                         <span class="fs-6">Username</span>
                         <i class="bi bi-chevron-down ms-2" id="dropdownIcon"></i>
                     </a>
@@ -62,11 +59,28 @@
     <!-- Main Layout -->
     <div class="d-flex">
         <!-- Sidebar -->
-        <div class="border-end" style="width: 250px; min-height: 100vh; background-color: #f8faff;">
-            <div class="p-3">
+        <div class="border-end sidebar d-md-block" style="width: 250px; min-height: 100vh; background-color: #f8faff;">
+            <div class="p-3 d-flex flex-column h-100">
+                <!-- Logo and Company Name (visible on mobile) -->
+                <div class="d-flex align-items-center mb-3 d-md-none">
+                    <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSXPAKF0yrzL00Y2amdFjlFzHQpRukwbBqXIg&s" alt="Logo" class="me-2" style="height: 32px; width: 32px;">
+                    <span class="fw-medium fs-6">Công ty test 1</span>
+                    <button class="btn ms-auto d-md-none" id="closeSidebarBtn" aria-label="Close sidebar">
+                        <i class="bi bi-x-lg"></i>
+                    </button>
+                </div>
                 <button class="btn btn-outline-primary w-100 mb-3 fs-6">Đổi chủ thể</button>
-                <div id="sidebar-menu">
+                <div id="sidebar-menu" class="flex-grow-1">
                     <!-- Sidebar content will be dynamically loaded -->
+                </div>
+                <!-- User Info and Logout (visible on mobile) -->
+                <div class="mt-auto d-md-none">
+                    <hr>
+                    <div class="d-flex align-items-center mb-2">
+                        <img src="https://img.freepik.com/free-vector/smiling-young-man-illustration_1308-173524.jpg" alt="Avatar" class="rounded-circle me-2" style="height: 32px; width: 32px;">
+                        <span class="fs-6">Username</span>
+                    </div>
+                    <a class="btn btn-outline-danger w-100 fs-6" href="#">Đăng xuất</a>
                 </div>
             </div>
         </div>

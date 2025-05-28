@@ -1,47 +1,91 @@
 (function initCompanyDetailPage(entityId) {
-    const entityName = document.getElementById('entityName');
-    const entityCode = document.getElementById('entityCode');
-    const phone = document.getElementById('phone');
-    const address = document.getElementById('address');
-    const businessRegNumber = document.getElementById('businessRegNumber');
-    const status = document.getElementById('status');
-    const createdDate = document.getElementById('createdDate');
-    const adminEmailContainer = document.getElementById('adminEmailContainer');
-    const adminEmailText = document.getElementById('adminEmailText');
-    const adminEmailInput = document.getElementById('adminEmailInput');
-    const editEmailBtn = document.getElementById('editEmailBtn');
-    const emailActionButtons = document.getElementById('emailActionButtons');
-    const confirmEmailBtn = document.getElementById('confirmEmailBtn');
-    const cancelEmailBtn = document.getElementById('cancelEmailBtn');
-    const emailError = document.getElementById('emailError');
-    const adminNameRow = document.getElementById('adminNameRow');
-    const adminNameText = document.getElementById('adminNameText');
-    const adminNameInput = document.getElementById('adminNameInput');
-    const adminPhoneRow = document.getElementById('adminPhoneRow');
-    const adminPhoneText = document.getElementById('adminPhoneText');
-    const adminPhoneInput = document.getElementById('adminPhoneInput');
-    const backBtn = document.getElementById('backBtn');
+    // DOM Elements
+    const elements = {
+        entityCode: document.getElementById('entityCode'),
+        entityName: document.getElementById('entityName'),
+        phone: document.getElementById('phone'),
+        shortName: document.getElementById('shortName'),
+        fullName: document.getElementById('fullName'),
+        englishName: document.getElementById('englishName'),
+        email: document.getElementById('email'),
+        taxCode: document.getElementById('taxCode'),
+        businessRegDate: document.getElementById('businessRegDate'),
+        businessRegPlace: document.getElementById('businessRegPlace'),
+        businessAddress: document.getElementById('businessAddress'),
+        gcpCode: document.getElementById('gcpCode'),
+        website: document.getElementById('website'),
+        coordinates: document.getElementById('coordinates'),
+        youtube: document.getElementById('youtube'),
+        description: document.getElementById('description'),
+        logoImage: document.getElementById('logoImage'),
+        businessRegImage1: document.getElementById('businessRegImage1'),
+        businessRegImage2: document.getElementById('businessRegImage2'),
+        status: document.getElementById('status'),
+        createdDate: document.getElementById('createdDate'),
+        createdBy: document.getElementById('createdBy'),
+        adminEmailContainer: document.getElementById('adminEmailContainer'),
+        adminEmailText: document.getElementById('adminEmailText'),
+        adminEmailInput: document.getElementById('adminEmailInput'),
+        editEmailBtn: document.getElementById('editEmailBtn'),
+        emailActionButtons: document.getElementById('emailActionButtons'),
+        confirmEmailBtn: document.getElementById('confirmEmailBtn'),
+        cancelEmailBtn: document.getElementById('cancelEmailBtn'),
+        emailError: document.getElementById('emailError'),
+        adminNameRow: document.getElementById('adminNameRow'),
+        adminNameText: document.getElementById('adminNameText'),
+        adminNameInput: document.getElementById('adminNameInput'),
+        adminPhoneRow: document.getElementById('adminPhoneRow'),
+        adminPhoneText: document.getElementById('adminPhoneText'),
+        adminPhoneInput: document.getElementById('adminPhoneInput'),
+        editBtn: document.getElementById('editBtn'),
+        backBtn: document.getElementById('backBtn'),
+        modalImage: document.getElementById('modalImage'),
+        modalTitle: document.getElementById('imageModalLabel')
+    };
 
     // Sample data (replace with API call if needed)
     const entities = [
-        { id: 1, entityName: 'Chủ thể A', entityCode: 'CT001', phone: '0912345678', address: '123 Đường A, Quận 1, TP.HCM', businessRegNumber: '123456789', status: 'Hoạt động', createdDate: '2025-05-01', admin: { email: 'admin1@example.com', name: 'Nguyễn Văn A', phone: '0987654321' } },
-        { id: 2, entityName: 'Chủ thể B', entityCode: 'CT002', phone: '0987654321', address: '456 Đường B, Quận 2, TP.HCM', businessRegNumber: '987654321', status: 'Khóa', createdDate: '2025-05-02', admin: null },
-        { id: 3, entityName: 'Chủ thể C', entityCode: 'CT003', phone: '0931234567', address: '789 Đường C, Quận 3, TP.HCM', businessRegNumber: '456789123', status: 'Hoạt động', createdDate: '2025-05-03', admin: { email: 'admin3@example.com', name: 'Trần Thị B', phone: '0918765432' } },
-        { id: 4, entityName: 'Chủ thể D', entityCode: 'CT004', phone: '0978765432', address: '321 Đường D, Quận 4, TP.HCM', businessRegNumber: '321654987', status: 'Hoạt động', createdDate: '2025-05-04', admin: null },
+        {
+            id: 1,
+            entityCode: 'CT001',
+            entityName: 'Chủ thể A',
+            phone: '0912345678',
+            shortName: 'CTA',
+            fullName: 'Công ty TNHH Chủ thể A',
+            englishName: 'Entity A Co., Ltd',
+            email: 'contact@entitya.com',
+            taxCode: '1234567890',
+            businessRegDate: '2025-05-01',
+            businessRegPlace: 'TP.HCM',
+            businessAddress: '123 Đường A, Quận 1, TP.HCM',
+            gcpCode: 'GCP001',
+            website: 'https://entitya.com',
+            coordinates: '10.7769, 106.7009',
+            youtube: 'https://youtube.com/entitya',
+            description: 'Mô tả về chủ thể A',
+            logo: 'https://via.placeholder.com/150',
+            businessRegImages: ['https://via.placeholder.com/150', 'https://via.placeholder.com/150'],
+            status: 'Hoạt động',
+            createdDate: '2025-05-01',
+            createdBy: 'System Admin',
+            admin: { email: 'admin1@example.com', name: 'Nguyễn Văn A', phone: '0987654321' }
+        }
     ];
 
     // Find entity by ID
     const entity = entities.find(e => e.id === parseInt(entityId)) || entities[0];
-    let originalAdminData = entity.admin ? { ...entity.admin } : null; // Store original admin data for cancel action
+    let originalAdminData = entity.admin ? { ...entity.admin } : null;
 
     // Populate entity information
-    entityName.textContent = entity.entityName;
-    entityCode.textContent = entity.entityCode;
-    phone.textContent = entity.phone;
-    address.textContent = entity.address;
-    businessRegNumber.textContent = entity.businessRegNumber;
-    status.textContent = entity.status;
-    createdDate.textContent = entity.createdDate;
+    Object.keys(elements).forEach(key => {
+        if (['logoImage', 'businessRegImage1', 'businessRegImage2', 'modalImage', 'modalTitle', 'adminEmailContainer', 'adminEmailText', 'adminEmailInput', 'editEmailBtn', 'emailActionButtons', 'confirmEmailBtn', 'cancelEmailBtn', 'emailError', 'adminNameRow', 'adminNameText', 'adminNameInput', 'adminPhoneRow', 'adminPhoneText', 'adminPhoneInput', 'editBtn', 'backBtn'].includes(key)) return;
+        elements[key].textContent = entity[key] || 'N/A';
+    });
+
+    // Populate images
+    elements.logoImage.src = entity.logo || 'https://via.placeholder.com/150';
+    elements.businessRegImage1.src = entity.businessRegImages?.[0] || 'https://via.placeholder.com/150';
+    elements.businessRegImage2.src = entity.businessRegImages?.[1] || 'https://via.placeholder.com/150';
 
     // Email validation regex
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -49,86 +93,100 @@
     // Function to validate email
     function validateEmail(email) {
         const isValid = emailRegex.test(email);
-        adminEmailInput.classList.toggle('is-invalid', !isValid);
-        emailError.style.display = isValid ? 'none' : 'block';
+        elements.adminEmailInput.classList.toggle('is-invalid', !isValid);
+        elements.emailError.style.display = isValid ? 'none' : 'block';
         return isValid;
     }
 
-    // Function to update UI based on admin data
+    // Function to update admin UI
     function updateAdminUI() {
         if (!entity.admin) {
-            // No admin assigned: Show email input
-            adminEmailText.classList.add('d-none');
-            adminEmailInput.classList.remove('d-none');
-            editEmailBtn.classList.add('d-none');
-            emailActionButtons.classList.remove('d-none');
-            confirmEmailBtn.classList.remove('d-none');
-            cancelEmailBtn.classList.add('d-none'); // No cancel button when adding new admin
-            adminNameRow.classList.add('d-none');
-            adminPhoneRow.classList.add('d-none');
+            elements.adminEmailText.classList.add('d-none');
+            elements.adminEmailInput.classList.remove('d-none');
+            elements.editEmailBtn.classList.add('d-none');
+            elements.emailActionButtons.classList.remove('d-none');
+            elements.confirmEmailBtn.classList.remove('d-none');
+            elements.cancelEmailBtn.classList.add('d-none');
+            elements.adminNameRow.classList.add('d-none');
+            elements.adminPhoneRow.classList.add('d-none');
         } else {
-            // Admin exists: Show admin info in read-only mode
-            adminEmailText.textContent = entity.admin.email;
-            adminEmailText.classList.remove('d-none');
-            adminEmailInput.classList.add('d-none');
-            editEmailBtn.classList.remove('d-none');
-            emailActionButtons.classList.add('d-none');
-            adminNameRow.classList.remove('d-none');
-            adminPhoneRow.classList.remove('d-none');
-            adminNameText.textContent = entity.admin.name || '';
-            adminNameText.classList.remove('d-none');
-            adminNameInput.classList.add('d-none');
-            adminPhoneText.textContent = entity.admin.phone || '';
-            adminPhoneText.classList.remove('d-none');
-            adminPhoneInput.classList.add('d-none');
+            elements.adminEmailText.textContent = entity.admin.email;
+            elements.adminEmailText.classList.remove('d-none');
+            elements.adminEmailInput.classList.add('d-none');
+            elements.editEmailBtn.classList.remove('d-none');
+            elements.emailActionButtons.classList.add('d-none');
+            elements.adminNameRow.classList.remove('d-none');
+            elements.adminPhoneRow.classList.remove('d-none');
+            elements.adminNameText.textContent = entity.admin.name || '';
+            elements.adminNameText.classList.remove('d-none');
+            elements.adminNameInput.classList.add('d-none');
+            elements.adminPhoneText.textContent = entity.admin.phone || '';
+            elements.adminPhoneText.classList.remove('d-none');
+            elements.adminPhoneInput.classList.add('d-none');
         }
     }
 
     // Function to switch to edit mode
     function switchToEditMode() {
-        adminEmailText.classList.add('d-none');
-        adminEmailInput.classList.remove('d-none');
-        adminEmailInput.value = entity.admin ? entity.admin.email : '';
-        editEmailBtn.classList.add('d-none');
-        emailActionButtons.classList.remove('d-none');
-        confirmEmailBtn.classList.remove('d-none');
-        cancelEmailBtn.classList.remove('d-none');
-        adminNameText.classList.add('d-none');
-        adminNameInput.classList.remove('d-none');
-        adminNameInput.value = ''; // Clear name
-        adminPhoneText.classList.add('d-none');
-        adminPhoneInput.classList.remove('d-none');
-        adminPhoneInput.value = ''; // Clear phone
+        elements.adminEmailText.classList.add('d-none');
+        elements.adminEmailInput.classList.remove('d-none');
+        elements.adminEmailInput.value = entity.admin ? entity.admin.email : '';
+        elements.editEmailBtn.classList.add('d-none');
+        elements.emailActionButtons.classList.remove('d-none');
+        elements.confirmEmailBtn.classList.remove('d-none');
+        elements.cancelEmailBtn.classList.remove('d-none');
+        elements.adminNameText.classList.add('d-none');
+        elements.adminNameInput.classList.remove('d-none');
+        elements.adminNameInput.value = entity.admin?.name || '';
+        elements.adminPhoneText.classList.add('d-none');
+        elements.adminPhoneInput.classList.remove('d-none');
+        elements.adminPhoneInput.value = entity.admin?.phone || '';
     }
 
-    // Event listeners
-    editEmailBtn.addEventListener('click', switchToEditMode);
+    // Image preview handler
+    [elements.logoImage, elements.businessRegImage1, elements.businessRegImage2].forEach(img => {
+        img.addEventListener('click', () => {
+            elements.modalImage.src = img.src;
+            elements.modalTitle.textContent = img.alt;
+        });
+    });
 
-    confirmEmailBtn.addEventListener('click', () => {
-        const newEmail = adminEmailInput.value.trim();
+    // Event listeners
+    elements.editEmailBtn.addEventListener('click', switchToEditMode);
+
+    elements.confirmEmailBtn.addEventListener('click', () => {
+        const newEmail = elements.adminEmailInput.value.trim();
         if (validateEmail(newEmail)) {
             entity.admin = {
                 email: newEmail,
-                name: adminNameInput.value.trim() || '',
-                phone: adminPhoneInput.value.trim() || ''
+                name: elements.adminNameInput.value.trim() || '',
+                phone: elements.adminPhoneInput.value.trim() || ''
             };
-            originalAdminData = { ...entity.admin }; // Update original data after confirmation
+            originalAdminData = { ...entity.admin };
             updateAdminUI();
-            alert('Cập nhật thông tin người quản trị thành công!'); // Replace with actual save logic
+            alert('Cập nhật thông tin người quản trị thành công!');
         }
     });
 
-    cancelEmailBtn.addEventListener('click', () => {
-        entity.admin = originalAdminData ? { ...originalAdminData } : null; // Revert to original data
-        adminEmailInput.value = entity.admin ? entity.admin.email : '';
-        adminEmailInput.classList.remove('is-invalid');
-        emailError.style.display = 'none';
+    elements.cancelEmailBtn.addEventListener('click', () => {
+        entity.admin = originalAdminData ? { ...originalAdminData } : null;
+        elements.adminEmailInput.value = entity.admin ? entity.admin.email : '';
+        elements.adminEmailInput.classList.remove('is-invalid');
+        elements.emailError.style.display = 'none';
         updateAdminUI();
     });
 
-    backBtn.addEventListener('click', () => {
+    elements.backBtn.addEventListener('click', () => {
         if (typeof window.loadContent === 'function') {
             window.loadContent('company-management');
+        } else {
+            console.error('loadContent function not found in layout.js');
+        }
+    });
+
+    elements.editBtn.addEventListener('click', () => {
+        if (typeof window.loadContent === 'function') {
+            window.loadContent('company-edit', entityId);
         } else {
             console.error('loadContent function not found in layout.js');
         }

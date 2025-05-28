@@ -7,15 +7,15 @@
                 <div class="card-header">Thông tin Chủ thể</div>
                 <div class="card-body">
                     <div class="row mb-3">
-                        <label class="col-sm-4 col-form-label">Tên chủ thể</label>
-                        <div class="col-sm-8">
-                            <p class="form-control-plaintext" id="entityName"></p>
-                        </div>
-                    </div>
-                    <div class="row mb-3">
                         <label class="col-sm-4 col-form-label">Mã chủ thể</label>
                         <div class="col-sm-8">
                             <p class="form-control-plaintext" id="entityCode"></p>
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <label class="col-sm-4 col-form-label">Tên chủ thể</label>
+                        <div class="col-sm-8">
+                            <p class="form-control-plaintext" id="entityName"></p>
                         </div>
                     </div>
                     <div class="row mb-3">
@@ -25,15 +25,104 @@
                         </div>
                     </div>
                     <div class="row mb-3">
-                        <label class="col-sm-4 col-form-label">Địa chỉ</label>
+                        <label class="col-sm-4 col-form-label">Tên viết tắt</label>
                         <div class="col-sm-8">
-                            <p class="form-control-plaintext" id="address"></p>
+                            <p class="form-control-plaintext" id="shortName"></p>
                         </div>
                     </div>
                     <div class="row mb-3">
-                        <label class="col-sm-4 col-form-label">Số đăng ký kinh doanh</label>
+                        <label class="col-sm-4 col-form-label">Tên đầy đủ</label>
                         <div class="col-sm-8">
-                            <p class="form-control-plaintext" id="businessRegNumber"></p>
+                            <p class="form-control-plaintext" id="fullName"></p>
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <label class="col-sm-4 col-form-label">Tên tiếng Anh</label>
+                        <div class="col-sm-8">
+                            <p class="form-control-plaintext" id="englishName"></p>
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <label class="col-sm-4 col-form-label">Email</label>
+                        <div class="col-sm-8">
+                            <p class="form-control-plaintext" id="email"></p>
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <label class="col-sm-4 col-form-label">Mã số thuế</label>
+                        <div class="col-sm-8">
+                            <p class="form-control-plaintext" id="taxCode"></p>
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <label class="col-sm-4 col-form-label">Ngày đăng ký kinh doanh</label>
+                        <div class="col-sm-8">
+                            <p class="form-control-plaintext" id="businessRegDate"></p>
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <label class="col-sm-4 col-form-label">Nơi cấp ĐKKD</label>
+                        <div class="col-sm-8">
+                            <p class="form-control-plaintext" id="businessRegPlace"></p>
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <label class="col-sm-4 col-form-label">Địa chỉ theo ĐKKD</label>
+                        <div class="col-sm-8">
+                            <p class="form-control-plaintext" id="businessAddress"></p>
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <label class="col-sm-4 col-form-label">Mã GCP</label>
+                        <div class="col-sm-8">
+                            <p class="form-control-plaintext" id="gcpCode"></p>
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <label class="col-sm-4 col-form-label">Website</label>
+                        <div class="col-sm-8">
+                            <p class="form-control-plaintext" id="website"></p>
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <label class="col-sm-4 col-form-label">Tọa độ (Google Maps)</label>
+                        <div class="col-sm-8">
+                            <p class="form-control-plaintext" id="coordinates"></p>
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <label class="col-sm-4 col-form-label">Youtube</label>
+                        <div class="col-sm-8">
+                            <p class="form-control-plaintext" id="youtube"></p>
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <label class="col-sm-4 col-form-label">Mô tả</label>
+                        <div class="col-sm-8">
+                            <p class="form-control-plaintext" id="description"></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Section 2: Thông tin bổ sung -->
+        <div class="col-md-6 mb-4">
+            <div class="card h-100">
+                <div class="card-header">Thông tin bổ sung</div>
+                <div class="card-body">
+                    <div class="row mb-3">
+                        <label class="col-sm-4 col-form-label">Logo</label>
+                        <div class="col-sm-8">
+                            <img id="logoImage" class="img-fluid mb-2" style="max-height: 100px; cursor: pointer;" alt="Logo" data-bs-toggle="modal" data-bs-target="#imageModal">
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <label class="col-sm-4 col-form-label">Ảnh giấy ĐKKD</label>
+                        <div class="col-sm-8">
+                            <div class="d-flex gap-2">
+                                <img id="businessRegImage1" class="img-fluid mb-2" style="max-height: 100px; cursor: pointer;" alt="Ảnh ĐKKD 1" data-bs-toggle="modal" data-bs-target="#imageModal">
+                                <img id="businessRegImage2" class="img-fluid mb-2" style="max-height: 100px; cursor: pointer;" alt="Ảnh ĐKKD 2" data-bs-toggle="modal" data-bs-target="#imageModal">
+                            </div>
                         </div>
                     </div>
                     <div class="row mb-3">
@@ -43,19 +132,17 @@
                         </div>
                     </div>
                     <div class="row mb-3">
-                        <label class="col-sm-4 col-form-label">Ngày tạo</label>
+                        <label class="col-sm-4 col-form-label">Thời gian tạo</label>
                         <div class="col-sm-8">
                             <p class="form-control-plaintext" id="createdDate"></p>
                         </div>
                     </div>
-                </div>
-            </div>
-        </div>
-        <!-- Section 2: Thông tin người được giao quyền -->
-        <div class="col-md-6 mb-4">
-            <div class="card h-100">
-                <div class="card-header">Thông tin người được giao quyền</div>
-                <div class="card-body">
+                    <div class="row mb-3">
+                        <label class="col-sm-4 col-form-label">Người tạo</label>
+                        <div class="col-sm-8">
+                            <p class="form-control-plaintext" id="createdBy"></p>
+                        </div>
+                    </div>
                     <div class="row mb-3">
                         <label class="col-sm-4 col-form-label">Email người quản trị</label>
                         <div class="col-sm-8">
@@ -91,10 +178,25 @@
             </div>
         </div>
     </div>
+    <!-- Image Preview Modal -->
+    <div class="modal fade" id="imageModal" tabindex="-1" aria-labelledby="imageModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="imageModalLabel">Xem trước ảnh</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <img id="modalImage" class="img-fluid" alt="Preview">
+                </div>
+            </div>
+        </div>
+    </div>
     <!-- Fixed button at the bottom -->
     <div class="fixed-bottom bg-light py-3 border-top">
         <div class="container-fluid">
             <div class="d-flex justify-content-end gap-2">
+                <button class="btn btn-primary" id="editBtn">Sửa</button>
                 <button class="btn btn-secondary" id="backBtn">Quay lại</button>
             </div>
         </div>

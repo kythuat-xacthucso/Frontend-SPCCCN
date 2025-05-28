@@ -1,5 +1,6 @@
 <!-- Modal Popup for Registering SPCCCN Subject -->
-<div class="modal fade" id="registerSubjectModal" tabindex="-1" aria-labelledby="registerSubjectModalLabel" aria-hidden="true">
+<div class="modal fade" id="registerSubjectModal" tabindex="-1" aria-labelledby="registerSubjectModalLabel"
+    aria-hidden="true">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header">
@@ -7,51 +8,88 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <form id="registerSubjectForm">
-                    <!-- Tên đơn vị -->
+                <form id="registerSubjectForm" novalidate>
+                    <!-- Tên tổ chức/thương hiệu -->
                     <div class="mb-3">
-                        <label for="unitName" class="form-label">Tên đơn vị</label>
-                        <input type="text" class="form-control" id="unitName" name="unitName" required>
+                        <label for="orgName" class="form-label">Tên tổ chức/thương hiệu <span
+                                class="text-danger">*</span></label>
+                        <input type="text" class="form-control" id="orgName" name="orgName" required>
+                        <div class="invalid-feedback" id="orgName-feedback"></div>
                     </div>
-                    <!-- Mã số thuế -->
+
+                    <!-- Mục tiêu chứng nhận -->
                     <div class="mb-3">
-                        <label for="taxCode" class="form-label">Mã số thuế</label>
-                        <input type="text" class="form-control" id="taxCode" name="taxCode" required>
+                        <label for="certificationGoal" class="form-label">Mục tiêu chứng nhận <span
+                                class="text-danger">*</span></label>
+                        <textarea class="form-control" id="certificationGoal" name="certificationGoal" rows="3"
+                            required></textarea>
+                        <div class="invalid-feedback" id="certificationGoal-feedback"></div>
                     </div>
-                    <!-- Thông tin người đại diện -->
+
+                    <!-- Nhóm sản phẩm chủ lực -->
                     <div class="mb-3">
-                        <label class="form-label">Thông tin người đại diện</label>
-                        <div class="row">
-                            <div class="col-md-6">
-                                <input type="text" class="form-control" id="repName" name="repName" placeholder="Tên" required>
-                            </div>
-                            <div class="col-md-6">
-                                <input type="tel" class="form-control" id="repPhone" name="repPhone" placeholder="Số điện thoại" required>
-                            </div>
-                        </div>
+                        <label for="productGroup" class="form-label">Nhóm sản phẩm chủ lực <span
+                                class="text-danger">*</span></label>
+                        <input type="text" class="form-control" id="productGroup" name="productGroup"
+                            data-role="tagsinput" required>
+                        <div class="invalid-feedback" id="productGroup-feedback"></div>
                     </div>
-                    <!-- Người quản lý Zalo -->
+
+                    <!-- Phạm vi hoạt động -->
                     <div class="mb-3">
-                        <label class="form-label">Người quản lý Zalo</label>
-                        <div class="row">
-                            <div class="col-md-6">
-                                <input type="text" class="form-control" id="zaloName" name="zaloName" placeholder="Tên" required>
-                            </div>
-                            <div class="col-md-6">
-                                <input type="tel" class="form-control" id="zaloPhone" name="zaloPhone" placeholder="Số điện thoại" required>
-                            </div>
-                        </div>
+                        <label for="operationScope" class="form-label">Phạm vi hoạt động <span
+                                class="text-danger">*</span></label>
+                        <select class="form-select" id="operationScope" name="operationScope" required>
+                            <option value="">Chọn tỉnh/thành</option>
+                            <option value="Hà Nội">Hà Nội</option>
+                            <option value="TP. Hồ Chí Minh">TP. Hồ Chí Minh</option>
+                            <option value="Đà Nẵng">Đà Nẵng</option>
+                            <option value="Hải Phòng">Hải Phòng</option>
+                        </select>
+                        <div class="invalid-feedback" id="operationScope-feedback"></div>
                     </div>
-                    <!-- Upload file giấy phép kinh doanh -->
+
+                    <!-- Mã số thuế/GPKD -->
                     <div class="mb-3">
-                        <label for="businessLicense" class="form-label">Giấy phép kinh doanh (PDF/JPG/PNG)</label>
-                        <input type="file" class="form-control" id="businessLicense" name="businessLicense" accept=".pdf,.jpg,.png" required>
+                        <label for="taxLicense" class="form-label">Mã số thuế/GPKD <span
+                                class="text-danger">*</span></label>
+                        <input type="text" class="form-control" id="taxLicense" name="taxLicense" pattern="[0-9]{10,13}"
+                            required>
+                        <div class="invalid-feedback" id="taxLicense-feedback"></div>
+                    </div>
+
+                    <!-- Email liên hệ -->
+                    <div class="mb-3">
+                        <label for="contactEmail" class="form-label">Email liên hệ <span
+                                class="text-danger">*</span></label>
+                        <input type="email" class="form-control" id="contactEmail" name="contactEmail" required>
+                        <div class="invalid-feedback" id="contactEmail-feedback"></div>
+                    </div>
+
+                    <!-- Số điện thoại -->
+                    <div class="mb-3">
+                        <label for="phoneNumber" class="form-label">Số điện thoại <span
+                                class="text-danger">*</span></label>
+                        <input type="tel" class="form-control" id="phoneNumber" name="phoneNumber" pattern="[0-9]{10}"
+                            required>
+                        <div class="invalid-feedback" id="phoneNumber-feedback"></div>
+                    </div>
+
+                    <!-- Upload giấy tờ pháp lý -->
+                    <div class="mb-3">
+                        <label for="legalDocuments" class="form-label">Giấy tờ pháp lý (PDF/JPG/PNG, max 3 file, ≤15MB)
+                            <span class="text-danger">*</span></label>
+                        <input type="file" class="form-control" id="legalDocuments" name="legalDocuments"
+                            accept=".pdf,.jpg,.png" multiple required>
+                        <div class="form-text" id="filePreview"></div>
+                        <div class="invalid-feedback" id="legalDocuments-feedback"></div>
                     </div>
                 </form>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
-                <button type="submit" form="registerSubjectForm" class="btn btn-primary">Gửi</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+                <button type="submit" form="registerSubjectForm" class="btn btn-primary" id="submitBtn">Gửi hồ
+                    sơ</button>
             </div>
         </div>
     </div>

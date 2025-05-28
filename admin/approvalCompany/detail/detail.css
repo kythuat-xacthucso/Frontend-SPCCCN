@@ -1,0 +1,25 @@
+.card-header {
+    background-color: #f8faff;
+    font-weight: 500;
+}
+
+.fixed-bottom {
+    z-index: 1000;
+}
+
+.list-group-item-action:hover {
+    background-color: #e6f0ff;
+}
+
+@media (max-width: 767.98px) {
+    .fixed-bottom {
+        position: static;
+        border-top: none;
+    }
+    .fixed-bottom .container-fluid {
+        padding: 0 15px;
+    }
+    .fixed-bottom .d-flex {
+        justify-content: center !important;
+    }
+}

@@ -1,11 +1,16 @@
-(function initCompanyList() {
+function initCompanyList() {
     const entityTableBody = document.getElementById('entityTableBody');
-    const searchInput = document.getElementById('searchInput');
+    const cardList = document.querySelector('.card-list');
+    const searchEntityName = document.getElementById('searchEntityName');
+    const searchEntityCode = document.getElementById('searchEntityCode');
+    const searchPhone = document.getElementById('searchPhone');
+    const searchStatus = document.getElementById('searchStatus');
     const searchBtn = document.getElementById('searchBtn');
     const clearFilterBtn = document.getElementById('clearFilterBtn');
     const addNewBtn = document.getElementById('addNewBtn');
     const pagination = document.getElementById('pagination');
     const resultCount = document.getElementById('resultCount');
+    const itemsPerPageSelect = document.getElementById('itemsPerPage');
 
     // Sample data (replace with API call if needed)
     const entities = [
@@ -16,8 +21,8 @@
     ];
 
     let filteredEntities = [...entities];
+    let itemsPerPage = parseInt(itemsPerPageSelect.value);
     let currentPage = 1;
-    const itemsPerPage = 10; // Fixed value
 
     // Function to render table data
     function renderTable(data, page) {
@@ -44,16 +49,48 @@
             entityTableBody.appendChild(row);
         });
 
-        // Add event listeners for action buttons
+        renderCards(data, page);
+        addActionListeners();
+        renderPagination(data.length);
+        resultCount.textContent = `${data.length}/${entities.length} kết quả`;
+    }
+
+    // Function to render card view for mobile
+    function renderCards(data, page) {
+        cardList.innerHTML = '';
+        const start = (page - 1) * itemsPerPage;
+        const end = start + itemsPerPage;
+        const paginatedData = data.slice(start, end);
+
+        paginatedData.forEach((entity, index) => {
+            const card = document.createElement('div');
+            card.className = 'card';
+            card.innerHTML = `
+                <div class="card-body">
+                    <h6 class="card-title">${entity.entityName}</h6>
+                    <p class="card-text mb-1"><strong>Mã chủ thể:</strong> ${entity.entityCode}</p>
+                    <p class="card-text mb-1"><strong>Số điện thoại:</strong> ${entity.phone}</p>
+                    <p class="card-text mb-1"><strong>Trạng thái:</strong> <span class="badge ${entity.status === 'Hoạt động' ? 'bg-success' : 'bg-danger'}">${entity.status}</span></p>
+                    <p class="card-text mb-1"><strong>Ngày tạo:</strong> ${entity.createdDate}</p>
+                    <div class="d-flex gap-1 mt-2">
+                        <button class="btn btn-sm btn-outline-primary view-details-btn" title="Xem chi tiết" data-id="${entity.id}">
+                            <i class="bi bi-eye"></i>
+                        </button>
+                    </div>
+                </div>
+            `;
+            cardList.appendChild(card);
+        });
+    }
+
+    // Function to add action listeners
+    function addActionListeners() {
         document.querySelectorAll('.view-details-btn').forEach(btn => {
             btn.addEventListener('click', () => {
                 const entityId = btn.getAttribute('data-id');
                 loadDetails(entityId);
             });
         });
-
-        renderPagination(data.length);
-        resultCount.textContent = `${data.length}/${entities.length} kết quả`;
     }
 
     // Function to render pagination
@@ -61,14 +98,9 @@
         const totalPages = Math.ceil(totalItems / itemsPerPage);
         pagination.innerHTML = '';
 
-        // Previous button
         const prevLi = document.createElement('li');
         prevLi.className = `page-item ${currentPage === 1 ? 'disabled' : ''}`;
-        prevLi.innerHTML = `
-            <a class="page-link" href="#" aria-label="Previous">
-                <span aria-hidden="true">«</span>
-            </a>
-        `;
+        prevLi.innerHTML = `<a class="page-link" href="#" aria-label="Previous"><span aria-hidden="true">«</span></a>`;
         prevLi.addEventListener('click', (e) => {
             e.preventDefault();
             if (currentPage > 1) {
@@ -78,7 +110,6 @@
         });
         pagination.appendChild(prevLi);
 
-        // Page numbers
         for (let i = 1; i <= totalPages; i++) {
             const pageLi = document.createElement('li');
             pageLi.className = `page-item ${i === currentPage ? 'active' : ''}`;
@@ -91,14 +122,9 @@
             pagination.appendChild(pageLi);
         }
 
-        // Next button
         const nextLi = document.createElement('li');
         nextLi.className = `page-item ${currentPage === totalPages ? 'disabled' : ''}`;
-        nextLi.innerHTML = `
-            <a class="page-link" href="#" aria-label="Next">
-                <span aria-hidden="true">»</span>
-            </a>
-        `;
+        nextLi.innerHTML = `<a class="page-link" href="#" aria-label="Next"><span aria-hidden="true">»</span></a>`;
         nextLi.addEventListener('click', (e) => {
             e.preventDefault();
             if (currentPage < totalPages) {
@@ -129,11 +155,16 @@
 
     // Search functionality
     searchBtn.addEventListener('click', () => {
-        const searchTerm = searchInput.value.trim().toLowerCase();
+        const entityName = searchEntityName.value.trim().toLowerCase();
+        const entityCode = searchEntityCode.value.trim().toLowerCase();
+        const phone = searchPhone.value.trim().toLowerCase();
+        const status = searchStatus.value;
+
         filteredEntities = entities.filter(entity =>
-            entity.entityName.toLowerCase().includes(searchTerm) ||
-            entity.entityCode.toLowerCase().includes(searchTerm) ||
-            entity.phone.toLowerCase().includes(searchTerm)
+            (entityName === '' || entity.entityName.toLowerCase().includes(entityName)) &&
+            (entityCode === '' || entity.entityCode.toLowerCase().includes(entityCode)) &&
+            (phone === '' || entity.phone.toLowerCase().includes(phone)) &&
+            (status === '' || entity.status === status)
         );
         currentPage = 1;
         renderTable(filteredEntities, currentPage);
@@ -141,7 +172,10 @@
 
     // Clear filter functionality
     clearFilterBtn.addEventListener('click', () => {
-        searchInput.value = '';
+        searchEntityName.value = '';
+        searchEntityCode.value = '';
+        searchPhone.value = '';
+        searchStatus.value = '';
         filteredEntities = [...entities];
         currentPage = 1;
         renderTable(filteredEntities, currentPage);
@@ -152,6 +186,16 @@
         loadAddNewPage();
     });
 
+    // Items per page change
+    itemsPerPageSelect.addEventListener('change', () => {
+        itemsPerPage = parseInt(itemsPerPageSelect.value);
+        currentPage = 1;
+        renderTable(filteredEntities, currentPage);
+    });
+
     // Initial render
     renderTable(filteredEntities, currentPage);
-})();
+}
+
+// Initialize when DOM is loaded
+document.addEventListener('DOMContentLoaded', initCompanyList);

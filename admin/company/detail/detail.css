@@ -1,0 +1,30 @@
+.card {
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.card-header {
+    background-color: #f8f9fa;
+    font-weight: 500;
+}
+
+.form-control-plaintext {
+    margin-bottom: 0;
+}
+
+.fixed-bottom {
+    z-index: 1000;
+}
+
+.img-fluid {
+    transition: opacity 0.3s ease;
+}
+
+.img-fluid:hover {
+    opacity: 0.8;
+}
+
+.modal-body img {
+    max-height: 70vh;
+    object-fit: contain;
+}

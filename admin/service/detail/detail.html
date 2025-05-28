@@ -1,0 +1,82 @@
+<div class="container-fluid py-3">
+    <h2 class="mb-4">Chi tiết gói dịch vụ</h2>
+    <div class="row">
+        <!-- Section 1: Thông tin gói dịch vụ -->
+        <div class="col-md-6 mb-4">
+            <div class="card h-100">
+                <div class="card-header">Thông tin gói dịch vụ</div>
+                <div class="card-body">
+                    <div class="row mb-3">
+                        <label class="col-sm-4 col-form-label">Tên gói</label>
+                        <div class="col-sm-8">
+                            <p class="form-control-plaintext" id="packageName"></p>
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <label class="col-sm-4 col-form-label">Giá tiền</label>
+                        <div class="col-sm-8">
+                            <p class="form-control-plaintext" id="packagePrice"></p>
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <label class="col-sm-4 col-form-label">Trạng thái</label>
+                        <div class="col-sm-8">
+                            <p class="form-control-plaintext" id="packageStatus"></p>
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <label class="col-sm-4 col-form-label">Thời gian tạo</label>
+                        <div class="col-sm-8">
+                            <p class="form-control-plaintext" id="createdDate"></p>
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <label class="col-sm-4 col-form-label">Người tạo</label>
+                        <div class="col-sm-8">
+                            <p class="form-control-plaintext" id="createdBy"></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Section 2: Danh sách tham số -->
+        <div class="col-md-6 mb-4">
+            <div class="card h-100">
+                <div class="card-header">Danh sách tham số</div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover table-bordered align-middle">
+                            <thead class="table-light">
+                                <tr>
+                                    <th scope="col" class="text-center" style="width: 10%;">STT</th>
+                                    <th scope="col" style="width: 30%;">Tên tham số</th>
+                                    <th scope="col" style="width: 20%;">Đơn vị</th>
+                                    <th scope="col" style="width: 20%;">Số lượng</th>
+                                </tr>
+                            </thead>
+                            <tbody id="parameterTableBody">
+                                <!-- Data will be loaded dynamically -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Fixed buttons at the bottom -->
+    <div class="fixed-bottom bg-light py-3 border-top" id="actionButtons">
+        <div class="container-fluid">
+            <div class="d-flex justify-content-end gap-2">
+                <button class="btn btn-secondary" id="backBtn">Quay lại</button>
+                <!-- Dynamic buttons based on status -->
+                <button class="btn btn-success d-none" id="approveBtn">Duyệt</button>
+                <button class="btn btn-danger d-none" id="rejectBtn">Từ chối</button>
+                <button class="btn btn-warning d-none" id="suspendBtn">Tạm ngưng</button>
+                <button class="btn btn-info d-none" id="activateBtn">Kích hoạt lại</button>
+                <button class="btn btn-primary d-none" id="editBtn">Sửa</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Add padding to prevent content from being hidden under fixed buttons -->
+<div style="height: 80px;"></div>

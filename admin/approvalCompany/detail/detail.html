@@ -7,7 +7,7 @@
                 <div class="card-header">Thông tin hồ sơ đề nghị</div>
                 <div class="card-body">
                     <div class="row mb-3">
-                        <label class="col-sm-4 col-form-label">Tên đơn vị</label>
+                        <label class="col-sm-4 col-form-label">Tên tổ chức</label>
                         <div class="col-sm-8">
                             <p class="form-control-plaintext" id="unitName"></p>
                         </div>
@@ -19,46 +19,58 @@
                         </div>
                     </div>
                     <div class="row mb-3">
-                        <label class="col-sm-4 col-form-label">Người đại diện</label>
+                        <label class="col-sm-4 col-form-label">Mục tiêu chứng nhận</label>
                         <div class="col-sm-8">
-                            <p class="form-control-plaintext" id="representative"></p>
+                            <p class="form-control-plaintext" id="certificationGoal"></p>
                         </div>
                     </div>
                     <div class="row mb-3">
-                        <label class="col-sm-4 col-form-label">Người quản lý Zalo</label>
+                        <label class="col-sm-4 col-form-label">Nhóm sản phẩm chủ lực</label>
                         <div class="col-sm-8">
-                            <p class="form-control-plaintext" id="zaloManager"></p>
+                            <p class="form-control-plaintext" id="mainProductGroup"></p>
                         </div>
                     </div>
                     <div class="row mb-3">
-                        <label class="col-sm-4 col-form-label">Trạng thái</label>
+                        <label class="col-sm-4 col-form-label">Phạm vi hoạt động</label>
+                        <div class="col-sm-8">
+                            <p class="form-control-plaintext" id="operationScope"></p>
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <label class="col-sm-4 col-form-label">Email liên hệ</label>
+                        <div class="col-sm-8">
+                            <p class="form-control-plaintext" id="email"></p>
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <label class="col-sm-4 col-form-label">Số điện thoại</label>
+                        <div class="col-sm-8">
+                            <p class="form-control-plaintext" id="phone"></p>
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <label class="col-sm-4 col form-label">Trạng thái</label>
                         <div class="col-sm-8">
                             <p class="form-control-plaintext" id="status"></p>
-                        </div>
-                    </div>
-                    <div class="row mb-3">
-                        <label class="col-sm-4 col-form-label">Ngày gửi</label>
-                        <div class="col-sm-8">
-                            <p class="form-control-plaintext" id="submittedDate"></p>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-        <!-- Section 2: Xử lý hồ sơ -->
+        <!-- Section 2 & 3: Giấy tờ pháp lý và Xử lý hồ sơ -->
         <div class="col-md-6 mb-4">
             <div class="card h-100">
                 <div class="card-header">Xử lý hồ sơ</div>
                 <div class="card-body">
                     <div class="mb-3">
-                        <label class="col-form-label">Tài liệu đính kèm</label>
-                        <div class="list-group" id="attachments">
-                            <!-- Attachments will be loaded dynamically -->
+                        <label class="col-form-label">Giấy tờ pháp lý</label>
+                        <div class="list-group" id="legalDocuments">
+                            <!-- Legal documents will be loaded dynamically -->
                         </div>
                     </div>
                     <div class="mb-3">
                         <label for="reason" class="col-form-label">Lý do xử lý</label>
-                        <textarea class="form-control" id="reason" rows="3" placeholder="Nhập lý do từ chối ..." disabled></textarea>
+                        <textarea class="form-control" id="reason" rows="3" placeholder="Nhập lý do từ chối ..."></textarea>
                         <div class="invalid-feedback" id="reasonError">Vui lòng nhập lý do từ chối.</div>
                     </div>
                 </div>
@@ -70,11 +82,11 @@
         <div class="container-fluid">
             <div class="d-flex justify-content-end gap-2">
                 <button class="btn btn-secondary" id="backBtn">Quay lại</button>
-                <button class="btn btn-success" id="acceptBtn" disabled>Chấp nhận</button>
-                <button class="btn btn-danger" id="rejectBtn" disabled>Từ chối</button>
+                <button class="btn btn-success" id="acceptBtn">Chấp nhận</button>
+                <button class="btn btn-danger" id="rejectBtn">Từ chối</button>
             </div>
         </div>
     </div>
+    <!-- Add padding to prevent content from being hidden under fixed buttons -->
+    <div style="height: 80px;"></div>
 </div>
-<!-- Add padding to the bottom to prevent content from being hidden under fixed buttons -->
-<div style="height: 80px;"></div>

@@ -3,101 +3,145 @@ document.addEventListener('DOMContentLoaded', () => {
     const mainContent = document.getElementById('main-content');
     const dropdownIcon = document.getElementById('dropdownIcon');
     const userDropdown = document.getElementById('userDropdown');
+    const hamburgerBtn = document.getElementById('hamburgerBtn');
+    const closeSidebarBtn = document.getElementById('closeSidebarBtn');
+    const sidebar = document.getElementById('sidebar');
+    const overlay = document.getElementById('overlay');
+
+    // Toggle sidebar on mobile
+    function toggleSidebar() {
+        sidebar.classList.toggle('active');
+        overlay.classList.toggle('active');
+    }
+
+    // Close sidebar when clicking overlay
+    overlay.addEventListener('click', () => {
+        sidebar.classList.remove('active');
+        overlay.classList.remove('active');
+    });
+
+    // Hamburger button click
+    if (hamburgerBtn) {
+        hamburgerBtn.addEventListener('click', toggleSidebar);
+    }
+
+    // Close sidebar button click
+    if (closeSidebarBtn) {
+        closeSidebarBtn.addEventListener('click', toggleSidebar);
+    }
 
     // Handle sidebar menu clicks
     sidebarLinks.forEach(link => {
         link.addEventListener('click', (e) => {
             e.preventDefault();
-            // Remove active class from all sidebar links
             sidebarLinks.forEach(l => l.classList.remove('active'));
-            // Add active class to clicked link
             link.classList.add('active');
-            // Load content dynamically
             const menuType = link.getAttribute('data-menu');
             loadContent(menuType);
+            // Close sidebar on mobile after clicking a link
+            if (window.innerWidth < 768) {
+                toggleSidebar();
+            }
         });
     });
 
-    // Handle dropdown icon toggle and active state
-    userDropdown.addEventListener('show.bs.dropdown', () => {
-        dropdownIcon.classList.remove('bi-chevron-down');
-        dropdownIcon.classList.add('bi-chevron-up');
-        userDropdown.classList.add('active');
-    });
-    userDropdown.addEventListener('hide.bs.dropdown', () => {
-        dropdownIcon.classList.remove('bi-chevron-up');
-        dropdownIcon.classList.add('bi-chevron-down');
-        userDropdown.classList.remove('active');
-    });
+    // Handle dropdown icon toggle and active state (desktop only)
+    if (userDropdown) {
+        userDropdown.addEventListener('show.bs.dropdown', () => {
+            dropdownIcon.classList.remove('bi-chevron-down');
+            dropdownIcon.classList.add('bi-chevron-up');
+            userDropdown.classList.add('active');
+        });
+        userDropdown.addEventListener('hide.bs.dropdown', () => {
+            dropdownIcon.classList.remove('bi-chevron-up');
+            dropdownIcon.classList.add('bi-chevron-down');
+            userDropdown.classList.remove('active');
+        });
+    }
 
     // Function to load content dynamically
     function loadContent(menuType, params = {}) {
         let pagePath, cssPath, scriptPath;
 
-        // Define paths based on menu type
         switch (menuType) {
             case 'home':
-                pagePath = '../../admin/index.html'; // Path to home.html
-                cssPath = '';  // Path to home.css
-                scriptPath = ''; // Path to home.js
+                pagePath = '../../admin/index.html';
+                cssPath = '';
+                scriptPath = '';
                 break;
             case 'service-packages':
-                pagePath = ''; // Path to service-packages.html
-                cssPath = '';  // Path to service-packages.css
-                scriptPath = ''; // Path to service-packages.js
+                pagePath = '../../admin/service/list/list.html';
+                cssPath = '';
+                scriptPath = '../../admin/service/list/list.js';
                 break;
             case 'subject-approval':
-                pagePath = '../../admin/approvalCompany/list/list.html'; // Path to subject-approval.html
-                cssPath = '';  // Path to subject-approval.css
-                scriptPath = '../../admin/approvalCompany/list/list.js'; // Path to subject-approval.js
+                pagePath = '../../admin/approvalCompany/list/list.html';
+                cssPath = '../../admin/approvalCompany/list/list.css';
+                scriptPath = '../../admin/approvalCompany/list/list.js';
                 break;
             case 'subject-details':
-                pagePath = '../../admin/approvalCompany/detail/detail.html'; // Path to detail.html
-                cssPath = '';  // Path to detail.css
-                scriptPath = '../../admin/approvalCompany/detail/detail.js'; // Path to detail.js
+                pagePath = '../../admin/approvalCompany/detail/detail.html';
+                cssPath = '';
+                scriptPath = '../../admin/approvalCompany/detail/detail.js';
                 break;
             case 'resource-monitoring':
-                pagePath = ''; // Path to resource-monitoring.html
-                cssPath = '';  // Path to resource-monitoring.css
-                scriptPath = ''; // Path to resource-monitoring.js
+                pagePath = '';
+                cssPath = '';
+                scriptPath = '';
                 break;
             case 'payment-management':
-                pagePath = ''; // Path to payment-management.html
-                cssPath = '';  // Path to payment-management.css
-                scriptPath = ''; // Path to payment-management.js
+                pagePath = '';
+                cssPath = '';
+                scriptPath = '';
                 break;
             case 'company-management':
-                pagePath = '../../admin/company/list/list.html'; // Path to company-management.html
-                cssPath = '';  // Path to company-management.css
-                scriptPath = '../../admin/company/list/list.js'; // Path to company-management.js
+                pagePath = '../../admin/company/list/list.html';
+                cssPath = '../../admin/company/list/list.css';
+                scriptPath = '../../admin/company/list/list.js';
                 break;
             case 'company-details':
-                pagePath = '../../admin/company/detail/detail.html'; // Path to detail.html
-                cssPath = '';  // Path to detail.css
-                scriptPath = '../../admin/company/detail/detail.js'; // Path to detail.js
+                pagePath = '../../admin/company/detail/detail.html';
+                cssPath = '../../admin/company/detail/detail.css';
+                scriptPath = '../../admin/company/detail/detail.js';
+                break;
+            case 'service-add-new':
+                pagePath = '../../admin/service/add/add.html';
+                cssPath = '';
+                scriptPath = '../../admin/service/add/add.js';
+                break;
+            case 'service-details':
+                pagePath = '../../admin/service/detail/detail.html';
+                cssPath = '';
+                scriptPath = '../../admin/service/detail/detail.js';
+                break;
+            case 'service-edit':
+                pagePath = '../../admin/service/edit/edit.html';
+                cssPath = '';
+                scriptPath = '../../admin/service/edit/edit.js';
+                break;
+            case 'subject-add-new':
+                pagePath = '../../admin/approvalCompany/add/add.html';
+                cssPath = '';
+                scriptPath = '../../admin/approvalCompany/add/add.js';
                 break;
             default:
                 console.error('Unknown menu type:', menuType);
                 return;
         }
 
-        // Fetch HTML content
         fetch(pagePath)
             .then(response => {
                 if (!response.ok) throw new Error(`Không tìm thấy trang: ${pagePath}`);
                 return response.text();
             })
             .then(data => {
-                // Update main content
                 mainContent.innerHTML = data;
 
-                // Remove existing CSS and JS to avoid conflicts
                 const existingStyle = document.querySelector('link[data-content-css]');
                 if (existingStyle) existingStyle.remove();
                 const existingScript = document.querySelector('script[data-content-js]');
                 if (existingScript) existingScript.remove();
 
-                // Add CSS if provided
                 if (cssPath) {
                     const style = document.createElement('link');
                     style.rel = 'stylesheet';
@@ -106,21 +150,27 @@ document.addEventListener('DOMContentLoaded', () => {
                     document.head.appendChild(style);
                 }
 
-                // Add JS if provided
                 if (scriptPath) {
                     const script = document.createElement('script');
                     script.src = scriptPath;
                     script.setAttribute('data-content-js', menuType);
                     script.onload = () => {
-                        // Call initialization functions based on menuType
                         if (menuType === 'subject-approval' && typeof initProfileList === 'function') {
                             initProfileList();
                         } else if (menuType === 'subject-details' && typeof initDetailPage === 'function') {
-                            initDetailPage(params.profileId); // Pass profileId to detail page
+                            initDetailPage(params.profileId);
                         } else if (menuType === 'company-management' && typeof initCompanyList === 'function') {
                             initCompanyList();
                         } else if (menuType === 'company-details' && typeof initCompanyDetailPage === 'function') {
-                            initCompanyDetailPage(params.entityId); // Pass entityId to detail page
+                            initCompanyDetailPage(params.entityId);
+                        } else if (menuType === 'service-packages' && typeof initServiceList === 'function') {
+                            initServiceList();
+                        } else if (menuType === 'service-details' && typeof initServiceDetailPage === 'function') {
+                            initServiceDetailPage(params.serviceId);
+                        } else if (menuType === 'service-edit' && typeof initServiceEditPage === 'function') {
+                            initServiceEditPage(params.serviceId);
+                        } else if (menuType === 'subject-add-new' && typeof initAddNewPage === 'function') {
+                            initAddNewPage();
                         }
                     };
                     document.body.appendChild(script);
@@ -132,10 +182,8 @@ document.addEventListener('DOMContentLoaded', () => {
             });
     }
 
-    // Expose loadContent globally so it can be called from other scripts
     window.loadContent = loadContent;
 
-    // Load default content (Home)
     const defaultLink = document.querySelector('.sidebar-link[data-menu="home"]');
     if (defaultLink) {
         defaultLink.classList.add('active');
