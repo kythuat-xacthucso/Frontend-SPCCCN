@@ -1,32 +1,30 @@
 (function () {
-    const products = [
-        { id: 1, name: 'SP điện TTCB không điện NVTD 3', group: 'Điện tử', creator: 'Phongigi', createdTime: '2025-05-07 14:27', status: 'Hoạt động' },
-        { id: 2, name: 'SP điện TTCB không điện NVTD 2', group: 'Điện tử', creator: 'Anonymous', createdTime: '2025-05-05 14:25', status: 'Hoạt động' },
-        { id: 3, name: 'SP điện TTCB không điện NVTD 1', group: 'Điện tử', creator: 'Phongigi', createdTime: '2025-05-07 14:25', status: 'Hoạt động' },
-        { id: 4, name: 'SP điện NVTD không điện TTCB', group: 'Điện tử', creator: 'Phongigi', createdTime: '2025-05-07 14:23', status: 'Khóa' },
-        { id: 5, name: 'Sp không điện NVTD và TTCB', group: 'Điện tử', creator: 'Anonymous', createdTime: '2025-05-07 14:23', status: 'Hoạt động' },
-        { id: 6, name: 'Kombucha Hồng trà - Đào tuyết', group: 'Đồ uống', creator: 'Phongigi', createdTime: '2025-05-06 18:31', status: 'Hoạt động' },
-        { id: 7, name: 'Kombucha sorn trà xanh', group: 'Đồ uống', creator: 'Phongigi', createdTime: '2025-01-03 15:58', status: 'Hoạt động' },
-        { id: 8, name: 'Kombucha cà phê robusta', group: 'Đồ uống', creator: 'Anonymous', createdTime: '2025-01-03 15:54', status: 'Khóa' }
+    const companies = [
+        { id: 1, name: 'Công ty TNHH ABC', phone: '0912345678', representative: 'Nguyễn Văn A', createdTime: '2025-05-16 15:00', status: 'Chờ duyệt' },
+        { id: 2, name: 'Công ty CP XYZ', phone: '0987654321', representative: 'Trần Thị B', createdTime: '2025-05-15 09:30', status: 'Đã duyệt' },
+        { id: 3, name: 'Công ty TNHH DEF', phone: '0931234567', representative: 'Lê Văn C', createdTime: '2025-05-14 14:20', status: 'Từ chối' },
+        { id: 4, name: 'Công ty CP GHI', phone: '0978765432', representative: 'Phạm Thị D', createdTime: '2025-05-13 11:10', status: 'Chờ duyệt' },
+        { id: 5, name: 'Công ty TNHH JKL', phone: '0901234567', representative: 'Hoàng Văn E', createdTime: '2025-05-12 10:00', status: 'Đã duyệt' },
+        { id: 6, name: 'Công ty CP MNO', phone: '0945678901', representative: 'Vũ Thị F', createdTime: '2025-05-11 08:45', status: 'Từ chối' }
     ];
 
-    function initProductList() {
+    function initCompanyList() {
         const elements = {
-            tableBody: document.getElementById('productTableBody'),
+            tableBody: document.getElementById('entityTableBody'),
             cardList: document.querySelector('.card-list'),
-            searchName: document.getElementById('searchProductName'),
-            searchGroup: document.getElementById('searchProductGroup'),
+            searchName: document.getElementById('searchEntityName'),
+            searchPhone: document.getElementById('searchPhone'),
             searchStatus: document.getElementById('searchStatus'),
             searchBtn: document.getElementById('searchBtn'),
             clearBtn: document.getElementById('clearFilterBtn'),
-            addBtn: document.getElementById('addNewBtn'),
+            inviteBtn: document.getElementById('inviteBtn'),
             pagination: document.getElementById('pagination'),
             resultCount: document.getElementById('resultCount'),
             itemsPerPage: document.getElementById('itemsPerPage')
         };
 
         let state = {
-            filteredProducts: [...products],
+            filteredCompanies: [...companies],
             itemsPerPage: elements.itemsPerPage ? parseInt(elements.itemsPerPage.value) : 10,
             currentPage: 1
         };
@@ -39,22 +37,24 @@
             const paginatedData = data.slice(start, end);
 
             const fragment = document.createDocumentFragment();
-            paginatedData.forEach((product, index) => {
+            paginatedData.forEach((company, index) => {
                 const row = document.createElement('tr');
                 row.innerHTML = `
                     <td class="text-center">${start + index + 1}</td>
-                    <td>${product.name}</td>
-                    <td>${product.group}</td>
-                    <td>${product.creator}</td>
-                    <td>${product.createdTime}</td>
-                    <td><span class="badge ${product.status === 'Hoạt động' ? 'bg-success' : 'bg-danger'}">${product.status}</span></td>
+                    <td>${company.name}</td>
+                    <td>${company.phone}</td>
+                    <td>${company.representative}</td>
+                    <td>${company.createdTime}</td>
+                    <td><span class="badge ${getStatusClass(company.status)}">${company.status}</span></td>
                     <td class="text-center">
-                        <button class="btn btn-sm btn-outline-primary me-1 view-details-btn" title="Xem chi tiết" data-id="${product.id}">
+                        <button class="btn btn-sm btn-outline-primary view-details-btn" title="Xem chi tiết" data-id="${company.id}">
                             <i class="bi bi-eye"></i>
                         </button>
-                        <button class="btn btn-sm btn-outline-primary edit-btn" title="Sửa" data-id="${product.id}">
-                            <i class="bi bi-pencil"></i>
-                        </button>
+                        ${company.status === 'Chờ duyệt' ? `
+                            <button class="btn btn-sm btn-outline-danger cancel-invite-btn" title="Hủy lời mời" data-id="${company.id}">
+                                <i class="bi bi-x-circle"></i>
+                            </button>
+                        ` : ''}
                     </td>
                 `;
                 fragment.appendChild(row);
@@ -64,7 +64,7 @@
             renderCards(data, page);
             renderPagination(data.length);
             if (elements.resultCount) {
-                elements.resultCount.textContent = `${data.length}/${products.length} kết quả`;
+                elements.resultCount.textContent = `${data.length}/${companies.length} kết quả`;
             }
         }
 
@@ -76,29 +76,40 @@
             const paginatedData = data.slice(start, end);
 
             const fragment = document.createDocumentFragment();
-            paginatedData.forEach((product) => {
+            paginatedData.forEach((company) => {
                 const card = document.createElement('div');
                 card.className = 'card';
                 card.innerHTML = `
                     <div class="card-body">
-                        <h6 class="card-title">${product.name}</h6>
-                        <p class="card-text mb-1"><strong>Nhóm:</strong> ${product.group}</p>
-                        <p class="card-text mb-1"><strong>Người tạo:</strong> ${product.creator}</p>
-                        <p class="card-text mb-1"><strong>Thời gian:</strong> ${product.createdTime}</p>
-                        <p class="card-text mb-1"><strong>Trạng thái:</strong> <span class="badge ${product.status === 'Hoạt động' ? 'bg-success' : 'bg-danger'}">${product.status}</span></p>
+                        <h6 class="card-title">${company.name}</h6>
+                        <p class="card-text mb-1"><strong>Số điện thoại:</strong> ${company.phone}</p>
+                        <p class="card-text mb-1"><strong>Người đại diện:</strong> ${company.representative}</p>
+                        <p class="card-text mb-1"><strong>Thời gian:</strong> ${company.createdTime}</p>
+                        <p class="card-text mb-1"><strong>Trạng thái:</strong> <span class="badge ${getStatusClass(company.status)}">${company.status}</span></p>
                         <div class="d-flex gap-1 mt-2">
-                            <button class="btn btn-sm btn-outline-primary view-details-btn" title="Xem chi tiết" data-id="${product.id}">
+                            <button class="btn btn-sm btn-outline-primary view-details-btn" title="Xem chi tiết" data-id="${company.id}">
                                 <i class="bi bi-eye"></i>
                             </button>
-                            <button class="btn btn-sm btn-outline-primary edit-btn" title="Sửa" data-id="${product.id}">
-                                <i class="bi bi-pencil"></i>
-                            </button>
+                            ${company.status === 'Chờ duyệt' ? `
+                                <button class="btn btn-sm btn-outline-danger cancel-invite-btn" title="Hủy lời mời" data-id="${company.id}">
+                                    <i class="bi bi-x-circle"></i>
+                                </button>
+                            ` : ''}
                         </div>
                     </div>
                 `;
                 fragment.appendChild(card);
             });
             elements.cardList.appendChild(fragment);
+        }
+
+        function getStatusClass(status) {
+            switch (status) {
+                case 'Chờ duyệt': return 'bg-warning text-dark';
+                case 'Đã duyệt': return 'bg-success';
+                case 'Từ chối': return 'bg-danger';
+                default: return 'bg-secondary';
+            }
         }
 
         function renderPagination(totalItems) {
@@ -114,7 +125,7 @@
                 e.preventDefault();
                 if (state.currentPage > 1) {
                     state.currentPage--;
-                    renderTable(state.filteredProducts, state.currentPage);
+                    renderTable(state.filteredCompanies, state.currentPage);
                 }
             });
             fragment.appendChild(prevLi);
@@ -126,7 +137,7 @@
                 pageLi.addEventListener('click', (e) => {
                     e.preventDefault();
                     state.currentPage = i;
-                    renderTable(state.filteredProducts, state.currentPage);
+                    renderTable(state.filteredCompanies, state.currentPage);
                 });
                 fragment.appendChild(pageLi);
             }
@@ -138,7 +149,7 @@
                 e.preventDefault();
                 if (state.currentPage < totalPages) {
                     state.currentPage++;
-                    renderTable(state.filteredProducts, state.currentPage);
+                    renderTable(state.filteredCompanies, state.currentPage);
                 }
             });
             fragment.appendChild(nextLi);
@@ -148,46 +159,46 @@
 
         function handleSearch() {
             const name = elements.searchName?.value.trim().toLowerCase() || '';
-            const group = elements.searchGroup?.value.trim().toLowerCase() || '';
+            const phone = elements.searchPhone?.value.trim().toLowerCase() || '';
             const status = elements.searchStatus?.value || '';
 
-            state.filteredProducts = products.filter(product =>
-                (!name || product.name.toLowerCase().includes(name)) &&
-                (!group || product.group.toLowerCase().includes(group)) &&
-                (!status || product.status === status)
+            state.filteredCompanies = companies.filter(company =>
+                (!name || company.name.toLowerCase().includes(name)) &&
+                (!phone || company.phone.includes(phone)) &&
+                (!status || company.status === status)
             );
             state.currentPage = 1;
-            renderTable(state.filteredProducts, state.currentPage);
+            renderTable(state.filteredCompanies, state.currentPage);
         }
 
         function clearFilters() {
             if (elements.searchName) elements.searchName.value = '';
-            if (elements.searchGroup) elements.searchGroup.value = '';
+            if (elements.searchPhone) elements.searchPhone.value = '';
             if (elements.searchStatus) elements.searchStatus.value = '';
-            state.filteredProducts = [...products];
+            state.filteredCompanies = [...companies];
             state.currentPage = 1;
-            renderTable(state.filteredProducts, state.currentPage);
+            renderTable(state.filteredCompanies, state.currentPage);
         }
 
-        function loadDetails(productId) {
+        function loadDetails(companyId) {
             if (typeof window.loadContent === 'function') {
-                window.loadContent('product-details', { productId });
+                window.loadContent('company-details', { companyId });
             } else {
                 console.error('loadContent not found');
             }
         }
 
-        function loadEditPage(productId) {
+        function cancelInvite(companyId) {
             if (typeof window.loadContent === 'function') {
-                window.loadContent('product-edit', { productId });
+                window.loadContent('company-cancel-invite', { companyId });
             } else {
                 console.error('loadContent not found');
             }
         }
 
-        function loadAddNewPage() {
+        function loadInvitePage() {
             if (typeof window.loadContent === 'function') {
-                window.loadContent('product-add-new');
+                window.loadContent('company-invite');
             } else {
                 console.error('loadContent not found');
             }
@@ -200,44 +211,48 @@
             if (elements.clearBtn) {
                 elements.clearBtn.addEventListener('click', clearFilters);
             }
-            if (elements.addBtn) {
-                elements.addBtn.addEventListener('click', loadAddNewPage);
+            if (elements.inviteBtn) {
+                elements.inviteBtn.addEventListener('click', loadInvitePage);
             }
             if (elements.itemsPerPage) {
                 elements.itemsPerPage.addEventListener('change', () => {
                     state.itemsPerPage = parseInt(elements.itemsPerPage.value);
                     state.currentPage = 1;
-                    renderTable(state.filteredProducts, state.currentPage);
+                    renderTable(state.filteredCompanies, state.currentPage);
                 });
             }
 
             elements.tableBody?.addEventListener('click', (e) => {
                 const target = e.target.closest('button');
                 if (!target) return;
-                const productId = target.dataset.id;
+                const companyId = target.dataset.id;
                 if (target.classList.contains('view-details-btn')) {
-                    loadDetails(productId);
-                } else if (target.classList.contains('edit-btn')) {
-                    loadEditPage(productId);
+                    loadDetails(companyId);
+                } else if (target.classList.contains('cancel-invite-btn')) {
+                    cancelInvite(companyId);
                 }
             });
 
             elements.cardList?.addEventListener('click', (e) => {
                 const target = e.target.closest('button');
                 if (!target) return;
-                const productId = target.dataset.id;
+                const companyId = target.dataset.id;
                 if (target.classList.contains('view-details-btn')) {
-                    loadDetails(productId);
-                } else if (target.classList.contains('edit-btn')) {
-                    loadEditPage(productId);
+                    loadDetails(companyId);
+                } else if (target.classList.contains('cancel-invite-btn')) {
+                    cancelInvite(companyId);
                 }
             });
         }
 
+        console.log('list.js loaded, initializing initCompanyList');
         addEventListeners();
-        renderTable(state.filteredProducts, state.currentPage);
+        renderTable(state.filteredCompanies, state.currentPage);
     }
 
-    window.initProductList = initProductList;
-    document.addEventListener('DOMContentLoaded', initProductList);
+    window.initCompanyList = initCompanyList;
+    document.addEventListener('DOMContentLoaded', () => {
+        console.log('DOMContentLoaded, calling initCompanyList');
+        initCompanyList();
+    });
 })();

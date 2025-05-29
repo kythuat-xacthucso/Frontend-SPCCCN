@@ -9,33 +9,33 @@
 
 @media (max-width: 767.98px) {
     .card-list .card-title {
-        font-size: 0.875rem; /* 14px */
+        font-size: 0.875rem;
     }
     .card-list .card-text {
-        font-size: 0.75rem; /* 12px */
+        font-size: 0.75rem;
     }
     .card-list .badge {
-        font-size: 0.6875rem; /* 11px */
+        font-size: 0.6875rem;
     }
     .card-list .btn-sm {
         padding: 0.25rem 0.5rem;
-        font-size: 0.75rem; /* 12px */
+        font-size: 0.75rem;
     }
     .form-label {
-        font-size: 0.875rem; /* 14px */
+        font-size: 0.875rem;
     }
     .form-control-sm,
     .form-select-sm {
-        font-size: 0.75rem; /* 12px */
+        font-size: 0.75rem;
     }
     .btn-sm {
-        font-size: 0.75rem; /* 12px */
+        font-size: 0.75rem;
     }
     .pagination .page-link {
-        font-size: 0.75rem; /* 12px */
+        font-size: 0.75rem;
         padding: 0.25rem 0.5rem;
     }
     #resultCount {
-        font-size: 0.75rem; /* 12px */
+        font-size: 0.75rem;
     }
 }

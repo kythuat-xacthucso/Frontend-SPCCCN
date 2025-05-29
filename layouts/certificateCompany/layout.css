@@ -29,4 +29,10 @@
     .overlay.active {
         display: block;
     }
+    .sidebar .nav-link,
+    .sidebar .fw-medium,
+    .sidebar .btn,
+    .sidebar span {
+        font-size: 0.875rem !important;
+    }
 }

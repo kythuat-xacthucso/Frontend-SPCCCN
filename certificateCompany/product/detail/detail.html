@@ -1,0 +1,56 @@
+<div class="container-fluid py-3">
+    <h2 class="mb-4">Chi tiết sản phẩm</h2>
+    <div class="row g-3">
+        <!-- Tên sản phẩm -->
+        <div class="col-12">
+            <label class="form-label">Tên sản phẩm</label>
+            <p class="form-control-plaintext" id="productName"></p>
+        </div>
+        <!-- Mô tả ngắn -->
+        <div class="col-12">
+            <label class="form-label">Mô tả ngắn</label>
+            <p class="form-control-plaintext" id="shortDescription"></p>
+        </div>
+        <!-- Nhóm sản phẩm -->
+        <div class="col-12 col-md-6">
+            <label class="form-label">Nhóm sản phẩm</label>
+            <p class="form-control-plaintext" id="productGroup"></p>
+        </div>
+        <!-- Tiêu chuẩn chứng nhận -->
+        <div class="col-12 col-md-6">
+            <label class="form-label">Tiêu chuẩn chứng nhận</label>
+            <p class="form-control-plaintext" id="certificationStandards"></p>
+        </div>
+        <!-- Hình ảnh minh họa -->
+        <div class="col-12">
+            <label class="form-label">Hình ảnh minh họa</label>
+            <img id="productImage" class="img-fluid" style="max-width: 300px;" alt="Hình ảnh sản phẩm">
+        </div>
+        <!-- Trạng thái -->
+        <div class="col-12 col-md-6">
+            <label class="form-label">Trạng thái</label>
+            <p class="form-control-plaintext" id="status"></p>
+        </div>
+        <!-- Người tạo -->
+        <div class="col-12 col-md-6">
+            <label class="form-label">Người tạo</label>
+            <p class="form-control-plaintext" id="createdBy"></p>
+        </div>
+        <!-- Thời gian tạo -->
+        <div class="col-12">
+            <label class="form-label">Thời gian tạo</label>
+            <p class="form-control-plaintext" id="createdDate"></p>
+        </div>
+    </div>
+    <!-- Fixed buttons at the bottom -->
+    <div class="fixed-bottom bg-light py-3 border-top" id="actionButtons">
+        <div class="container-fluid">
+            <div class="d-flex justify-content-end gap-2">
+                <button type="button" class="btn btn-secondary" id="backBtn">Quay lại</button>
+                <button type="button" class="btn btn-primary" id="editBtn">Sửa</button>
+            </div>
+        </div>
+    </div>
+    <!-- Add padding to prevent content from being hidden under fixed buttons -->
+    <div style="height: 80px;"></div>
+</div>

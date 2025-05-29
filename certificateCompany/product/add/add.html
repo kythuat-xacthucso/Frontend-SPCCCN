@@ -1,0 +1,53 @@
+<div class="container-fluid py-3">
+    <h2 class="mb-4">Thêm mới sản phẩm</h2>
+    <form id="addProductForm" novalidate>
+        <div class="row g-3">
+            <!-- Tên sản phẩm -->
+            <div class="col-12">
+                <label for="productName" class="form-label">Tên sản phẩm <span class="text-danger">*</span></label>
+                <input type="text" class="form-control" id="productName" name="productName" required>
+                <div class="invalid-feedback" id="productName-feedback"></div>
+            </div>
+            <!-- Mô tả ngắn -->
+            <div class="col-12">
+                <label for="shortDescription" class="form-label">Mô tả ngắn <span class="text-danger">*</span></label>
+                <textarea class="form-control" id="shortDescription" name="shortDescription" rows="3" required></textarea>
+                <div class="invalid-feedback" id="shortDescription-feedback"></div>
+            </div>
+            <!-- Nhóm sản phẩm -->
+            <div class="col-12 col-md-6">
+                <label for="productGroup" class="form-label">Nhóm sản phẩm <span class="text-danger">*</span></label>
+                <select class="form-select" id="productGroup" name="productGroup" required>
+                    <option value="">Chọn nhóm sản phẩm</option>
+                    <option value="Đồ gia dụng">Đồ gia dụng</option>
+                    <option value="Thực phẩm">Thực phẩm</option>
+                    <option value="Đồ điện tử">Đồ điện tử</option>
+                </select>
+                <div class="invalid-feedback" id="productGroup-feedback"></div>
+            </div>
+            <!-- Tiêu chuẩn chứng nhận -->
+            <div class="col-12 col-md-6">
+                <label for="certificationStandards" class="form-label">Tiêu chuẩn chứng nhận</label>
+                <input type="text" class="form-control" id="certificationStandards" name="certificationStandards">
+                <div class="invalid-feedback" id="certificationStandards-feedback"></div>
+            </div>
+            <!-- Hình ảnh minh họa -->
+            <div class="col-12">
+                <label for="productImage" class="form-label">Hình ảnh minh họa</label>
+                <input type="file" class="form-control" id="productImage" name="productImage" accept=".png,.jpg,.jpeg">
+                <div class="invalid-feedback" id="productImage-feedback"></div>
+            </div>
+        </div>
+        <!-- Fixed buttons at the bottom -->
+        <div class="fixed-bottom bg-light py-3 border-top" id="actionButtons">
+            <div class="container-fluid">
+                <div class="d-flex justify-content-end gap-2">
+                    <button type="button" class="btn btn-secondary" id="backBtn">Quay lại</button>
+                    <button type="submit" class="btn btn-primary" id="confirmBtn" disabled>Xác nhận</button>
+                </div>
+            </div>
+        </div>
+        <!-- Add padding to prevent content from being hidden under fixed buttons -->
+        <div style="height: 80px;"></div>
+    </form>
+</div>

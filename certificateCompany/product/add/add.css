@@ -1,0 +1,6 @@
+/* Responsive font size */
+@media (max-width: 768px) {
+    h2, label, .form-control, .btn {
+        font-size: 0.9rem !important;
+    }
+}

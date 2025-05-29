@@ -7,37 +7,35 @@ document.addEventListener('DOMContentLoaded', () => {
     const hamburgerBtn = document.getElementById('hamburgerBtn');
     const closeSidebarBtn = document.getElementById('closeSidebarBtn');
     const sidebar = document.querySelector('.sidebar');
-
-    // Create overlay element
     const overlay = document.createElement('div');
+
     overlay.classList.add('overlay');
     document.body.appendChild(overlay);
 
-    // Sidebar content templates
     const sidebarTemplates = {
         desktop: {
             overview: '',
             traceability: `
                 <ul class="nav flex-column">
                     <li class="nav-item">
-                        <a class="nav-link text-dark fs-6 sidebar-link active" href="#" data-menu="product-management">Quản lý sản phẩm</a>
+                        <a class="nav-link text-dark sidebar-link active" href="#" data-menu="product-management">Quản lý sản phẩm</a>
                     </li>
                 </ul>
             `,
             services: `
                 <ul class="nav flex-column">
                     <li class="nav-item">
-                        <a class="nav-link text-dark fs-6 sidebar-link active" href="#" data-menu="resource-management">Quản lý tài nguyên</a>
+                        <a class="nav-link text-dark sidebar-link active" href="#" data-menu="resource-management">Quản lý tài nguyên</a>
                     </li>
                 </ul>
             `,
             administration: `
                 <ul class="nav flex-column">
                     <li class="nav-item">
-                        <a class="nav-link text-dark fs-6 sidebar-link active" href="#" data-menu="nsxkd-approval">Mời NSXKD</a>
+                        <a class="nav-link text-dark sidebar-link active" href="#" data-menu="nsxkd-approval">Mời NSXKD</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link text-dark fs-6 sidebar-link" href="#" data-menu="internal-users">Nhân viên</a>
+                        <a class="nav-link text-dark sidebar-link" href="#" data-menu="internal-users">Nhân viên</a>
                     </li>
                 </ul>
             `
@@ -45,82 +43,89 @@ document.addEventListener('DOMContentLoaded', () => {
         mobile: `
             <ul class="nav flex-column">
                 <li class="nav-item">
-                    <a class="nav-link text-dark fs-6 sidebar-link active" href="#" data-menu="overview">Tổng quan</a>
+                    <a class="nav-link text-dark sidebar-link active" href="#" data-menu="overview">Tổng quan</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link text-dark fs-6 sidebar-link" href="#" data-menu="product-management">Quản lý sản phẩm</a>
+                    <a class="nav-link text-dark sidebar-link" href="#" data-menu="product-management">Quản lý sản phẩm</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link text-dark fs-6 sidebar-link" href="#" data-menu="resource-management">Quản lý tài nguyên</a>
+                    <a class="nav-link text-dark sidebar-link" href="#" data-menu="resource-management">Quản lý tài nguyên</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link text-dark fs-6 sidebar-link" href="#" data-menu="nsxkd-approval">Mời NSXKD</a>
+                    <a class="nav-link text-dark sidebar-link" href="#" data-menu="nsxkd-approval">Mời NSXKD</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link text-dark fs-6 sidebar-link" href="#" data-menu="internal-users">Nhân viên</a>
+                    <a class="nav-link text-dark sidebar-link" href="#" data-menu="internal-users">Nhân viên</a>
                 </li>
             </ul>
         `
     };
 
-    // Function to load content dynamically
     function loadContent(menuType, params = {}) {
-        let pagePath, cssPath, scriptPath;
+        const paths = {
+            'overview': {
+                page: '../../certificateCompany/index.html',
+                css: '',
+                script: ''
+            },
+            'product-management': {
+                page: '../../certificateCompany/product/list/list.html',
+                css: '../../certificateCompany/product/list/list.css',
+                script: '../../certificateCompany/product/list/list.js',
+                init: () => typeof initProductList === 'function' && initProductList()
+            },
+            'product-details': {
+                page: '../../certificateCompany/product/detail/detail.html',
+                css: '../../certificateCompany/product/detail/detail.css',
+                script: '../../certificateCompany/product/detail/detail.js',
+                init: () => typeof initProductDetailPage === 'function' && initProductDetailPage(params.productId)
+            },
+            'product-edit': {
+                page: '../../certificateCompany/product/edit/edit.html',
+                css: '../../certificateCompany/product/edit/edit.css',
+                script: '../../certificateCompany/product/edit/edit.js',
+                init: () => typeof initProductEditPage === 'function' && initProductEditPage(params.productId)
+            },
+            'product-add-new': {
+                page: '../../certificateCompany/product/add/add.html',
+                css: '../../certificateCompany/product/add/add.css',
+                script: '../../certificateCompany/product/add/add.js',
+                init: () => typeof initProductAddNewPage === 'function' && initProductAddNewPage()
+            },
+            'resource-management': {
+                page: '',
+                css: '',
+                script: ''
+            },
+            'nsxkd-approval': {
+                page: '../../certificateCompany/company/list/list.html',
+                css: '../../certificateCompany/company/list/list.css',
+                script: '../../certificateCompany/company/list/list.js',
+                init: () => typeof initCompanyList === 'function' && initCompanyList()
+            },
+            'company-details': {
+                page: '../../certificateCompany/company/detail/detail.html',
+                css: '',
+                script: '../../certificateCompany/company/detail/detail.js',
+                init: () => typeof initCompanyDetailPage === 'function' && initCompanyDetailPage(params.entityId)
+            },
+            'company-add-new': {
+                page: '../../certificateCompany/company/add/add.html',
+                css: '',
+                script: '../../certificateCompany/company/add/add.js',
+                init: () => typeof initCompanyAddNewPage === 'function' && initCompanyAddNewPage()
+            },
+            'internal-users': {
+                page: '../../certificateCompany/user/list/list.html',
+                css: '',
+                script: ''
+            }
+        };
 
-        switch (menuType) {
-            case 'overview':
-                pagePath = '../../certificateCompany/index.html';
-                cssPath = '';
-                scriptPath = '';
-                break;
-            case 'product-management':
-                pagePath = '../../certificateCompany/product/list/list.html';
-                cssPath = '../../certificateCompany/product/list/list.css';
-                scriptPath = '../../certificateCompany/product/list/list.js';
-                break;
-            case 'product-details':
-                pagePath = '../../certificateCompany/product/detail/detail.html';
-                cssPath = '';
-                scriptPath = '../../certificateCompany/product/detail/detail.js';
-                break;
-            case 'product-edit':
-                pagePath = '../../certificateCompany/product/edit/edit.html';
-                cssPath = '';
-                scriptPath = '../../certificateCompany/product/edit/edit.js';
-                break;
-            case 'product-add-new':
-                pagePath = '../../certificateCompany/product/add/add.html';
-                cssPath = '';
-                scriptPath = '../../certificateCompany/product/add/add.js';
-                break;
-            case 'resource-management':
-                pagePath = '';
-                cssPath = '';
-                scriptPath = '';
-                break;
-            case 'nsxkd-approval':
-                pagePath = '../../certificateCompany/company/list/list.html';
-                cssPath = '../../certificateCompany/company/list/list.css';
-                scriptPath = '../../certificateCompany/company/list/list.js';
-                break;
-            case 'company-details':
-                pagePath = '../../certificateCompany/company/detail/detail.html';
-                cssPath = '';
-                scriptPath = '../../certificateCompany/company/detail/detail.js';
-                break;
-            case 'company-add-new':
-                pagePath = '../../certificateCompany/company/add/add.html';
-                cssPath = '';
-                scriptPath = '../../certificateCompany/company/add/add.js';
-                break;
-            case 'internal-users':
-                pagePath = '../../certificateCompany/user/list/list.html';
-                cssPath = '';
-                scriptPath = '';
-                break;
-            default:
-                console.error('Unknown menu type:', menuType);
-                return;
+        const { page: pagePath, css: cssPath, script: scriptPath, init } = paths[menuType] || {};
+        if (!pagePath) {
+            console.error('Unknown menu type:', menuType);
+            return;
         }
 
         fetch(pagePath)
@@ -130,11 +135,8 @@ document.addEventListener('DOMContentLoaded', () => {
             })
             .then(data => {
                 mainContent.innerHTML = data;
-
-                const existingStyle = document.querySelector('link[data-content-css]');
-                if (existingStyle) existingStyle.remove();
-                const existingScript = document.querySelector('script[data-content-js]');
-                if (existingScript) existingScript.remove();
+                document.querySelector('link[data-content-css]')?.remove();
+                document.querySelector('script[data-content-js]')?.remove();
 
                 if (cssPath) {
                     const style = document.createElement('link');
@@ -148,23 +150,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     const script = document.createElement('script');
                     script.src = scriptPath;
                     script.setAttribute('data-content-js', menuType);
-                    script.onload = () => {
-                        if (menuType === 'product-management' && typeof initProductList === 'function') {
-                            initProductList();
-                        } else if (menuType === 'product-details' && typeof initProductDetailPage === 'function') {
-                            initProductDetailPage(params.productId);
-                        } else if (menuType === 'product-edit' && typeof initProductEditPage === 'function') {
-                            initProductEditPage(params.productId);
-                        } else if (menuType === 'product-add-new' && typeof initProductAddNewPage === 'function') {
-                            initProductAddNewPage();
-                        } else if (menuType === 'nsxkd-approval' && typeof initCompanyList === 'function') {
-                            initCompanyList();
-                        } else if (menuType === 'company-details' && typeof initCompanyDetailPage === 'function') {
-                            initCompanyDetailPage(params.entityId);
-                        } else if (menuType === 'company-add-new' && typeof initCompanyAddNewPage === 'function') {
-                            initCompanyAddNewPage();
-                        }
-                    };
+                    script.onload = init || (() => {});
                     document.body.appendChild(script);
                 }
             })
@@ -174,25 +160,16 @@ document.addEventListener('DOMContentLoaded', () => {
             });
     }
 
-    // Expose loadContent globally
     window.loadContent = loadContent;
 
-    // Function to update sidebar based on device
     function updateSidebar(menuType) {
-        if (window.innerWidth <= 767.98) {
-            sidebarMenu.innerHTML = sidebarTemplates.mobile;
-        } else {
-            sidebarMenu.innerHTML = sidebarTemplates.desktop[menuType] || '';
-        }
-
-        const sidebarLinks = document.querySelectorAll('.sidebar-link');
-        sidebarLinks.forEach(link => {
-            link.addEventListener('click', (e) => {
+        sidebarMenu.innerHTML = window.innerWidth <= 767.98 ? sidebarTemplates.mobile : (sidebarTemplates.desktop[menuType] || '');
+        document.querySelectorAll('.sidebar-link').forEach(link => {
+            link.addEventListener('click', e => {
                 e.preventDefault();
-                sidebarLinks.forEach(l => l.classList.remove('active'));
+                document.querySelectorAll('.sidebar-link').forEach(l => l.classList.remove('active'));
                 link.classList.add('active');
-                const sidebarMenuType = link.getAttribute('data-menu');
-                loadContent(sidebarMenuType);
+                loadContent(link.getAttribute('data-menu'));
                 if (window.innerWidth <= 767.98) {
                     sidebar.classList.remove('active');
                     overlay.classList.remove('active');
@@ -201,73 +178,55 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Handle header menu clicks (desktop only)
     headerMenus.forEach(menu => {
-        menu.addEventListener('click', (e) => {
+        menu.addEventListener('click', e => {
             e.preventDefault();
             headerMenus.forEach(m => m.classList.remove('active'));
             menu.classList.add('active');
             const menuType = menu.getAttribute('data-menu');
             updateSidebar(menuType);
-
-            let defaultMenuType = menuType;
-            if (menuType === 'traceability') {
-                defaultMenuType = 'product-management';
-            } else if (menuType === 'services') {
-                defaultMenuType = 'resource-management';
-            } else if (menuType === 'administration') {
-                defaultMenuType = 'nsxkd-approval';
-            }
+            const defaultMenuType = {
+                traceability: 'product-management',
+                services: 'resource-management',
+                administration: 'nsxkd-approval'
+            }[menuType] || menuType;
             loadContent(defaultMenuType);
         });
     });
 
-    // Handle dropdown icon toggle
     if (userDropdown && dropdownIcon) {
         userDropdown.addEventListener('show.bs.dropdown', () => {
-            dropdownIcon.classList.remove('bi-chevron-down');
-            dropdownIcon.classList.add('bi-chevron-up');
+            dropdownIcon.classList.replace('bi-chevron-down', 'bi-chevron-up');
             userDropdown.classList.add('active');
         });
         userDropdown.addEventListener('hide.bs.dropdown', () => {
-            dropdownIcon.classList.remove('bi-chevron-up');
-            dropdownIcon.classList.add('bi-chevron-down');
+            dropdownIcon.classList.replace('bi-chevron-up', 'bi-chevron-down');
             userDropdown.classList.remove('active');
         });
     }
 
-    // Handle hamburger menu and sidebar toggle
-    if (hamburgerBtn) {
-        hamburgerBtn.addEventListener('click', () => {
-            sidebar.classList.add('active');
-            overlay.classList.add('active');
-        });
-    }
+    hamburgerBtn?.addEventListener('click', () => {
+        sidebar.classList.add('active');
+        overlay.classList.add('active');
+    });
 
-    if (closeSidebarBtn) {
-        closeSidebarBtn.addEventListener('click', () => {
-            sidebar.classList.remove('active');
-            overlay.classList.remove('active');
-        });
-    }
+    closeSidebarBtn?.addEventListener('click', () => {
+        sidebar.classList.remove('active');
+        overlay.classList.remove('active');
+    });
 
     overlay.addEventListener('click', () => {
         sidebar.classList.remove('active');
         overlay.classList.remove('active');
     });
 
-    // Handle window resize to update sidebar
     window.addEventListener('resize', () => {
         const activeHeaderMenu = document.querySelector('.nav-link.active');
-        const menuType = activeHeaderMenu ? activeHeaderMenu.getAttribute('data-menu') : 'overview';
-        updateSidebar(menuType);
+        updateSidebar(activeHeaderMenu?.getAttribute('data-menu') || 'overview');
     });
 
-    // Load default content (Tổng quan)
     const defaultHeaderMenu = document.querySelector('.nav-link[data-menu="overview"]');
-    if (defaultHeaderMenu) {
-        defaultHeaderMenu.classList.add('active');
-    }
+    if (defaultHeaderMenu) defaultHeaderMenu.classList.add('active');
     updateSidebar('overview');
     loadContent('overview');
 });

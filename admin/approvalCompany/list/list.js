@@ -1,256 +1,270 @@
-function initProfileList() {
-    const profileTableBody = document.getElementById('profileTableBody');
-    const cardList = document.querySelector('.card-list');
-    const searchUnitName = document.getElementById('searchUnitName');
-    const searchTaxCode = document.getElementById('searchTaxCode');
-    const searchEmail = document.getElementById('searchEmail');
-    const searchPhone = document.getElementById('searchPhone');
-    const searchStatus = document.getElementById('searchStatus');
-    const searchBtn = document.getElementById('searchBtn');
-    const clearFilterBtn = document.getElementById('clearFilterBtn');
-    const addNewBtn = document.getElementById('addNewBtn');
-    const pagination = document.getElementById('pagination');
-    const resultCount = document.getElementById('resultCount');
-    const itemsPerPageSelect = document.getElementById('itemsPerPage');
+const initProfileList = () => {
+    // DOM Elements
+    const elements = {
+        profileTableBody: document.getElementById('profileTableBody'),
+        cardGridView: document.getElementById('cardGridView'),
+        tableView: document.getElementById('tableView'),
+        filterStatus: document.getElementById('filter_status'),
+        filterSpcName: document.getElementById('filter_spc_name'),
+        filterDateRangeStart: document.getElementById('filter_date_range_start'),
+        filterDateRangeEnd: document.getElementById('filter_date_range_end'),
+        filterStatusMobile: document.getElementById('filter_status_mobile'),
+        filterSpcNameMobile: document.getElementById('filter_spc_name_mobile'),
+        filterDateRangeStartMobile: document.getElementById('filter_date_range_start_mobile'),
+        filterDateRangeEndMobile: document.getElementById('filter_date_range_end_mobile'),
+        applyFilterBtn: document.getElementById('applyFilterBtn'),
+        applyFilterMobileBtn: document.getElementById('applyFilterMobileBtn'),
+        clearFilterBtn: document.getElementById('clearFilterBtn'),
+        clearFilterMobileBtn: document.getElementById('clearFilterMobileBtn'),
+        reloadBtn: document.getElementById('reloadBtn'),
+        reloadMobileBtn: document.getElementById('reloadMobileBtn'),
+        retryBtn: document.getElementById('retryBtn'),
+        errorBanner: document.getElementById('errorBanner'),
+        emptyState: document.getElementById('emptyState'),
+        pagination: document.getElementById('pagination'),
+        resultCount: document.getElementById('resultCount'),
+        itemsPerPageSelect: document.getElementById('itemsPerPage'),
+        toggleTableViewBtn: document.getElementById('toggleTableViewBtn'),
+        toggleCardViewBtn: document.getElementById('toggleCardViewBtn'),
+    };
 
-    // Sample data (replace with API call if needed)
-    const profiles = [
-        { id: 1, unitName: 'Công ty TNHH ABC', taxCode: '1234567890', email: 'abc@example.com', phone: '0123456789', status: 'Chờ duyệt', submittedDate: '2025-05-01' },
-        { id: 2, unitName: 'Công ty CP XYZ', taxCode: '0987654321', email: 'xyz@example.com', phone: '0987654321', status: 'Đã duyệt', submittedDate: '2025-05-02' },
-        { id: 3, unitName: 'Công ty TNHH DEF', taxCode: '1122334455', email: 'def@example.com', phone: '0912345678', status: 'Từ chối', submittedDate: '2025-05-03' },
-        { id: 4, unitName: 'Công ty CP GHI', taxCode: '5566778899', email: 'ghi@example.com', phone: '0932145678', status: 'Chờ duyệt', submittedDate: '2025-05-04' },
-    ];
-
-    let filteredProfiles = [...profiles];
-    let itemsPerPage = parseInt(itemsPerPageSelect.value);
+    let profiles = [];
+    let filteredProfiles = [];
+    let itemsPerPage = 10;
     let currentPage = 1;
+    let isTableView = true;
 
-    // Function to render table data
-    function renderTable(data, page) {
-        profileTableBody.innerHTML = '';
-        const start = (page - 1) * itemsPerPage;
-        const end = start + itemsPerPage;
-        const paginatedData = data.slice(start, end);
+    const statusBadgeClass = {
+        'Chờ duyệt': 'badge-pending',
+        'Đã duyệt': 'badge-approved',
+        'Từ chối': 'badge-rejected',
+    };
 
-        paginatedData.forEach((profile, index) => {
-            const row = document.createElement('tr');
-            const statusBadgeClass = {
-                'Chờ duyệt': 'bg-warning text-dark',
-                'Đã duyệt': 'bg-success text-white',
-                'Từ chối': 'bg-danger text-white'
-            }[profile.status] || 'bg-secondary';
-            
-            let actionButtons = `
-                <button class="btn btn-sm btn-outline-primary me-1 view-details-btn" title="Xem chi tiết" data-id="${profile.id}">
+    // Utility: Format date to dd/mm/yyyy
+    const formatDate = (dateStr) => new Date(dateStr).toLocaleDateString('vi-VN', {
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric',
+    });
+
+    // Fetch profiles from API
+    const fetchProfiles = async () => {
+        try {
+            const response = await new Promise((resolve) =>
+                setTimeout(() => resolve({
+                    ok: true,
+                    json: () => Promise.resolve([
+                        { id: 1, unitName: 'Công ty TNHH ABC', taxCode: '1234567890', email: 'abc@example.com', submittedDate: '2025-05-01', status: 'Chờ duyệt' },
+                        { id: 2, unitName: 'Công ty CP XYZ', taxCode: '0987654321', email: 'xyz@example.com', submittedDate: '2025-05-02', status: 'Đã duyệt' },
+                        { id: 3, unitName: 'Công ty TNHH DEF', taxCode: '1122334455', email: 'def@example.com', submittedDate: '2025-05-03', status: 'Từ chối' },
+                        { id: 4, unitName: 'Công ty CP GHI', taxCode: '5566778899', email: 'ghi@example.com', submittedDate: '2025-05-04', status: 'Chờ duyệt' },
+                    ]),
+                }), 1000)
+            );
+
+            if (!response.ok) throw new Error('Network error');
+            profiles = await response.json();
+            filteredProfiles = [...profiles];
+            elements.errorBanner.classList.add('d-none');
+            renderData();
+        } catch (error) {
+            elements.errorBanner.classList.remove('d-none');
+            elements.emptyState.classList.add('d-none');
+            if (elements.profileTableBody) elements.profileTableBody.innerHTML = '';
+            if (elements.cardGridView) elements.cardGridView.innerHTML = '';
+            if (elements.pagination) elements.pagination.innerHTML = '';
+        }
+    };
+
+    // Render table row
+    const renderTableRow = (profile, index, start) => `
+        <tr>
+            <td class="text-center">${start + index + 1}</td>
+            <td><span data-bs-toggle="tooltip" data-bs-title="Tên pháp lý: ${profile.unitName}\nNgày gửi: ${formatDate(profile.submittedDate)}">${profile.unitName}</span></td>
+            <td>${profile.taxCode}</td>
+            <td>${profile.email}</td>
+            <td>${formatDate(profile.submittedDate)}</td>
+            <td><span class="badge ${statusBadgeClass[profile.status] || 'badge-secondary'}">${profile.status}</span></td>
+            <td class="text-center">
+                <button class="btn btn-sm btn-outline-primary view-details-btn" data-id="${profile.id}">
                     <i class="bi bi-eye"></i>
                 </button>
-            `;
-            if (profile.status === 'Chờ duyệt') {
-                actionButtons += `
-                    <button class="btn btn-sm btn-outline-success me-1 approve-btn" title="Duyệt" data-id="${profile.id}">
-                        <i class="bi bi-check-circle"></i>
-                    </button>
-                    <button class="btn btn-sm btn-outline-danger reject-btn" title="Từ chối" data-id="${profile.id}">
-                        <i class="bi bi-x-circle"></i>
-                    </button>
-                `;
-            }
+            </td>
+        </tr>
+    `;
 
-            row.innerHTML = `
-                <td class="text-center">${start + index + 1}</td>
-                <td>${profile.unitName}</td>
-                <td>${profile.taxCode}</td>
-                <td>${profile.email}</td>
-                <td>${profile.phone}</td>
-                <td><span class="badge ${statusBadgeClass}">${profile.status}</span></td>
-                <td class="text-center">${actionButtons}</td>
-            `;
-            profileTableBody.appendChild(row);
-        });
-
-        renderCards(data, page);
-        addActionListeners();
-        renderPagination(data.length);
-        resultCount.textContent = `${data.length}/${profiles.length} kết quả`;
-    }
-
-    // Function to render card view for mobile
-    function renderCards(data, page) {
-        cardList.innerHTML = '';
-        const start = (page - 1) * itemsPerPage;
-        const end = start + itemsPerPage;
-        const paginatedData = data.slice(start, end);
-
-        paginatedData.forEach((profile, index) => {
-            const statusBadgeClass = {
-                'Chờ duyệt': 'bg-warning text-dark',
-                'Đã duyệt': 'bg-success text-white',
-                'Từ chối': 'bg-danger text-white'
-            }[profile.status] || 'bg-secondary';
-
-            let actionButtons = `
-                <button class="btn btn-sm btn-outline-primary me-1 view-details-btn" title="Xem chi tiết" data-id="${profile.id}">
-                    <i class="bi bi-eye"></i>
-                </button>
-            `;
-            if (profile.status === 'Chờ duyệt') {
-                actionButtons += `
-                    <button class="btn btn-sm btn-outline-success me-1 approve-btn" title="Duyệt" data-id="${profile.id}">
-                        <i class="bi bi-check-circle"></i>
-                    </button>
-                    <button class="btn btn-sm btn-outline-danger reject-btn" title="Từ chối" data-id="${profile.id}">
-                        <i class="bi bi-x-circle"></i>
-                    </button>
-                `;
-            }
-
-            const card = document.createElement('div');
-            card.className = 'card';
-            card.innerHTML = `
+    // Render card item
+    const renderCardItem = (profile) => `
+        <div class="col">
+            <div class="card">
                 <div class="card-body">
                     <h6 class="card-title">${profile.unitName}</h6>
-                    <p class="card-text mb-1"><strong>Mã số thuế:</strong> ${profile.taxCode}</p>
-                    <p class="card-text mb-1"><strong>Email:</strong> ${profile.email}</p>
-                    <p class="card-text mb-1"><strong>Số điện thoại:</strong> ${profile.phone}</p>
-                    <p class="card-text mb-1"><strong>Trạng thái:</strong> <span class="badge ${statusBadgeClass}">${profile.status}</span></p>
-                    <p class="card-text mb-1"><strong>Ngày gửi:</strong> ${profile.submittedDate}</p>
-                    <div class="d-flex gap-1 mt-2">${actionButtons}</div>
+                    <p class="card-text mb-1"><strong>Mã số thuế:</strong> <span data-bs-toggle="tooltip" data-bs-title="Tên pháp lý: ${profile.unitName}\nNgày gửi: ${formatDate(profile.submittedDate)}">${profile.taxCode}</span></p>
+                    <p class="card-text mb-1"><strong>Ngày gửi:</strong> ${formatDate(profile.submittedDate)}</p>
+                    <p class="card-text mb-1"><strong>Trạng thái:</strong> <span class="badge ${statusBadgeClass[profile.status] || 'badge-secondary'}">${profile.status}</span></p>
+                    <button class="btn btn-sm btn-outline-primary view-details-btn" data-id="${profile.id}">
+                        <i class="bi bi-eye"></i> Xem chi tiết
+                    </button>
                 </div>
-            `;
-            cardList.appendChild(card);
-        });
-    }
+            </div>
+        </div>
+    `;
 
-    // Function to add action listeners
-    function addActionListeners() {
-        document.querySelectorAll('.view-details-btn').forEach(btn => {
-            btn.addEventListener('click', () => {
-                const profileId = btn.getAttribute('data-id');
-                loadDetails(profileId);
-            });
-        });
+    // Render data
+    const renderData = () => {
+        const start = (currentPage - 1) * itemsPerPage;
+        const end = start + itemsPerPage;
+        const paginatedData = filteredProfiles.slice(start, end);
 
-        document.querySelectorAll('.approve-btn').forEach(btn => {
-            btn.addEventListener('click', () => {
-                const profileId = btn.getAttribute('data-id');
-                alert(`Duyệt hồ sơ ID: ${profileId}`); // Replace with actual approval logic
-            });
-        });
+        if (filteredProfiles.length === 0) {
+            elements.emptyState.classList.remove('d-none');
+            if (elements.profileTableBody) elements.profileTableBody.innerHTML = '';
+            if (elements.cardGridView) elements.cardGridView.innerHTML = '';
+            if (elements.pagination) elements.pagination.innerHTML = '';
+            if (elements.resultCount) elements.resultCount.textContent = '0/0 kết quả';
+            return;
+        }
+        elements.emptyState.classList.add('d-none');
 
-        document.querySelectorAll('.reject-btn').forEach(btn => {
-            btn.addEventListener('click', () => {
-                const profileId = btn.getAttribute('data-id');
-                alert(`Từ chối hồ sơ ID: ${profileId}`); // Replace with actual rejection logic
-            });
-        });
-    }
-
-    // Function to render pagination
-    function renderPagination(totalItems) {
-        const totalPages = Math.ceil(totalItems / itemsPerPage);
-        pagination.innerHTML = '';
-
-        const prevLi = document.createElement('li');
-        prevLi.className = `page-item ${currentPage === 1 ? 'disabled' : ''}`;
-        prevLi.innerHTML = `<a class="page-link" href="#" aria-label="Previous"><span aria-hidden="true">«</span></a>`;
-        prevLi.addEventListener('click', (e) => {
-            e.preventDefault();
-            if (currentPage > 1) {
-                currentPage--;
-                renderTable(filteredProfiles, currentPage);
-            }
-        });
-        pagination.appendChild(prevLi);
-
-        for (let i = 1; i <= totalPages; i++) {
-            const pageLi = document.createElement('li');
-            pageLi.className = `page-item ${i === currentPage ? 'active' : ''}`;
-            pageLi.innerHTML = `<a class="page-link" href="#">${i}</a>`;
-            pageLi.addEventListener('click', (e) => {
-                e.preventDefault();
-                currentPage = i;
-                renderTable(filteredProfiles, currentPage);
-            });
-            pagination.appendChild(pageLi);
+        const isDesktopTableView = isTableView && window.innerWidth >= 768;
+        if (elements.tableView && elements.cardGridView) {
+            elements.tableView.classList.toggle('active', isDesktopTableView);
+            elements.tableView.classList.toggle('d-none', !isDesktopTableView);
+            elements.cardGridView.classList.toggle('active', !isDesktopTableView);
+            elements.cardGridView.classList.toggle('d-none', isDesktopTableView);
         }
 
-        const nextLi = document.createElement('li');
-        nextLi.className = `page-item ${currentPage === totalPages ? 'disabled' : ''}`;
-        nextLi.innerHTML = `<a class="page-link" href="#" aria-label="Next"><span aria-hidden="true">»</span></a>`;
-        nextLi.addEventListener('click', (e) => {
-            e.preventDefault();
-            if (currentPage < totalPages) {
-                currentPage++;
-                renderTable(filteredProfiles, currentPage);
-            }
-        });
-        pagination.appendChild(nextLi);
-    }
-
-    // Function to load details page
-    function loadDetails(profileId) {
-        if (typeof window.loadContent === 'function') {
-            window.loadContent('subject-details', { profileId: profileId });
-        } else {
-            console.error('loadContent function not found in layout.js');
+        if (isDesktopTableView && elements.profileTableBody) {
+            elements.profileTableBody.innerHTML = paginatedData
+                .map((profile, index) => renderTableRow(profile, index, start))
+                .join('');
         }
-    }
 
-    // Function to load add new page
-    function loadAddNewPage() {
-        if (typeof window.loadContent === 'function') {
-            window.loadContent('subject-add-new');
-        } else {
-            console.error('loadContent function not found in layout.js');
+        if (!isDesktopTableView && elements.cardGridView) {
+            elements.cardGridView.innerHTML = paginatedData
+                .map((profile) => renderCardItem(profile))
+                .join('');
         }
-    }
 
-    // Search functionality
-    searchBtn.addEventListener('click', () => {
-        const unitName = searchUnitName.value.trim().toLowerCase();
-        const taxCode = searchTaxCode.value.trim().toLowerCase();
-        const email = searchEmail.value.trim().toLowerCase();
-        const phone = searchPhone.value.trim().toLowerCase();
-        const status = searchStatus.value;
+        if (elements.pagination) renderPagination(filteredProfiles.length);
+        if (elements.resultCount) elements.resultCount.textContent = `${filteredProfiles.length}/${profiles.length} kết quả`;
+        addActionListeners();
+        initTooltips();
+    };
 
-        filteredProfiles = profiles.filter(profile =>
-            (unitName === '' || profile.unitName.toLowerCase().includes(unitName)) &&
-            (taxCode === '' || profile.taxCode.toLowerCase().includes(taxCode)) &&
-            (email === '' || profile.email.toLowerCase().includes(email)) &&
-            (phone === '' || profile.phone.toLowerCase().includes(phone)) &&
-            (status === '' || profile.status === status)
+    // Initialize tooltips
+    const initTooltips = () => {
+        document.querySelectorAll('[data-bs-toggle="tooltip"]').forEach(
+            (el) => new bootstrap.Tooltip(el)
         );
+    };
+
+    // Render pagination
+    const renderPagination = (totalItems) => {
+        const totalPages = Math.ceil(totalItems / itemsPerPage);
+        if (!elements.pagination) return;
+
+        elements.pagination.innerHTML = `
+            <li class="page-item ${currentPage === 1 ? 'disabled' : ''}">
+                <a class="page-link" href="#" aria-label="Previous"><span aria-hidden="true">«</span></a>
+            </li>
+            ${Array.from({ length: totalPages }, (_, i) => `
+                <li class="page-item ${i + 1 === currentPage ? 'active' : ''}">
+                    <a class="page-link" href="#">${i + 1}</a>
+                </li>
+            `).join('')}
+            <li class="page-item ${currentPage === totalPages ? 'disabled' : ''}">
+                <a class="page-link" href="#" aria-label="Next"><span aria-hidden="true">»</span></a>
+            </li>
+        `;
+
+        elements.pagination.querySelectorAll('.page-link').forEach((link) => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                const targetPage = parseInt(link.textContent) || (link.getAttribute('aria-label') === 'Previous' ? currentPage - 1 : currentPage + 1);
+                if (targetPage >= 1 && targetPage <= totalPages && targetPage !== currentPage) {
+                    currentPage = targetPage;
+                    renderData();
+                }
+            });
+        });
+    };
+
+    // Apply filters
+    const applyFilters = () => {
+        const status = elements.filterStatus.value || elements.filterStatusMobile.value;
+        const spcName = (elements.filterSpcName.value || elements.filterSpcNameMobile.value).trim().toLowerCase();
+        const dateStart = elements.filterDateRangeStart.value || elements.filterDateRangeStartMobile.value;
+        const dateEnd = elements.filterDateRangeEnd.value || elements.filterDateRangeEndMobile.value;
+
+        filteredProfiles = profiles.filter((profile) => {
+            const matchesStatus = !status || profile.status === status;
+            const matchesName = !spcName || profile.unitName.toLowerCase().includes(spcName);
+            const matchesDate = !dateStart || !dateEnd || (
+                new Date(profile.submittedDate) >= new Date(dateStart) &&
+                new Date(profile.submittedDate) <= new Date(dateEnd)
+            );
+            return matchesStatus && matchesName && matchesDate;
+        });
+
         currentPage = 1;
-        renderTable(filteredProfiles, currentPage);
+        renderData();
+    };
+
+    // Clear filters
+    const clearFilters = () => {
+        elements.filterStatus.value = '';
+        elements.filterSpcName.value = '';
+        elements.filterDateRangeStart.value = '';
+        elements.filterDateRangeEnd.value = '';
+        elements.filterStatusMobile.value = '';
+        elements.filterSpcNameMobile.value = '';
+        elements.filterDateRangeStartMobile.value = '';
+        elements.filterDateRangeEndMobile.value = '';
+        applyFilters();
+    };
+
+    // Add action listeners for view details buttons
+    const addActionListeners = () => {
+        document.querySelectorAll('.view-details-btn').forEach((btn) => {
+            btn.addEventListener('click', () => {
+                const profileId = btn.getAttribute('data-id');
+                if (typeof window.loadContent === 'function') {
+                    window.loadContent('QTV-M01-DETAIL', { profileId });
+                } else {
+                    console.error('loadContent function not found');
+                }
+            });
+        });
+    };
+
+    // Event listeners
+    elements.toggleTableViewBtn.addEventListener('click', () => {
+        isTableView = true;
+        renderData();
     });
 
-    // Clear filter functionality
-    clearFilterBtn.addEventListener('click', () => {
-        searchUnitName.value = '';
-        searchTaxCode.value = '';
-        searchEmail.value = '';
-        searchPhone.value = '';
-        searchStatus.value = '';
-        filteredProfiles = [...profiles];
+    elements.toggleCardViewBtn.addEventListener('click', () => {
+        isTableView = false;
+        renderData();
+    });
+
+    elements.applyFilterBtn.addEventListener('click', applyFilters);
+    elements.applyFilterMobileBtn.addEventListener('click', applyFilters);
+    elements.clearFilterBtn.addEventListener('click', clearFilters);
+    elements.clearFilterMobileBtn.addEventListener('click', clearFilters);
+    elements.reloadBtn.addEventListener('click', fetchProfiles);
+    elements.reloadMobileBtn.addEventListener('click', fetchProfiles);
+    elements.retryBtn.addEventListener('click', fetchProfiles);
+    elements.itemsPerPageSelect.addEventListener('change', () => {
+        itemsPerPage = parseInt(elements.itemsPerPageSelect.value);
         currentPage = 1;
-        renderTable(filteredProfiles, currentPage);
+        renderData();
     });
+    elements.filterSpcName.addEventListener('input', applyFilters);
+    elements.filterSpcNameMobile.addEventListener('input', applyFilters);
 
-    // Add new button functionality
-    addNewBtn.addEventListener('click', () => {
-        loadAddNewPage();
-    });
+    fetchProfiles();
+};
 
-    // Items per page change
-    itemsPerPageSelect.addEventListener('change', () => {
-        itemsPerPage = parseInt(itemsPerPageSelect.value);
-        currentPage = 1;
-        renderTable(filteredProfiles, currentPage);
-    });
-
-    // Initial render
-    renderTable(filteredProfiles, currentPage);
-}
-
-// Initialize when DOM is loaded
 document.addEventListener('DOMContentLoaded', initProfileList);

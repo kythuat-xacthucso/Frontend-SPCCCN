@@ -1,23 +1,56 @@
-.card-list .card {
+/* Card styling */
+.card-grid .card {
     margin-bottom: 1rem;
 }
 
-@media (max-width: 767.98px) {
-    .table-responsive {
-        display: none;
-    }
+/* Badge styling */
+.badge-pending {
+    background-color: #0d6efd;
+    color: white;
+}
 
-    .card-list {
+.badge-approved {
+    background-color: #198754;
+    color: white;
+}
+
+.badge-rejected {
+    background-color: #dc3545;
+    color: white;
+}
+
+/* Fixed bottom for mobile */
+.fixed-bottom {
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 1000;
+}
+
+/* View toggling */
+#tableView, #cardGridView {
+    display: none;
+}
+
+#tableView.active, #cardGridView.active {
+    display: block;
+}
+
+/* Responsive adjustments */
+@media (max-width: 767.98px) {
+    #tableView {
+        display: none !important;
+    }
+    #cardGridView.active {
         display: block;
+    }
+    #toggleTableViewBtn, #toggleCardViewBtn {
+        display: none !important;
     }
 }
 
 @media (min-width: 768px) {
-    .card-list {
-        display: none;
-    }
-
-    .table-responsive {
-        display: block;
+    #cardGridView.active {
+        display: flex;
     }
 }
