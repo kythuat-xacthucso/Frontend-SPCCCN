@@ -1,0 +1,4 @@
+/* Đảm bảo toast hiển thị trên cùng */
+.toast {
+    z-index: 1055;
+}

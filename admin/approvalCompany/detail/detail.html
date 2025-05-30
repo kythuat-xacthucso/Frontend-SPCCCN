@@ -1,13 +1,15 @@
 <div class="container-fluid py-3">
     <h2 class="mb-4">Chi tiết hồ sơ</h2>
-    <div class="row">
-        <!-- Section 1: Thông tin hồ sơ đề nghị -->
-        <div class="col-md-6 mb-4">
+
+    <!-- Desktop Layout (2 columns) -->
+    <div class="row g-4 d-none d-md-flex">
+        <!-- Left Column: Profile Information -->
+        <div class="col-md-6">
             <div class="card h-100">
                 <div class="card-header">Thông tin hồ sơ đề nghị</div>
                 <div class="card-body">
                     <div class="row mb-3">
-                        <label class="col-sm-4 col-form-label">Tên tổ chức</label>
+                        <label class="col-sm-4 col-form-label fw-bold">Tên pháp nhân</label>
                         <div class="col-sm-8">
                             <p class="form-control-plaintext" id="unitName"></p>
                         </div>
@@ -19,37 +21,31 @@
                         </div>
                     </div>
                     <div class="row mb-3">
-                        <label class="col-sm-4 col-form-label">Mục tiêu chứng nhận</label>
+                        <label class="col-sm-4 col-form-label">Người đại diện</label>
                         <div class="col-sm-8">
-                            <p class="form-control-plaintext" id="certificationGoal"></p>
+                            <p class="form-control-plaintext" id="representative"></p>
                         </div>
                     </div>
                     <div class="row mb-3">
-                        <label class="col-sm-4 col-form-label">Nhóm sản phẩm chủ lực</label>
+                        <label class="col-sm-4 col-form-label">Số điện thoại/Email</label>
                         <div class="col-sm-8">
-                            <p class="form-control-plaintext" id="mainProductGroup"></p>
+                            <p class="form-control-plaintext" id="contactInfo"></p>
                         </div>
                     </div>
                     <div class="row mb-3">
-                        <label class="col-sm-4 col-form-label">Phạm vi hoạt động</label>
+                        <label class="col-sm-4 col-form-label">Địa chỉ trụ sở</label>
                         <div class="col-sm-8">
-                            <p class="form-control-plaintext" id="operationScope"></p>
+                            <p class="form-control-plaintext" id="address" style="white-space: pre-line;"></p>
                         </div>
                     </div>
                     <div class="row mb-3">
-                        <label class="col-sm-4 col-form-label">Email liên hệ</label>
+                        <label class="col-sm-4 col-form-label">Ngày gửi hồ sơ</label>
                         <div class="col-sm-8">
-                            <p class="form-control-plaintext" id="email"></p>
+                            <p class="form-control-plaintext" id="submittedDate"></p>
                         </div>
                     </div>
                     <div class="row mb-3">
-                        <label class="col-sm-4 col-form-label">Số điện thoại</label>
-                        <div class="col-sm-8">
-                            <p class="form-control-plaintext" id="phone"></p>
-                        </div>
-                    </div>
-                    <div class="row mb-3">
-                        <label class="col-sm-4 col form-label">Trạng thái</label>
+                        <label class="col-sm-4 col-form-label">Trạng thái hiện tại</label>
                         <div class="col-sm-8">
                             <p class="form-control-plaintext" id="status"></p>
                         </div>
@@ -57,16 +53,15 @@
                 </div>
             </div>
         </div>
-        <!-- Section 2 & 3: Giấy tờ pháp lý và Xử lý hồ sơ -->
-        <div class="col-md-6 mb-4">
+
+        <!-- Right Column: Documents and Status -->
+        <div class="col-md-6">
             <div class="card h-100">
                 <div class="card-header">Xử lý hồ sơ</div>
                 <div class="card-body">
                     <div class="mb-3">
-                        <label class="col-form-label">Giấy tờ pháp lý</label>
-                        <div class="list-group" id="legalDocuments">
-                            <!-- Legal documents will be loaded dynamically -->
-                        </div>
+                        <label class="col-form-label">File đính kèm</label>
+                        <div class="list-group" id="legalDocuments"></div>
                     </div>
                     <div class="mb-3">
                         <label for="reason" class="col-form-label">Lý do xử lý</label>
@@ -77,16 +72,96 @@
             </div>
         </div>
     </div>
-    <!-- Fixed buttons at the bottom -->
-    <div class="fixed-bottom bg-light py-3 border-top">
-        <div class="container-fluid">
-            <div class="d-flex justify-content-end gap-2">
-                <button class="btn btn-secondary" id="backBtn">Quay lại</button>
-                <button class="btn btn-success" id="acceptBtn">Chấp nhận</button>
-                <button class="btn btn-danger" id="rejectBtn">Từ chối</button>
+
+    <!-- Mobile Layout (Accordion) -->
+    <div class="accordion d-md-none" id="mobileAccordion">
+        <div class="accordion-item">
+            <h2 class="accordion-header">
+                <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseInfo">
+                    Thông tin hồ sơ đề nghị
+                </button>
+            </h2>
+            <div id="collapseInfo" class="accordion-collapse collapse show" data-bs-parent="#mobileAccordion">
+                <div class="accordion-body">
+                    <div class="row mb-3">
+                        <label class="col-sm-4 col-form-label fw-bold">Tên pháp nhân</label>
+                        <div class="col-sm-8">
+                            <p class="form-control-plaintext" id="unitNameMobile"></p>
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <label class="col-sm-4 col-form-label">Mã số thuế</label>
+                        <div class="col-sm-8">
+                            <p class="form-control-plaintext" id="taxCodeMobile"></p>
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <label class="col-sm-4 col-form-label">Người đại diện</label>
+                        <div class="col-sm-8">
+                            <p class="form-control-plaintext" id="representativeMobile"></p>
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <label class="col-sm-4 col-form-label">Số điện thoại/Email</label>
+                        <div class="col-sm-8">
+                            <p class="form-control-plaintext" id="contactInfoMobile"></p>
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <label class="col-sm-4 col-form-label">Địa chỉ trụ sở</label>
+                        <div class="col-sm-8">
+                            <p class="form-control-plaintext" id="addressMobile" style="white-space: pre-line;"></p>
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <label class="col-sm-4 col-form-label">Ngày gửi hồ sơ</label>
+                        <div class="col-sm-8">
+                            <p class="form-control-plaintext" id="submittedDateMobile"></p>
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <label class="col-sm-4 col-form-label">Trạng thái hiện tại</label>
+                        <div class="col-sm-8">
+                            <p class="form-control-plaintext" id="statusMobile"></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="accordion-item">
+            <h2 class="accordion-header">
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseDocs">
+                    Xử lý hồ sơ
+                </button>
+            </h2>
+            <div id="collapseDocs" class="accordion-collapse collapse" data-bs-parent="#mobileAccordion">
+                <div class="accordion-body">
+                    <div class="mb-3">
+                        <label class="col-form-label">File đính kèm</label>
+                        <div class="list-group" id="legalDocumentsMobile"></div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="reasonMobile" class="col-form-label">Lý do xử lý</label>
+                        <textarea class="form-control" id="reasonMobile" rows="3" placeholder="Nhập lý do từ chối ..."></textarea>
+                        <div class="invalid-feedback" id="reasonErrorMobile">Vui lòng nhập lý do từ chối.</div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
-    <!-- Add padding to prevent content from being hidden under fixed buttons -->
+
+    <!-- Action Buttons (Sticky on Mobile, Fixed on Desktop) -->
+    <div class="fixed-bottom bg-light py-3 border-top d-md-block d-none">
+        <div class="container-fluid">
+            <div class="d-flex justify-content-end gap-2" id="desktopActionButtons"></div>
+        </div>
+    </div>
+    <div class="d-md-none sticky-bottom bg-light py-3 border-top">
+        <div class="container-fluid">
+            <div class="d-flex justify-content-end gap-2" id="mobileActionButtons"></div>
+        </div>
+    </div>
+
+    <!-- Padding to prevent content overlap -->
     <div style="height: 80px;"></div>
 </div>

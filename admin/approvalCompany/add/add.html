@@ -1,0 +1,206 @@
+<!-- Mobile Layout (Full Main Content) -->
+<div class="d-md-none">
+    <div class="container-fluid py-3">
+        <h2 class="mb-4">Khởi tạo thông tin chủ thể</h2>
+        <div class="accordion" id="mobileAccordion">
+            <div class="accordion-item">
+                <h2 class="accordion-header">
+                    <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseInfoMobile">
+                        Thông tin hồ sơ đề nghị
+                    </button>
+                </h2>
+                <div id="collapseInfoMobile" class="accordion-collapse collapse show" data-bs-parent="#mobileAccordion">
+                    <div class="accordion-body">
+                        <div class="row mb-3">
+                            <label class="col-sm-4 col-form-label fw-bold">Tên pháp nhân</label>
+                            <div class="col-sm-8">
+                                <p class="form-control-plaintext" id="unitNameMobile"></p>
+                            </div>
+                        </div>
+                        <div class="row mb-3">
+                            <label class="col-sm-4 col-form-label">Mã số thuế</label>
+                            <div class="col-sm-8">
+                                <p class="form-control-plaintext" id="taxCodeMobile"></p>
+                            </div>
+                        </div>
+                        <div class="row mb-3">
+                            <label class="col-sm-4 col-form-label">Người đại diện</label>
+                            <div class="col-sm-8">
+                                <p class="form-control-plaintext" id="representativeMobile"></p>
+                            </div>
+                        </div>
+                        <div class="row mb-3">
+                            <label class="col-sm-4 col-form-label">Số điện thoại/Email</label>
+                            <div class="col-sm-8">
+                                <p class="form-control-plaintext" id="contactInfoMobile"></p>
+                            </div>
+                        </div>
+                        <div class="row mb-3">
+                            <label class="col-sm-4 col-form-label">Địa chỉ trụ sở</label>
+                            <div class="col-sm-8">
+                                <p class="form-control-plaintext" id="addressMobile" style="white-space: pre-line;"></p>
+                            </div>
+                        </div>
+                        <div class="row mb-3">
+                            <label class="col-sm-4 col-form-label">Ngày gửi hồ sơ</label>
+                            <div class="col-sm-8">
+                                <p class="form-control-plaintext" id="submittedDateMobile"></p>
+                            </div>
+                        </div>
+                        <div class="row mb-3">
+                            <label class="col-sm-4 col-form-label">File đính kèm</label>
+                            <div class="col-sm-8">
+                                <div class="list-group" id="legalDocumentsMobile"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="accordion-item">
+                <h2 class="accordion-header">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFormMobile">
+                        Cấu hình thông tin chủ thể
+                    </button>
+                </h2>
+                <div id="collapseFormMobile" class="accordion-collapse collapse" data-bs-parent="#mobileAccordion">
+                    <div class="accordion-body">
+                        <div class="mb-3">
+                            <label for="sloganMobile" class="form-label">Slogan ngắn</label>
+                            <input type="text" class="form-control" id="sloganMobile" maxlength="100" placeholder="Nhập slogan ngắn (tối đa 100 ký tự)">
+                            <div class="invalid-feedback" id="sloganErrorMobile"></div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="introArticleMobile" class="form-label">Bài viết giới thiệu</label>
+                            <textarea class="form-control" id="introArticleMobile" rows="5" placeholder="Nhập bài viết giới thiệu"></textarea>
+                            <div class="invalid-feedback" id="introArticleErrorMobile"></div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="logoFileMobile" class="form-label">Logo</label>
+                            <input type="file" class="form-control" id="logoFileMobile" accept="image/png, image/jpeg">
+                            <div class="invalid-feedback" id="logoFileErrorMobile"></div>
+                            <small class="form-text text-muted">Định dạng PNG/JPG, tối đa 2MB. Khuyến nghị tải lên.</small>
+                        </div>
+                        <div class="mb-3">
+                            <label for="internalCodeMobile" class="form-label">Mã nội bộ</label>
+                            <input type="text" class="form-control" id="internalCodeMobile" maxlength="20" placeholder="Nhập mã nội bộ (tối đa 20 ký tự)">
+                            <div class="invalid-feedback" id="internalCodeErrorMobile"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Action Buttons (Sticky on Mobile) -->
+        <div class="sticky-bottom bg-light py-3 border-top">
+            <div class="container-fluid">
+                <div class="d-flex justify-content-end gap-2">
+                    <button class="btn btn-secondary" id="createLaterBtnMobile">Tạo hồ sơ sau</button>
+                    <button class="btn btn-primary" id="createProfileBtnMobile">Tạo hồ sơ chính thức</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Padding to prevent content overlap -->
+        <div style="height: 80px;"></div>
+    </div>
+</div>
+
+<!-- Desktop Layout (Popup Modal) -->
+<div class="modal fade d-none d-md-block" id="addProfileModal" tabindex="-1" aria-labelledby="addProfileModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="addProfileModalLabel">Khởi tạo thông tin chủ thể</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row g-4">
+                    <!-- Left Column: Profile Information -->
+                    <div class="col-md-6">
+                        <div class="card h-100">
+                            <div class="card-header">Thông tin hồ sơ đề nghị</div>
+                            <div class="card-body">
+                                <div class="row mb-3">
+                                    <label class="col-sm-4 col-form-label fw-bold">Tên pháp nhân</label>
+                                    <div class="col-sm-8">
+                                        <p class="form-control-plaintext" id="unitName"></p>
+                                    </div>
+                                </div>
+                                <div class="row mb-3">
+                                    <label class="col-sm-4 col-form-label">Mã số thuế</label>
+                                    <div class="col-sm-8">
+                                        <p class="form-control-plaintext" id="taxCode"></p>
+                                    </div>
+                                </div>
+                                <div class="row mb-3">
+                                    <label class="col-sm-4 col-form-label">Người đại diện</label>
+                                    <div class="col-sm-8">
+                                        <p class="form-control-plaintext" id="representative"></p>
+                                    </div>
+                                </div>
+                                <div class="row mb-3">
+                                    <label class="col-sm-4 col-form-label">Số điện thoại/Email</label>
+                                    <div class="col-sm-8">
+                                        <p class="form-control-plaintext" id="contactInfo"></p>
+                                    </div>
+                                </div>
+                                <div class="row mb-3">
+                                    <label class="col-sm-4 col-form-label">Địa chỉ trụ sở</label>
+                                    <div class="col-sm-8">
+                                        <p class="form-control-plaintext" id="address" style="white-space: pre-line;"></p>
+                                    </div>
+                                </div>
+                                <div class="row mb-3">
+                                    <label class="col-sm-4 col-form-label">Ngày gửi hồ sơ</label>
+                                    <div class="col-sm-8">
+                                        <p class="form-control-plaintext" id="submittedDate"></p>
+                                    </div>
+                                </div>
+                                <div class="row mb-3">
+                                    <label class="col-sm-4 col-form-label">File đính kèm</label>
+                                    <div class="col-sm-8">
+                                        <div class="list-group" id="legalDocuments"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Right Column: Form -->
+                    <div class="col-md-6">
+                        <div class="card h-100">
+                            <div class="card-header">Cấu hình thông tin chủ thể</div>
+                            <div class="card-body">
+                                <div class="mb-3">
+                                    <label for="slogan" class="form-label">Slogan ngắn</label>
+                                    <input type="text" class="form-control" id="slogan" maxlength="100" placeholder="Nhập slogan ngắn (tối đa 100 ký tự)">
+                                    <div class="invalid-feedback" id="sloganError"></div>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="introArticle" class="form-label">Bài viết giới thiệu</label>
+                                    <textarea class="form-control" id="introArticle" rows="5" placeholder="Nhập bài viết giới thiệu"></textarea>
+                                    <div class="invalid-feedback" id="introArticleError"></div>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="logoFile" class="form-label">Logo</label>
+                                    <input type="file" class="form-control" id="logoFile" accept="image/png, image/jpeg">
+                                    <div class="invalid-feedback" id="logoFileError"></div>
+                                    <small class="form-text text-muted">Định dạng PNG/JPG, tối đa 2MB. Khuyến nghị tải lên.</small>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="internalCode" class="form-label">Mã nội bộ</label>
+                                    <input type="text" class="form-control" id="internalCode" maxlength="20" placeholder="Nhập mã nội bộ (tối đa 20 ký tự)">
+                                    <div class="invalid-feedback" id="internalCodeError"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" id="createLaterBtn">Tạo hồ sơ sau</button>
+                <button type="button" class="btn btn-primary" id="createProfileBtn">Tạo hồ sơ chính thức</button>
+            </div>
+        </div>
+    </div>
+</div>

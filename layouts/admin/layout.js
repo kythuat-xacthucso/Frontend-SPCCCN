@@ -8,17 +8,51 @@ document.addEventListener('DOMContentLoaded', () => {
     const sidebar = document.getElementById('sidebar');
     const overlay = document.getElementById('overlay');
 
+    // Load Popup and Toast modules
+    const loadSharedModules = () => {
+        // Load CSS for toast
+        const existingToastStyle = document.querySelector('link[data-toast-css]');
+        if (!existingToastStyle) {
+            const toastStyle = document.createElement('link');
+            toastStyle.rel = 'stylesheet';
+            toastStyle.href = '../../admin/shared/toast.css';
+            toastStyle.setAttribute('data-toast-css', 'toast');
+            document.head.appendChild(toastStyle);
+        }
+
+        // Load Popup module
+        const existingPopupScript = document.querySelector('script[data-popup-js]');
+        if (!existingPopupScript) {
+            const popupScript = document.createElement('script');
+            popupScript.src = '../../admin/shared/popup.js';
+            popupScript.setAttribute('data-popup-js', 'popup');
+            document.body.appendChild(popupScript);
+        }
+
+        // Load Toast module
+        const existingToastScript = document.querySelector('script[data-toast-js]');
+        if (!existingToastScript) {
+            const toastScript = document.createElement('script');
+            toastScript.src = '../../admin/shared/toast.js';
+            toastScript.setAttribute('data-toast-js', 'toast');
+            document.body.appendChild(toastScript);
+        }
+    };
+
     // Toggle sidebar on mobile
     function toggleSidebar() {
         sidebar.classList.toggle('active');
         overlay.classList.toggle('active');
     }
 
-    // Close sidebar when clicking overlay
-    overlay.addEventListener('click', () => {
+    // Close sidebar and overlay
+    function closeSidebarAndOverlay() {
         sidebar.classList.remove('active');
         overlay.classList.remove('active');
-    });
+    }
+
+    // Close sidebar when clicking overlay
+    overlay.addEventListener('click', closeSidebarAndOverlay);
 
     // Hamburger button click
     if (hamburgerBtn) {
@@ -27,7 +61,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Close sidebar button click
     if (closeSidebarBtn) {
-        closeSidebarBtn.addEventListener('click', toggleSidebar);
+        closeSidebarBtn.addEventListener('click', closeSidebarAndOverlay);
     }
 
     // Handle sidebar menu clicks
@@ -40,7 +74,7 @@ document.addEventListener('DOMContentLoaded', () => {
             loadContent(menuType);
             // Close sidebar on mobile after clicking a link
             if (window.innerWidth < 768) {
-                toggleSidebar();
+                closeSidebarAndOverlay();
             }
         });
     });
@@ -81,7 +115,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 break;
             case 'subject-details':
                 pagePath = '../../admin/approvalCompany/detail/detail.html';
-                cssPath = '';
+                cssPath = '../../admin/approvalCompany/detail/detail.css';
                 scriptPath = '../../admin/approvalCompany/detail/detail.js';
                 break;
             case 'resource-monitoring':
@@ -121,7 +155,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 break;
             case 'subject-add-new':
                 pagePath = '../../admin/approvalCompany/add/add.html';
-                cssPath = '';
+                cssPath = '../../admin/approvalCompany/add/add.css';
                 scriptPath = '../../admin/approvalCompany/add/add.js';
                 break;
             default:
@@ -155,6 +189,11 @@ document.addEventListener('DOMContentLoaded', () => {
                     script.src = scriptPath;
                     script.setAttribute('data-content-js', menuType);
                     script.onload = () => {
+                        // Ensure overlay and sidebar are closed on mobile
+                        if (window.innerWidth < 768) {
+                            closeSidebarAndOverlay();
+                        }
+
                         if (menuType === 'subject-approval' && typeof initProfileList === 'function') {
                             initProfileList();
                         } else if (menuType === 'subject-details' && typeof initDetailPage === 'function') {
@@ -170,7 +209,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         } else if (menuType === 'service-edit' && typeof initServiceEditPage === 'function') {
                             initServiceEditPage(params.serviceId);
                         } else if (menuType === 'subject-add-new' && typeof initAddNewPage === 'function') {
-                            initAddNewPage();
+                            initAddNewPage(params.profileId);
                         }
                     };
                     document.body.appendChild(script);
@@ -184,9 +223,17 @@ document.addEventListener('DOMContentLoaded', () => {
 
     window.loadContent = loadContent;
 
+    // Load shared modules (Popup and Toast)
+    loadSharedModules();
+
     const defaultLink = document.querySelector('.sidebar-link[data-menu="home"]');
     if (defaultLink) {
         defaultLink.classList.add('active');
         loadContent('home');
+    }
+
+    // Ensure overlay and sidebar are closed on initial load if on mobile
+    if (window.innerWidth < 768) {
+        closeSidebarAndOverlay();
     }
 });

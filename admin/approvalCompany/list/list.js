@@ -38,6 +38,7 @@ const initProfileList = () => {
         'Chờ duyệt': 'badge-pending',
         'Đã duyệt': 'badge-approved',
         'Từ chối': 'badge-rejected',
+        'Đã tạo chủ thể': 'badge-created',
     };
 
     // Utility: Format date to dd/mm/yyyy
@@ -57,7 +58,7 @@ const initProfileList = () => {
                         { id: 1, unitName: 'Công ty TNHH ABC', taxCode: '1234567890', email: 'abc@example.com', submittedDate: '2025-05-01', status: 'Chờ duyệt' },
                         { id: 2, unitName: 'Công ty CP XYZ', taxCode: '0987654321', email: 'xyz@example.com', submittedDate: '2025-05-02', status: 'Đã duyệt' },
                         { id: 3, unitName: 'Công ty TNHH DEF', taxCode: '1122334455', email: 'def@example.com', submittedDate: '2025-05-03', status: 'Từ chối' },
-                        { id: 4, unitName: 'Công ty CP GHI', taxCode: '5566778899', email: 'ghi@example.com', submittedDate: '2025-05-04', status: 'Chờ duyệt' },
+                        { id: 4, unitName: 'Công ty CP GHI', taxCode: '5566778899', email: 'ghi@example.com', submittedDate: '2025-05-04', status: 'Đã tạo chủ thể' },
                     ]),
                 }), 1000)
             );
@@ -76,6 +77,62 @@ const initProfileList = () => {
         }
     };
 
+    // Update profile status (mock API call)
+    const updateProfileStatus = async (profileId, newStatus) => {
+        try {
+            await new Promise((resolve) => setTimeout(resolve, 500));
+            const profileIndex = profiles.findIndex(p => p.id === parseInt(profileId));
+            if (profileIndex !== -1) {
+                profiles[profileIndex].status = newStatus;
+                filteredProfiles = [...profiles];
+                renderData();
+                return true;
+            }
+            return false;
+        } catch (error) {
+            console.error('Error updating profile status:', error);
+            return false;
+        }
+    };
+
+    // Handle approve action
+    const handleApprove = (profileId) => {
+        window.Popup.showApproveConfirm(profileId, async () => {
+            const success = await updateProfileStatus(profileId, 'Đã duyệt');
+            if (success) {
+                window.Toast.showSuccess('Duyệt hồ sơ thành công!');
+            }
+        });
+    };
+
+    // Handle reject action
+    const handleReject = (profileId) => {
+        window.Popup.showRejectConfirm(profileId, async () => {
+            const success = await updateProfileStatus(profileId, 'Từ chối');
+            if (success) {
+                window.Toast.showSuccess('Từ chối hồ sơ thành công!');
+            }
+        });
+    };
+
+    // Handle create entity action
+    const handleCreateEntity = (profileId) => {
+        if (typeof window.loadContent === 'function') {
+            window.loadContent('subject-add-new', { profileId });
+        } else {
+            console.error('loadContent function not found');
+        }
+    };
+
+    // Handle view entity details action
+    const handleViewEntityDetails = (profileId) => {
+        if (typeof window.loadContent === 'function') {
+            window.loadContent('company-details', { profileId });
+        } else {
+            console.error('loadContent function not found');
+        }
+    };
+
     // Render table row
     const renderTableRow = (profile, index, start) => `
         <tr>
@@ -85,10 +142,28 @@ const initProfileList = () => {
             <td>${profile.email}</td>
             <td>${formatDate(profile.submittedDate)}</td>
             <td><span class="badge ${statusBadgeClass[profile.status] || 'badge-secondary'}">${profile.status}</span></td>
-            <td class="text-center">
+            <td class="text-center action-buttons">
                 <button class="btn btn-sm btn-outline-primary view-details-btn" data-id="${profile.id}">
-                    <i class="bi bi-eye"></i>
+                    <i class="bi bi-eye"></i> Xem chi tiết
                 </button>
+                ${profile.status === 'Chờ duyệt' ? `
+                    <button class="btn btn-sm btn-outline-success approve-btn" data-id="${profile.id}">
+                        <i class="bi bi-check-circle"></i> Duyệt
+                    </button>
+                    <button class="btn btn-sm btn-outline-danger reject-btn" data-id="${profile.id}">
+                        <i class="bi bi-x-circle"></i> Từ chối
+                    </button>
+                ` : ''}
+                ${profile.status === 'Đã duyệt' ? `
+                    <button class="btn btn-sm btn-outline-info create-entity-btn" data-id="${profile.id}">
+                        <i class="bi bi-plus-circle"></i> Tạo chủ thể
+                    </button>
+                ` : ''}
+                ${profile.status === 'Đã tạo chủ thể' ? `
+                    <button class="btn btn-sm btn-outline-secondary view-entity-details-btn" data-id="${profile.id}">
+                        <i class="bi bi-eye"></i> Xem chi tiết chủ thể
+                    </button>
+                ` : ''}
             </td>
         </tr>
     `;
@@ -102,9 +177,29 @@ const initProfileList = () => {
                     <p class="card-text mb-1"><strong>Mã số thuế:</strong> <span data-bs-toggle="tooltip" data-bs-title="Tên pháp lý: ${profile.unitName}\nNgày gửi: ${formatDate(profile.submittedDate)}">${profile.taxCode}</span></p>
                     <p class="card-text mb-1"><strong>Ngày gửi:</strong> ${formatDate(profile.submittedDate)}</p>
                     <p class="card-text mb-1"><strong>Trạng thái:</strong> <span class="badge ${statusBadgeClass[profile.status] || 'badge-secondary'}">${profile.status}</span></p>
-                    <button class="btn btn-sm btn-outline-primary view-details-btn" data-id="${profile.id}">
-                        <i class="bi bi-eye"></i> Xem chi tiết
-                    </button>
+                    <div class="d-flex gap-2 flex-wrap">
+                        <button class="btn btn-sm btn-outline-primary view-details-btn" data-id="${profile.id}">
+                            <i class="bi bi-eye"></i> Xem chi tiết
+                        </button>
+                        ${profile.status === 'Chờ duyệt' ? `
+                            <button class="btn btn-sm btn-outline-success approve-btn" data-id="${profile.id}">
+                                <i class="bi bi-check-circle"></i> Duyệt
+                            </button>
+                            <button class="btn btn-sm btn-outline-danger reject-btn" data-id="${profile.id}">
+                                <i class="bi bi-x-circle"></i> Từ chối
+                            </button>
+                        ` : ''}
+                        ${profile.status === 'Đã duyệt' ? `
+                            <button class="btn btn-sm btn-outline-info create-entity-btn" data-id="${profile.id}">
+                                <i class="bi bi-plus-circle"></i> Tạo chủ thể
+                            </button>
+                        ` : ''}
+                        ${profile.status === 'Đã tạo chủ thể' ? `
+                            <button class="btn btn-sm btn-outline-secondary view-entity-details-btn" data-id="${profile.id}">
+                                <i class="bi bi-eye"></i> Xem chi tiết chủ thể
+                            </button>
+                        ` : ''}
+                    </div>
                 </div>
             </div>
         </div>
@@ -224,16 +319,49 @@ const initProfileList = () => {
         applyFilters();
     };
 
-    // Add action listeners for view details buttons
+    // Add action listeners for view details, approve, reject, create entity, and view entity details
     const addActionListeners = () => {
+        // View details
         document.querySelectorAll('.view-details-btn').forEach((btn) => {
             btn.addEventListener('click', () => {
                 const profileId = btn.getAttribute('data-id');
                 if (typeof window.loadContent === 'function') {
-                    window.loadContent('QTV-M01-DETAIL', { profileId });
+                    window.loadContent('subject-details', { profileId });
                 } else {
                     console.error('loadContent function not found');
                 }
+            });
+        });
+
+        // Approve
+        document.querySelectorAll('.approve-btn').forEach((btn) => {
+            btn.addEventListener('click', () => {
+                const profileId = btn.getAttribute('data-id');
+                handleApprove(profileId);
+            });
+        });
+
+        // Reject
+        document.querySelectorAll('.reject-btn').forEach((btn) => {
+            btn.addEventListener('click', () => {
+                const profileId = btn.getAttribute('data-id');
+                handleReject(profileId);
+            });
+        });
+
+        // Create entity
+        document.querySelectorAll('.create-entity-btn').forEach((btn) => {
+            btn.addEventListener('click', () => {
+                const profileId = btn.getAttribute('data-id');
+                handleCreateEntity(profileId);
+            });
+        });
+
+        // View entity details
+        document.querySelectorAll('.view-entity-details-btn').forEach((btn) => {
+            btn.addEventListener('click', () => {
+                const profileId = btn.getAttribute('data-id');
+                handleViewEntityDetails(profileId);
             });
         });
     };

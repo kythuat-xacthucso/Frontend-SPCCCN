@@ -1,75 +1,155 @@
 <div class="container-fluid py-3">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h2 class="mb-0">Danh sách chủ thể</h2>
-        <div class="d-flex gap-2">
-            <button class="btn btn-primary" id="addNewBtn">Thêm mới</button>
-            <button class="btn btn-outline-secondary" id="clearFilterBtn">Xóa bộ lọc</button>
+    <!-- Error Banner -->
+    <div class="alert alert-danger d-none" id="errorBanner" role="alert">
+        Lỗi khi tải danh sách. <button class="btn btn-sm btn-link" id="retryBtn">Thử lại</button>
+    </div>
+
+    <!-- Empty State -->
+    <div class="d-none text-center py-5" id="emptyState">
+        <i class="bi bi-inbox fs-1 text-muted"></i>
+        <p class="text-muted mt-3">Hiện chưa có chủ thể nào</p>
+    </div>
+
+    <!-- Filter Section (Desktop - Accordion) -->
+    <div class="accordion mb-3 d-none d-md-block" id="filterAccordion">
+        <div class="accordion-item">
+            <h2 class="accordion-header">
+                <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFilter">
+                    Bộ lọc
+                </button>
+            </h2>
+            <div id="collapseFilter" class="accordion-collapse collapse show" data-bs-parent="#filterAccordion">
+                <div class="accordion-body">
+                    <div class="row g-3">
+                        <div class="col-md-3 col-12">
+                            <label class="form-label" for="filter_status">Trạng thái</label>
+                            <select class="form-select" id="filter_status">
+                                <option value="">Tất cả trạng thái</option>
+                                <option value="Đang hoạt động">Đang hoạt động</option>
+                                <option value="Khóa">Khóa</option>
+                                <option value="Mới tạo">Mới tạo</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3 col-12">
+                            <label class="form-label" for="filter_spc_name">Tên chủ thể</label>
+                            <input type="text" class="form-control" id="filter_spc_name" placeholder="Tên chủ thể">
+                        </div>
+                        <div class="col-md-3 col-12">
+                            <label class="form-label">Ngày tạo</label>
+                            <div class="row g-2">
+                                <div class="col-6">
+                                    <input type="date" class="form-control" id="filter_date_range_start">
+                                </div>
+                                <div class="col-6">
+                                    <input type="date" class="form-control" id="filter_date_range_end">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3 col-12 d-flex align-items-end gap-2">
+                            <button class="btn btn-primary w-100" id="applyFilterBtn">Tìm kiếm</button>
+                            <button class="btn btn-outline-secondary w-100" id="clearFilterBtn">Xóa bộ lọc</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
-    <div class="mb-3">
-        <label class="form-label">Tìm kiếm</label>
-        <div class="row g-2">
-            <div class="col-md-3">
-                <input type="text" class="form-control" id="searchEntityName" placeholder="Tên chủ thể">
+
+    <!-- Main Content -->
+    <div>
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2 class="mb-0">Danh sách chủ thể</h2>
+            <div class="d-none d-md-flex gap-2">
+                <button class="btn btn-outline-secondary" id="toggleTableViewBtn" title="Chuyển sang Bảng">
+                    <i class="bi bi-table"></i>
+                </button>
+                <button class="btn btn-outline-secondary" id="toggleCardViewBtn" title="Chuyển sang Card">
+                    <i class="bi bi-grid"></i>
+                </button>
             </div>
-            <div class="col-md-2">
-                <input type="text" class="form-control" id="searchEntityCode" placeholder="Mã chủ thể">
-            </div>
-            <div class="col-md-2">
-                <input type="text" class="form-control" id="searchPhone" placeholder="Số điện thoại">
-            </div>
-            <div class="col-md-2">
-                <select class="form-select" id="searchStatus">
-                    <option value="">Tất cả trạng thái</option>
-                    <option value="Hoạt động">Hoạt động</option>
-                    <option value="Khóa">Khóa</option>
+        </div>
+
+        <!-- Table View (Desktop) -->
+        <div class="table-responsive d-none" id="tableView">
+            <table class="table table-hover table-bordered align-middle">
+                <thead class="table-light">
+                    <tr>
+                        <th scope="col" class="text-center col-1">STT</th>
+                        <th scope="col" class="col-3">Tên chủ thể</th>
+                        <th scope="col" class="col-2">Mã chủ thể</th>
+                        <th scope="col" class="col-2">Số điện thoại</th>
+                        <th scope="col" class="col-2">Người quản trị</th>
+                        <th scope="col" class="col-1">Trạng thái</th>
+                        <th scope="col" class="col-2">Ngày tạo</th>
+                        <th scope="col" class="text-center col-2">Hành động</th>
+                    </tr>
+                </thead>
+                <tbody id="entityTableBody"></tbody>
+            </table>
+        </div>
+
+        <!-- Card Grid View (Desktop & Mobile) -->
+        <div class="row row-cols-1 row-cols-md-2 g-3 d-none" id="cardGridView"></div>
+
+        <!-- Pagination -->
+        <div class="d-flex justify-content-between align-items-center mt-3">
+            <div class="d-flex align-items-center">
+                <label for="itemsPerPage" class="me-2">Số bản ghi trên trang:</label>
+                <select id="itemsPerPage" class="form-select w-auto">
+                    <option value="10">10</option>
+                    <option value="20">20</option>
+                    <option value="50">50</option>
                 </select>
             </div>
-            <div class="col-md-3">
-                <button class="btn btn-primary" id="searchBtn">Tìm kiếm</button>
+            <div class="d-flex align-items-center">
+                <nav aria-label="Page navigation">
+                    <ul class="pagination mb-0" id="pagination"></ul>
+                </nav>
+                <span class="ms-3 text-muted" id="resultCount">0/0 kết quả</span>
             </div>
         </div>
     </div>
-    <div class="mb-3">
-        <p class="text-muted">Chức năng: Thực hiện lựa chọn các chức năng bạn muốn để triển khai.</p>
-    </div>
-    <div class="table-responsive">
-        <table class="table table-hover table-bordered align-middle">
-            <thead class="table-light">
-                <tr>
-                    <th scope="col" class="text-center" style="width: 5%;">STT</th>
-                    <th scope="col" style="width: 25%;">Tên chủ thể</th>
-                    <th scope="col" style="width: 15%;">Mã chủ thể</th>
-                    <th scope="col" style="width: 15%;">Số điện thoại</th>
-                    <th scope="col" style="width: 15%;">Trạng thái</th>
-                    <th scope="col" style="width: 15%;">Ngày tạo</th>
-                    <th scope="col" class="text-center" style="width: 10%;">Hành động</th>
-                </tr>
-            </thead>
-            <tbody id="entityTableBody">
-                <!-- Data will be loaded dynamically -->
-            </tbody>
-        </table>
-    </div>
-    <div class="card-list">
-        <!-- Card view for mobile -->
-    </div>
-    <div class="d-flex justify-content-between align-items-center mt-3">
-        <div class="d-flex align-items-center">
-            <label for="itemsPerPage" class="me-2">Số bản ghi trên trang:</label>
-            <select id="itemsPerPage" class="form-select w-auto">
-                <option value="10">10</option>
-                <option value="20">20</option>
-                <option value="50">50</option>
-            </select>
+
+    <!-- Mobile Fixed Buttons -->
+    <div class="d-md-none fixed-bottom bg-white p-2 shadow-sm d-flex justify-content-between align-items-center">
+        <div class="dropdown">
+            <button class="btn btn-primary dropdown-toggle" type="button" id="filterDropdown" data-bs-toggle="dropdown">
+                <i class="bi bi-filter"></i> Lọc
+            </button>
+            <div class="dropdown-menu p-3" style="min-width: 300px;">
+                <div class="mb-3">
+                    <label class="form-label" for="filter_status_mobile">Trạng thái</label>
+                    <select class="form-select" id="filter_status_mobile">
+                        <option value="">Tất cả trạng thái</option>
+                        <option value="Đang hoạt động">Đang hoạt động</option>
+                        <option value="Khóa">Khóa</option>
+                        <option value="Mới tạo">Mới tạo</option>
+                    </select>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label" for="filter_spc_name_mobile">Tên chủ thể</label>
+                    <input type="text" class="form-control" id="filter_spc_name_mobile" placeholder="Tên chủ thể">
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Ngày tạo</label>
+                    <input type="date" class="form-control mb-2" id="filter_date_range_start_mobile">
+                    <input type="date" class="form-control" id="filter_date_range_end_mobile">
+                </div>
+                <div class="d-flex gap-2">
+                    <button class="btn btn-primary w-100" id="applyFilterMobileBtn">Áp dụng bộ lọc</button>
+                    <button class="btn btn-outline-secondary w-100" id="clearFilterMobileBtn">Xóa bộ lọc</button>
+                </div>
+            </div>
         </div>
-        <div class="d-flex align-items-center">
-            <nav aria-label="Page navigation">
-                <ul class="pagination mb-0" id="pagination">
-                    <!-- Pagination will be loaded dynamically -->
-                </ul>
-            </nav>
-            <span class="ms-3 text-muted" id="resultCount">0/0 kết quả</span>
+        <button class="btn btn-outline-secondary" id="reloadMobileBtn">
+            <i class="bi bi-arrow-clockwise"></i>
+        </button>
+    </div>
+
+    <!-- Loading Spinner -->
+    <div class="d-none position-fixed top-50 start-50 translate-middle" id="loadingSpinner">
+        <div class="spinner-border text-primary" role="status">
+            <span class="visually-hidden">Loading...</span>
         </div>
     </div>
 </div>

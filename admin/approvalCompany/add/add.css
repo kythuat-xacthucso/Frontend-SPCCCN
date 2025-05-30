@@ -17,10 +17,6 @@
     z-index: 1000;
 }
 
-.fixed-bottom {
-    z-index: 1000;
-}
-
 #contactInfo,
 #contactInfoMobile {
     display: flex;
@@ -34,39 +30,9 @@
     color: #6c757d;
 }
 
-/* Badge styling */
-#status .badge,
-#statusMobile .badge {
-    padding: 0.25em 0.5em;
-}
-
-#status .badge-warning,
-#statusMobile .badge-warning {
-    background-color: #ffc107;
-    color: #000;
-}
-
-#status .badge-success,
-#statusMobile .badge-success {
-    background-color: #198754;
-    color: white;
-}
-
-#status .badge-danger,
-#statusMobile .badge-danger {
-    background-color: #dc3545;
-    color: white;
-}
-
-#status .badge-created,
-#statusMobile .badge-created {
-    background-color: #17a2b8;
-    color: white;
-}
-
 @media (max-width: 767.98px) {
-    .fixed-bottom {
-        display: none;
+    .modal.fade.d-none.d-md-block {
+        display: none !important;
     }
     .sticky-bottom .container-fluid {
         padding: 0 15px;
@@ -93,10 +59,11 @@
     .d-md-none {
         display: none !important;
     }
-    .d-md-block {
-        display: block !important;
+    .modal-xl {
+        max-width: 90%;
     }
-    .action-buttons {
-        min-width: 300px;
+    .modal-body {
+        max-height: 70vh;
+        overflow-y: auto;
     }
 }
