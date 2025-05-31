@@ -1,0 +1,62 @@
+<div class="modal fade" id="searchUserModal" tabindex="-1" aria-labelledby="searchUserModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" style="max-width: 600px;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="searchUserModalLabel">Tìm kiếm người dùng</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="mb-3">
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="searchType" id="searchPhone" value="phone" checked>
+                        <label class="form-check-label" for="searchPhone">Số điện thoại</label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="searchType" id="searchEmail" value="email">
+                        <label class="form-check-label" for="searchEmail">Email</label>
+                    </div>
+                </div>
+                <div id="searchInputContainer">
+                    <div id="phoneInput" class="mb-3">
+                        <label for="userPhone" class="form-label">Số điện thoại</label>
+                        <input type="tel" class="form-control" id="userPhone" placeholder="Nhập số điện thoại">
+                        <div id="phoneError" class="invalid-feedback"></div>
+                    </div>
+                    <div id="emailInput" class="mb-3 d-none">
+                        <label for="userEmail" class="form-label">Email</label>
+                        <input type="email" class="form-control" id="userEmail" placeholder="Nhập email">
+                        <div id="emailError" class="invalid-feedback"></div>
+                    </div>
+                </div>
+                <div id="userInfoContainer" class="d-none">
+                    <div class="mb-3">
+                        <label class="form-label">Ảnh đại diện</label>
+                        <img id="userAvatar" src="" alt="Avatar" class="img-fluid rounded" style="max-width: 100px;">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Tên người dùng</label>
+                        <input type="text" class="form-control" id="userName" readonly>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Địa chỉ</label>
+                        <input type="text" class="form-control" id="userAddress" readonly>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Số điện thoại</label>
+                        <input type="text" class="form-control" id="userPhoneResult" readonly>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Email</label>
+                        <input type="text" class="form-control" id="userEmailResult" readonly>
+                    </div>
+                </div>
+                <div id="searchResultMessage" class="text-danger mb-3"></div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" id="searchBtn" disabled>Tìm</button>
+                <button type="button" class="btn btn-success d-none" id="selectBtn">Chọn</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,9 +1,8 @@
 const initCompanyList = () => {
-    // DOM Elements
     const elements = {
-        entityTableBody: document.getElementById('entityTableBody'),
-        cardGridView: document.getElementById('cardGridView'),
         tableView: document.getElementById('tableView'),
+        cardGridView: document.getElementById('cardGridView'),
+        entityTableBody: document.getElementById('entityTableBody'),
         filterStatus: document.getElementById('filter_status'),
         filterSpcName: document.getElementById('filter_spc_name'),
         filterDateRangeStart: document.getElementById('filter_date_range_start'),
@@ -28,30 +27,25 @@ const initCompanyList = () => {
         loadingSpinner: document.getElementById('loadingSpinner'),
     };
 
-    let entities = [];
-    let filteredEntities = [];
-    let itemsPerPage = 10;
-    let currentPage = 1;
-    let isTableView = true;
+    let entities = [], filteredEntities = [], itemsPerPage = 10, currentPage = 1, isTableView = true;
+    const statusBadgeClass = { 'Đang hoạt động': 'badge-active', 'Khóa': 'badge-locked', 'Mới tạo': 'badge-new' };
 
-    const statusBadgeClass = {
-        'Đang hoạt động': 'badge-active',
-        'Khóa': 'badge-locked',
-        'Mới tạo': 'badge-new',
+    const formatDate = (dateStr) => new Date(dateStr).toLocaleDateString('vi-VN', { day: '2-digit', month: '2-digit', year: 'numeric' });
+
+    // Debounce function
+    const debounce = (func, delay) => {
+        let timeoutId;
+        return (...args) => {
+            clearTimeout(timeoutId);
+            timeoutId = setTimeout(() => func.apply(null, args), delay);
+        };
     };
 
-    // Utility: Format date to dd/mm/yyyy
-    const formatDate = (dateStr) => new Date(dateStr).toLocaleDateString('vi-VN', {
-        day: '2-digit',
-        month: '2-digit',
-        year: 'numeric',
-    });
-
-    // Fetch entities from API
+    // Fetch entities with mock data
     const fetchEntities = async () => {
         elements.loadingSpinner.classList.remove('d-none');
         try {
-            const response = await new Promise((resolve) =>
+            await new Promise((resolve) =>
                 setTimeout(() => resolve({
                     ok: true,
                     json: () => Promise.resolve([
@@ -62,24 +56,25 @@ const initCompanyList = () => {
                     ]),
                 }), 1000)
             );
-
-            if (!response.ok) throw new Error('Network error');
-            entities = await response.json();
+            entities = [
+                { id: 1, entityName: 'Chủ thể A', entityCode: 'CT001', phone: '0912345678', admin: 'Nguyễn Văn A', status: 'Đang hoạt động', createdDate: '2025-05-01' },
+                { id: 2, entityName: 'Chủ thể B', entityCode: 'CT002', phone: '0987654321', admin: 'Trần Thị B', status: 'Khóa', createdDate: '2025-05-02' },
+                { id: 3, entityName: 'Chủ thể C', entityCode: 'CT003', phone: '0931234567', admin: 'Lê Văn C', status: 'Mới tạo', createdDate: '2025-05-03' },
+                { id: 4, entityName: 'Chủ thể D', entityCode: 'CT004', phone: '0978765432', admin: 'Phạm Thị D', status: 'Đang hoạt động', createdDate: '2025-05-04' },
+            ];
             filteredEntities = [...entities];
             elements.errorBanner.classList.add('d-none');
             renderData();
         } catch (error) {
+            console.error('Fetch error:', error);
             elements.errorBanner.classList.remove('d-none');
             elements.emptyState.classList.add('d-none');
-            if (elements.entityTableBody) elements.entityTableBody.innerHTML = '';
-            if (elements.cardGridView) elements.cardGridView.innerHTML = '';
-            if (elements.pagination) elements.pagination.innerHTML = '';
+            [elements.entityTableBody, elements.cardGridView, elements.pagination].forEach(el => el && (el.innerHTML = ''));
         } finally {
             elements.loadingSpinner.classList.add('d-none');
         }
     };
 
-    // Update entity status (mock API call)
     const updateEntityStatus = async (entityId, newStatus) => {
         try {
             await new Promise((resolve) => setTimeout(resolve, 500));
@@ -97,37 +92,6 @@ const initCompanyList = () => {
         }
     };
 
-    // Handle lock action
-    const handleLock = (entityId) => {
-        window.Popup.showConfirm('Xác nhận khóa', 'Bạn có chắc chắn muốn khóa chủ thể này?', async () => {
-            const success = await updateEntityStatus(entityId, 'Khóa');
-            if (success) {
-                window.Toast.showSuccess('Khóa chủ thể thành công!');
-            }
-        });
-    };
-
-    // Handle unlock action
-    const handleUnlock = (entityId) => {
-        window.Popup.showConfirm('Xác nhận mở khóa', 'Bạn có chắc chắn muốn mở khóa chủ thể này?', async () => {
-            const success = await updateEntityStatus(entityId, 'Đang hoạt động');
-            if (success) {
-                window.Toast.showSuccess('Mở khóa chủ thể thành công!');
-            }
-        });
-    };
-
-    // Handle assign admin action
-    const handleAssignAdmin = (entityId) => {
-        window.Popup.showConfirm('Gán quyền quản trị', 'Bạn có muốn gán quyền quản trị cho chủ thể này?', async () => {
-            const success = await updateEntityStatus(entityId, 'Đang hoạt động');
-            if (success) {
-                window.Toast.showSuccess('Gán quyền quản trị thành công!');
-            }
-        });
-    };
-
-    // Render table row
     const renderTableRow = (entity, index, start) => `
         <tr>
             <td class="text-center">${start + index + 1}</td>
@@ -135,72 +99,38 @@ const initCompanyList = () => {
             <td>${entity.entityCode}</td>
             <td>${entity.phone}</td>
             <td>${entity.admin}</td>
-            <td><span class="badge ${statusBadgeClass[entity.status] || 'badge-secondary'}">${entity.status}</span></td>
+            <td><span class="badge ${statusBadgeClass[entity.status]}">${entity.status}</span></td>
             <td>${formatDate(entity.createdDate)}</td>
             <td class="text-center action-buttons">
-                <button class="btn btn-sm btn-outline-primary view-details-btn" data-id="${entity.id}">
-                    <i class="bi bi-eye"></i>
-                </button>
-                <button class="btn btn-sm btn-outline-warning edit-btn" data-id="${entity.id}">
-                    <i class="bi bi-pencil"></i>
-                </button>
-                ${entity.status === 'Đang hoạt động' || entity.status === 'Mới tạo' ? `
-                    <button class="btn btn-sm btn-outline-danger lock-btn" data-id="${entity.id}">
-                        <i class="bi bi-lock"></i>
-                    </button>
-                ` : ''}
-                ${entity.status === 'Khóa' ? `
-                    <button class="btn btn-sm btn-outline-success unlock-btn" data-id="${entity.id}">
-                        <i class="bi bi-unlock"></i>
-                    </button>
-                ` : ''}
-                ${entity.status === 'Mới tạo' ? `
-                    <button class="btn btn-sm btn-outline-info assign-admin-btn" data-id="${entity.id}">
-                        <i class="bi bi-person-plus"></i>
-                    </button>
-                ` : ''}
+                <button class="btn btn-sm btn-outline-primary view-details-btn" data-id="${entity.id}"><i class="bi bi-eye"></i></button>
+                <button class="btn btn-sm btn-outline-warning edit-btn" data-id="${entity.id}"><i class="bi bi-pencil"></i></button>
+                ${['Đang hoạt động', 'Mới tạo'].includes(entity.status) ? `<button class="btn btn-sm btn-outline-danger lock-btn" data-id="${entity.id}"><i class="bi bi-lock"></i></button>` : ''}
+                ${entity.status === 'Khóa' ? `<button class="btn btn-sm btn-outline-success unlock-btn" data-id="${entity.id}"><i class="bi bi-unlock"></i></button>` : ''}
+                ${entity.status === 'Mới tạo' ? `<button class="btn btn-sm btn-outline-info assign-admin-btn" data-id="${entity.id}"><i class="bi bi-person-plus"></i></button>` : ''}
             </td>
         </tr>
     `;
 
-    // Render card item
     const renderCardItem = (entity) => `
         <div class="col">
             <div class="card">
                 <div class="card-body">
                     <h6 class="card-title">${entity.entityName}</h6>
                     <p class="card-text mb-1"><strong>Mã chủ thể:</strong> <span data-bs-toggle="tooltip" data-bs-title="Tên pháp lý: ${entity.entityName}\nNgày tạo: ${formatDate(entity.createdDate)}">${entity.entityCode}</span></p>
-                    <p class="card-text mb-1"><strong>Trạng thái:</strong> <span class="badge ${statusBadgeClass[entity.status] || 'badge-secondary'}">${entity.status}</span></p>
-                    <p class="card-text mb-1"><strong>Ngày tạo:</strong> ${formatDate(entity.createdDate)}</span></p>
+                    <p class="card-text mb-1"><strong>Trạng thái:</strong> <span class="badge ${statusBadgeClass[entity.status]}">${entity.status}</span></p>
+                    <p class="card-text mb-1"><strong>Ngày tạo:</strong> ${formatDate(entity.createdDate)}</p>
                     <div class="d-flex gap-2 flex-wrap">
-                        <button class="btn btn-sm btn-outline-primary view-details-btn" data-id="${entity.id}">
-                            <i class="bi bi-eye"></i> Xem chi tiết
-                        </button>
-                        <button class="btn btn-sm btn-outline-warning edit-btn" data-id="${entity.id}">
-                            <i class="bi bi-pencil"></i> Sửa
-                        </button>
-                        ${entity.status === 'Đang hoạt động' || entity.status === 'Mới tạo' ? `
-                            <button class="btn btn-sm btn-outline-danger lock-btn" data-id="${entity.id}">
-                                <i class="bi bi-lock"></i> Khóa
-                            </button>
-                        ` : ''}
-                        ${entity.status === 'Khóa' ? `
-                            <button class="btn btn-sm btn-outline-success unlock-btn" data-id="${entity.id}">
-                                <i class="bi bi-unlock"></i> Mở khóa
-                            </button>
-                        ` : ''}
-                        ${entity.status === 'Mới tạo' ? `
-                            <button class="btn btn-sm btn-outline-info assign-admin-btn" data-id="${entity.id}">
-                                <i class="bi bi-person-plus"></i> Gán quyền
-                            </button>
-                        ` : ''}
+                        <button class="btn btn-sm btn-outline-primary view-details-btn" data-id="${entity.id}"><i class="bi bi-eye"></i> Xem chi tiết</button>
+                        <button class="btn btn-sm btn-outline-warning edit-btn" data-id="${entity.id}"><i class="bi bi-pencil"></i> Sửa</button>
+                        ${['Đang hoạt động', 'Mới tạo'].includes(entity.status) ? `<button class="btn btn-sm btn-outline-danger lock-btn" data-id="${entity.id}"><i class="bi bi-lock"></i> Khóa</button>` : ''}
+                        ${entity.status === 'Khóa' ? `<button class="btn btn-sm btn-outline-success unlock-btn" data-id="${entity.id}"><i class="bi bi-unlock"></i> Mở khóa</button>` : ''}
+                        ${entity.status === 'Mới tạo' ? `<button class="btn btn-sm btn-outline-info assign-admin-btn" data-id="${entity.id}"><i class="bi bi-person-plus"></i> Gán quyền</button>` : ''}
                     </div>
                 </div>
             </div>
         </div>
     `;
 
-    // Render data
     const renderData = () => {
         const start = (currentPage - 1) * itemsPerPage;
         const end = start + itemsPerPage;
@@ -208,92 +138,56 @@ const initCompanyList = () => {
 
         if (filteredEntities.length === 0) {
             elements.emptyState.classList.remove('d-none');
-            if (elements.entityTableBody) elements.entityTableBody.innerHTML = '';
-            if (elements.cardGridView) elements.cardGridView.innerHTML = '';
-            if (elements.pagination) elements.pagination.innerHTML = '';
-            if (elements.resultCount) elements.resultCount.textContent = '0/0 kết quả';
+            [elements.entityTableBody, elements.cardGridView, elements.pagination].forEach(el => el && (el.innerHTML = ''));
+            elements.resultCount.textContent = '0/0 kết quả';
             return;
         }
         elements.emptyState.classList.add('d-none');
 
         const isDesktopTableView = isTableView && window.innerWidth >= 768;
-        if (elements.tableView && elements.cardGridView) {
-            elements.tableView.classList.toggle('active', isDesktopTableView);
-            elements.tableView.classList.toggle('d-none', !isDesktopTableView);
-            elements.cardGridView.classList.toggle('active', !isDesktopTableView);
-            elements.cardGridView.classList.toggle('d-none', isDesktopTableView);
-        }
+        [elements.tableView, elements.cardGridView].forEach(el => {
+            el.classList.toggle('active', el === (isDesktopTableView ? elements.tableView : elements.cardGridView));
+            el.classList.toggle('d-none', !el.classList.contains('active'));
+        });
 
-        if (isDesktopTableView && elements.entityTableBody) {
-            elements.entityTableBody.innerHTML = paginatedData
-                .map((entity, index) => renderTableRow(entity, index, start))
-                .join('');
-        }
+        if (isDesktopTableView) elements.entityTableBody.innerHTML = paginatedData.map((entity, index) => renderTableRow(entity, index, start)).join('');
+        else elements.cardGridView.innerHTML = paginatedData.map(renderCardItem).join('');
 
-        if (!isDesktopTableView && elements.cardGridView) {
-            elements.cardGridView.innerHTML = paginatedData
-                .map((entity) => renderCardItem(entity))
-                .join('');
-        }
-
-        if (elements.pagination) renderPagination(filteredEntities.length);
-        if (elements.resultCount) elements.resultCount.textContent = `${filteredEntities.length}/${entities.length} kết quả`;
+        renderPagination(filteredEntities.length);
+        elements.resultCount.textContent = `${filteredEntities.length}/${entities.length} kết quả`;
         addActionListeners();
         initTooltips();
     };
 
-    // Initialize tooltips
-    const initTooltips = () => {
-        document.querySelectorAll('[data-bs-toggle="tooltip"]').forEach(
-            (el) => new bootstrap.Tooltip(el)
-        );
-    };
+    const initTooltips = () => document.querySelectorAll('[data-bs-toggle="tooltip"]').forEach(el => new bootstrap.Tooltip(el));
 
-    // Render pagination
     const renderPagination = (totalItems) => {
         const totalPages = Math.ceil(totalItems / itemsPerPage);
-        if (!elements.pagination) return;
-
         elements.pagination.innerHTML = `
-            <li class="page-item ${currentPage === 1 ? 'disabled' : ''}">
-                <a class="page-link" href="#" aria-label="Previous"><span aria-hidden="true">«</span></a>
-            </li>
-            ${Array.from({ length: totalPages }, (_, i) => `
-                <li class="page-item ${i + 1 === currentPage ? 'active' : ''}">
-                    <a class="page-link" href="#">${i + 1}</a>
-                </li>
-            `).join('')}
-            <li class="page-item ${currentPage === totalPages ? 'disabled' : ''}">
-                <a class="page-link" href="#" aria-label="Next"><span aria-hidden="true">»</span></a>
-            </li>
+            <li class="page-item ${currentPage === 1 ? 'disabled' : ''}"><a class="page-link" href="#" aria-label="Previous"><span>«</span></a></li>
+            ${Array.from({ length: totalPages }, (_, i) => `<li class="page-item ${i + 1 === currentPage ? 'active' : ''}"><a class="page-link" href="#">${i + 1}</a></li>`).join('')}
+            <li class="page-item ${currentPage === totalPages ? 'disabled' : ''}"><a class="page-link" href="#" aria-label="Next"><span>»</span></a></li>
         `;
-
-        elements.pagination.querySelectorAll('.page-link').forEach((link) => {
-            link.addEventListener('click', (e) => {
-                e.preventDefault();
-                const targetPage = parseInt(link.textContent) || (link.getAttribute('aria-label') === 'Previous' ? currentPage - 1 : currentPage + 1);
-                if (targetPage >= 1 && targetPage <= totalPages && targetPage !== currentPage) {
-                    currentPage = targetPage;
-                    renderData();
-                }
-            });
-        });
+        elements.pagination.querySelectorAll('.page-link').forEach(link => link.addEventListener('click', (e) => {
+            e.preventDefault();
+            const targetPage = parseInt(link.textContent) || (link.getAttribute('aria-label') === 'Previous' ? currentPage - 1 : currentPage + 1);
+            if (targetPage >= 1 && targetPage <= totalPages && targetPage !== currentPage) {
+                currentPage = targetPage;
+                renderData();
+            }
+        }));
     };
 
-    // Apply filters
     const applyFilters = () => {
         const status = elements.filterStatus.value || elements.filterStatusMobile.value;
         const spcName = (elements.filterSpcName.value || elements.filterSpcNameMobile.value).trim().toLowerCase();
         const dateStart = elements.filterDateRangeStart.value || elements.filterDateRangeStartMobile.value;
         const dateEnd = elements.filterDateRangeEnd.value || elements.filterDateRangeEndMobile.value;
 
-        filteredEntities = entities.filter((entity) => {
+        filteredEntities = entities.filter(entity => {
             const matchesStatus = !status || entity.status === status;
             const matchesName = !spcName || entity.entityName.toLowerCase().includes(spcName);
-            const matchesDate = !dateStart || !dateEnd || (
-                new Date(entity.createdDate) >= new Date(dateStart) &&
-                new Date(entity.createdDate) <= new Date(dateEnd)
-            );
+            const matchesDate = !dateStart || !dateEnd || (new Date(entity.createdDate) >= new Date(dateStart) && new Date(entity.createdDate) <= new Date(dateEnd));
             return matchesStatus && matchesName && matchesDate;
         });
 
@@ -301,94 +195,87 @@ const initCompanyList = () => {
         renderData();
     };
 
-    // Clear filters
     const clearFilters = () => {
-        elements.filterStatus.value = '';
-        elements.filterSpcName.value = '';
-        elements.filterDateRangeStart.value = '';
-        elements.filterDateRangeEnd.value = '';
-        elements.filterStatusMobile.value = '';
-        elements.filterSpcNameMobile.value = '';
-        elements.filterDateRangeStartMobile.value = '';
-        elements.filterDateRangeEndMobile.value = '';
+        [elements.filterStatus, elements.filterSpcName, elements.filterDateRangeStart, elements.filterDateRangeEnd,
+         elements.filterStatusMobile, elements.filterSpcNameMobile, elements.filterDateRangeStartMobile, elements.filterDateRangeEndMobile]
+            .forEach(el => el.value = '');
         applyFilters();
     };
 
-    // Add action listeners for view details, edit, lock, unlock, and assign admin buttons
-    const addActionListeners = () => {
-        // View details
-        document.querySelectorAll('.view-details-btn').forEach((btn) => {
-            btn.addEventListener('click', () => {
-                const entityId = btn.getAttribute('data-id');
-                if (typeof window.loadContent === 'function') {
-                    window.loadContent('company-details', { entityId });
-                } else {
-                    console.error('loadContent function not found');
+    // Handle lock action
+    const handleLock = (entityId) => {
+        if (window.Popup && typeof window.Popup.showApproveConfirm === 'function') {
+            window.Popup.showApproveConfirm(entityId, async () => {
+                const success = await updateEntityStatus(entityId, 'Khóa');
+                if (success && window.Toast && typeof window.Toast.showSuccess === 'function') {
+                    window.Toast.showSuccess('Khóa chủ thể thành công!');
+                } else if (!window.Toast) {
+                    console.error('Toast module not loaded');
                 }
             });
-        });
-
-        // Edit
-        document.querySelectorAll('.edit-btn').forEach((btn) => {
-            btn.addEventListener('click', () => {
-                const entityId = btn.getAttribute('data-id');
-                if (typeof window.loadContent === 'function') {
-                    window.loadContent('company-edit', { entityId });
-                } else {
-                    console.error('loadContent function not found');
-                }
-            });
-        });
-
-        // Lock
-        document.querySelectorAll('.lock-btn').forEach((btn) => {
-            btn.addEventListener('click', () => {
-                const entityId = btn.getAttribute('data-id');
-                handleLock(entityId);
-            });
-        });
-
-        // Unlock
-        document.querySelectorAll('.unlock-btn').forEach((btn) => {
-            btn.addEventListener('click', () => {
-                const entityId = btn.getAttribute('data-id');
-                handleUnlock(entityId);
-            });
-        });
-
-        // Assign admin
-        document.querySelectorAll('.assign-admin-btn').forEach((btn) => {
-            btn.addEventListener('click', () => {
-                const entityId = btn.getAttribute('data-id');
-                handleAssignAdmin(entityId);
-            });
-        });
+        } else {
+            console.error('Popup module not loaded or showApproveConfirm not found');
+        }
     };
 
-    // Event listeners
-    elements.toggleTableViewBtn.addEventListener('click', () => {
-        isTableView = true;
-        renderData();
-    });
+    // Handle unlock action
+    const handleUnlock = (entityId) => {
+        if (window.Popup && typeof window.Popup.showApproveConfirm === 'function') {
+            window.Popup.showApproveConfirm(entityId, async () => {
+                const success = await updateEntityStatus(entityId, 'Đang hoạt động');
+                if (success && window.Toast && typeof window.Toast.showSuccess === 'function') {
+                    window.Toast.showSuccess('Mở khóa chủ thể thành công!');
+                } else if (!window.Toast) {
+                    console.error('Toast module not loaded');
+                }
+            });
+        } else {
+            console.error('Popup module not loaded or showApproveConfirm not found');
+        }
+    };
 
-    elements.toggleCardViewBtn.addEventListener('click', () => {
-        isTableView = false;
-        renderData();
-    });
+    const addActionListeners = () => {
+        document.querySelectorAll('.view-details-btn').forEach(btn => btn.addEventListener('click', () => {
+            const entityId = btn.dataset.id;
+            window.loadContent('company-details', { entityId });
+        }));
 
-    elements.applyFilterBtn.addEventListener('click', applyFilters);
-    elements.applyFilterMobileBtn.addEventListener('click', applyFilters);
-    elements.clearFilterBtn.addEventListener('click', clearFilters);
-    elements.clearFilterMobileBtn.addEventListener('click', clearFilters);
-    elements.reloadMobileBtn.addEventListener('click', fetchEntities);
-    elements.retryBtn.addEventListener('click', fetchEntities);
+        document.querySelectorAll('.edit-btn').forEach(btn => btn.addEventListener('click', () => {
+            const entityId = btn.dataset.id;
+            window.loadContent('company-edit', { entityId });
+        }));
+
+        document.querySelectorAll('.lock-btn').forEach(btn => btn.addEventListener('click', () => {
+            const entityId = btn.dataset.id;
+            handleLock(entityId);
+        }));
+
+        document.querySelectorAll('.unlock-btn').forEach(btn => btn.addEventListener('click', () => {
+            const entityId = btn.dataset.id;
+            handleUnlock(entityId);
+        }));
+
+        document.querySelectorAll('.assign-admin-btn').forEach(btn => btn.addEventListener('click', () => {
+            const entityId = btn.dataset.id;
+            window.loadContent('company-searchUser', { entityId });
+        }));
+    };
+
+    // Event listeners with debouncing
+    const debouncedApplyFilters = debounce(applyFilters, 300);
+    [elements.toggleTableViewBtn, elements.toggleCardViewBtn].forEach(btn => btn.addEventListener('click', () => {
+        isTableView = btn === elements.toggleTableViewBtn;
+        renderData();
+    }));
+    [elements.applyFilterBtn, elements.applyFilterMobileBtn].forEach(btn => btn.addEventListener('click', applyFilters));
+    [elements.clearFilterBtn, elements.clearFilterMobileBtn].forEach(btn => btn.addEventListener('click', clearFilters));
+    [elements.reloadMobileBtn, elements.retryBtn].forEach(btn => btn.addEventListener('click', fetchEntities));
     elements.itemsPerPageSelect.addEventListener('change', () => {
         itemsPerPage = parseInt(elements.itemsPerPageSelect.value);
         currentPage = 1;
         renderData();
     });
-    elements.filterSpcName.addEventListener('input', applyFilters);
-    elements.filterSpcNameMobile.addEventListener('input', applyFilters);
+    [elements.filterSpcName, elements.filterSpcNameMobile].forEach(el => el.addEventListener('input', debouncedApplyFilters));
 
     fetchEntities();
 };

@@ -1,0 +1,35 @@
+#searchUserModal .modal-dialog {
+    max-width: 600px;
+}
+
+#searchUserModal .modal-body {
+    padding: 1.5rem;
+}
+
+#searchUserModal .form-check {
+    margin-bottom: 0.5rem;
+}
+
+#searchUserModal .invalid-feedback {
+    display: block;
+}
+
+#searchUserModal #userInfoContainer img {
+    margin-top: 0.5rem;
+}
+
+@media (max-width: 767.98px) {
+    #searchUserModal .modal-dialog {
+        margin: 0;
+        height: 100%;
+        max-height: 100vh;
+    }
+    #searchUserModal .modal-content {
+        border-radius: 0;
+        height: 100%;
+    }
+    #searchUserModal .modal-body {
+        flex-grow: 1;
+        overflow-y: auto;
+    }
+}

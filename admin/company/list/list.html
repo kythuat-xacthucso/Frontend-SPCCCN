@@ -1,6 +1,6 @@
 <div class="container-fluid py-3">
     <!-- Error Banner -->
-    <div class="alert alert-danger d-none" id="errorBanner" role="alert">
+    <div class="alert alert-danger d-none" id="errorBanner">
         Lỗi khi tải danh sách. <button class="btn btn-sm btn-link" id="retryBtn">Thử lại</button>
     </div>
 
@@ -14,11 +14,9 @@
     <div class="accordion mb-3 d-none d-md-block" id="filterAccordion">
         <div class="accordion-item">
             <h2 class="accordion-header">
-                <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFilter">
-                    Bộ lọc
-                </button>
+                <button class="accordion-button" data-bs-toggle="collapse" data-bs-target="#collapseFilter">Bộ lọc</button>
             </h2>
-            <div id="collapseFilter" class="accordion-collapse collapse show" data-bs-parent="#filterAccordion">
+            <div id="collapseFilter" class="accordion-collapse collapse show">
                 <div class="accordion-body">
                     <div class="row g-3">
                         <div class="col-md-3 col-12">
@@ -37,12 +35,8 @@
                         <div class="col-md-3 col-12">
                             <label class="form-label">Ngày tạo</label>
                             <div class="row g-2">
-                                <div class="col-6">
-                                    <input type="date" class="form-control" id="filter_date_range_start">
-                                </div>
-                                <div class="col-6">
-                                    <input type="date" class="form-control" id="filter_date_range_end">
-                                </div>
+                                <div class="col-6"><input type="date" class="form-control" id="filter_date_range_start"></div>
+                                <div class="col-6"><input type="date" class="form-control" id="filter_date_range_end"></div>
                             </div>
                         </div>
                         <div class="col-md-3 col-12 d-flex align-items-end gap-2">
@@ -60,51 +54,45 @@
         <div class="d-flex justify-content-between align-items-center mb-4">
             <h2 class="mb-0">Danh sách chủ thể</h2>
             <div class="d-none d-md-flex gap-2">
-                <button class="btn btn-outline-secondary" id="toggleTableViewBtn" title="Chuyển sang Bảng">
-                    <i class="bi bi-table"></i>
-                </button>
-                <button class="btn btn-outline-secondary" id="toggleCardViewBtn" title="Chuyển sang Card">
-                    <i class="bi bi-grid"></i>
-                </button>
+                <button class="btn btn-outline-secondary" id="toggleTableViewBtn" title="Chuyển sang Bảng"><i class="bi bi-table"></i></button>
+                <button class="btn btn-outline-secondary" id="toggleCardViewBtn" title="Chuyển sang Card"><i class="bi bi-grid"></i></button>
             </div>
         </div>
 
-        <!-- Table View (Desktop) -->
+        <!-- Table View -->
         <div class="table-responsive d-none" id="tableView">
             <table class="table table-hover table-bordered align-middle">
                 <thead class="table-light">
                     <tr>
-                        <th scope="col" class="text-center col-1">STT</th>
-                        <th scope="col" class="col-3">Tên chủ thể</th>
-                        <th scope="col" class="col-2">Mã chủ thể</th>
-                        <th scope="col" class="col-2">Số điện thoại</th>
-                        <th scope="col" class="col-2">Người quản trị</th>
-                        <th scope="col" class="col-1">Trạng thái</th>
-                        <th scope="col" class="col-2">Ngày tạo</th>
-                        <th scope="col" class="text-center col-2">Hành động</th>
+                        <th class="text-center col-1">STT</th>
+                        <th class="col-3">Tên chủ thể</th>
+                        <th class="col-2">Mã chủ thể</th>
+                        <th class="col-2">Số điện thoại</th>
+                        <th class="col-2">Người quản trị</th>
+                        <th class="col-1">Trạng thái</th>
+                        <th class="col-2">Ngày tạo</th>
+                        <th class="text-center col-2">Hành động</th>
                     </tr>
                 </thead>
                 <tbody id="entityTableBody"></tbody>
             </table>
         </div>
 
-        <!-- Card Grid View (Desktop & Mobile) -->
+        <!-- Card Grid View -->
         <div class="row row-cols-1 row-cols-md-2 g-3 d-none" id="cardGridView"></div>
 
         <!-- Pagination -->
         <div class="d-flex justify-content-between align-items-center mt-3">
             <div class="d-flex align-items-center">
-                <label for="itemsPerPage" class="me-2">Số bản ghi trên trang:</label>
-                <select id="itemsPerPage" class="form-select w-auto">
+                <label class="me-2" for="itemsPerPage">Số bản ghi trên trang:</label>
+                <select class="form-select w-auto" id="itemsPerPage">
                     <option value="10">10</option>
                     <option value="20">20</option>
                     <option value="50">50</option>
                 </select>
             </div>
             <div class="d-flex align-items-center">
-                <nav aria-label="Page navigation">
-                    <ul class="pagination mb-0" id="pagination"></ul>
-                </nav>
+                <nav aria-label="Page navigation"><ul class="pagination mb-0" id="pagination"></ul></nav>
                 <span class="ms-3 text-muted" id="resultCount">0/0 kết quả</span>
             </div>
         </div>
@@ -113,7 +101,7 @@
     <!-- Mobile Fixed Buttons -->
     <div class="d-md-none fixed-bottom bg-white p-2 shadow-sm d-flex justify-content-between align-items-center">
         <div class="dropdown">
-            <button class="btn btn-primary dropdown-toggle" type="button" id="filterDropdown" data-bs-toggle="dropdown">
+            <button class="btn btn-primary dropdown-toggle" id="filterDropdown" data-bs-toggle="dropdown">
                 <i class="bi bi-filter"></i> Lọc
             </button>
             <div class="dropdown-menu p-3" style="min-width: 300px;">
@@ -141,15 +129,11 @@
                 </div>
             </div>
         </div>
-        <button class="btn btn-outline-secondary" id="reloadMobileBtn">
-            <i class="bi bi-arrow-clockwise"></i>
-        </button>
+        <button class="btn btn-outline-secondary" id="reloadMobileBtn"><i class="bi bi-arrow-clockwise"></i></button>
     </div>
 
     <!-- Loading Spinner -->
     <div class="d-none position-fixed top-50 start-50 translate-middle" id="loadingSpinner">
-        <div class="spinner-border text-primary" role="status">
-            <span class="visually-hidden">Loading...</span>
-        </div>
+        <div class="spinner-border text-primary" role="status"><span class="visually-hidden">Loading...</span></div>
     </div>
 </div>

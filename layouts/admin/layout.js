@@ -10,7 +10,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Load Popup and Toast modules
     const loadSharedModules = () => {
-        // Load CSS for toast
         const existingToastStyle = document.querySelector('link[data-toast-css]');
         if (!existingToastStyle) {
             const toastStyle = document.createElement('link');
@@ -20,7 +19,6 @@ document.addEventListener('DOMContentLoaded', () => {
             document.head.appendChild(toastStyle);
         }
 
-        // Load Popup module
         const existingPopupScript = document.querySelector('script[data-popup-js]');
         if (!existingPopupScript) {
             const popupScript = document.createElement('script');
@@ -29,7 +27,6 @@ document.addEventListener('DOMContentLoaded', () => {
             document.body.appendChild(popupScript);
         }
 
-        // Load Toast module
         const existingToastScript = document.querySelector('script[data-toast-js]');
         if (!existingToastScript) {
             const toastScript = document.createElement('script');
@@ -39,32 +36,21 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
-    // Toggle sidebar on mobile
     function toggleSidebar() {
         sidebar.classList.toggle('active');
         overlay.classList.toggle('active');
     }
 
-    // Close sidebar and overlay
     function closeSidebarAndOverlay() {
         sidebar.classList.remove('active');
         overlay.classList.remove('active');
     }
 
-    // Close sidebar when clicking overlay
     overlay.addEventListener('click', closeSidebarAndOverlay);
 
-    // Hamburger button click
-    if (hamburgerBtn) {
-        hamburgerBtn.addEventListener('click', toggleSidebar);
-    }
+    if (hamburgerBtn) hamburgerBtn.addEventListener('click', toggleSidebar);
+    if (closeSidebarBtn) closeSidebarBtn.addEventListener('click', closeSidebarAndOverlay);
 
-    // Close sidebar button click
-    if (closeSidebarBtn) {
-        closeSidebarBtn.addEventListener('click', closeSidebarAndOverlay);
-    }
-
-    // Handle sidebar menu clicks
     sidebarLinks.forEach(link => {
         link.addEventListener('click', (e) => {
             e.preventDefault();
@@ -72,14 +58,10 @@ document.addEventListener('DOMContentLoaded', () => {
             link.classList.add('active');
             const menuType = link.getAttribute('data-menu');
             loadContent(menuType);
-            // Close sidebar on mobile after clicking a link
-            if (window.innerWidth < 768) {
-                closeSidebarAndOverlay();
-            }
+            if (window.innerWidth < 768) closeSidebarAndOverlay();
         });
     });
 
-    // Handle dropdown icon toggle and active state (desktop only)
     if (userDropdown) {
         userDropdown.addEventListener('show.bs.dropdown', () => {
             dropdownIcon.classList.remove('bi-chevron-down');
@@ -93,7 +75,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Function to load content dynamically
     function loadContent(menuType, params = {}) {
         let pagePath, cssPath, scriptPath;
 
@@ -138,6 +119,16 @@ document.addEventListener('DOMContentLoaded', () => {
                 cssPath = '../../admin/company/detail/detail.css';
                 scriptPath = '../../admin/company/detail/detail.js';
                 break;
+            case 'company-edit':
+                pagePath = '../../admin/company/edit/edit.html';
+                cssPath = '../../admin/company/edit/edit.css';
+                scriptPath = '../../admin/company/edit/edit.js';
+                break;
+            case 'company-searchUser':
+                pagePath = '../../admin/company/searchUser/searchUser.html';
+                cssPath = '../../admin/company/searchUser/searchUser.css';
+                scriptPath = '../../admin/company/searchUser/searchUser.js';
+                break;
             case 'service-add-new':
                 pagePath = '../../admin/service/add/add.html';
                 cssPath = '';
@@ -163,67 +154,127 @@ document.addEventListener('DOMContentLoaded', () => {
                 return;
         }
 
-        fetch(pagePath)
-            .then(response => {
-                if (!response.ok) throw new Error(`Không tìm thấy trang: ${pagePath}`);
-                return response.text();
-            })
-            .then(data => {
-                mainContent.innerHTML = data;
+        // Handle company-searchUser as a popup
+        if (menuType === 'company-searchUser') {
+            // Create overlay
+            const overlay = document.createElement('div');
+            overlay.classList.add('modal-backdrop', 'fade', 'show');
+            overlay.style.opacity = '0.5';
+            overlay.id = 'searchUserOverlay';
+            document.body.appendChild(overlay);
 
-                const existingStyle = document.querySelector('link[data-content-css]');
-                if (existingStyle) existingStyle.remove();
-                const existingScript = document.querySelector('script[data-content-js]');
-                if (existingScript) existingScript.remove();
+            // Create container for popup
+            const popupContainer = document.createElement('div');
+            popupContainer.id = 'searchUserPopupContainer';
+            document.body.appendChild(popupContainer);
 
-                if (cssPath) {
-                    const style = document.createElement('link');
-                    style.rel = 'stylesheet';
-                    style.href = cssPath;
-                    style.setAttribute('data-content-css', menuType);
-                    document.head.appendChild(style);
-                }
+            fetch(pagePath)
+                .then(response => {
+                    if (!response.ok) throw new Error(`Không tìm thấy trang: ${pagePath}`);
+                    return response.text();
+                })
+                .then(data => {
+                    popupContainer.innerHTML = data;
 
-                if (scriptPath) {
-                    const script = document.createElement('script');
-                    script.src = scriptPath;
-                    script.setAttribute('data-content-js', menuType);
-                    script.onload = () => {
-                        // Ensure overlay and sidebar are closed on mobile
-                        if (window.innerWidth < 768) {
-                            closeSidebarAndOverlay();
-                        }
+                    // Load CSS
+                    const existingStyle = document.querySelector('link[data-content-css]');
+                    if (existingStyle) existingStyle.remove();
+                    if (cssPath) {
+                        const style = document.createElement('link');
+                        style.rel = 'stylesheet';
+                        style.href = cssPath;
+                        style.setAttribute('data-content-css', menuType);
+                        document.head.appendChild(style);
+                    }
 
-                        if (menuType === 'subject-approval' && typeof initProfileList === 'function') {
-                            initProfileList();
-                        } else if (menuType === 'subject-details' && typeof initDetailPage === 'function') {
-                            initDetailPage(params.profileId);
-                        } else if (menuType === 'company-management' && typeof initCompanyList === 'function') {
-                            initCompanyList();
-                        } else if (menuType === 'company-details' && typeof initCompanyDetailPage === 'function') {
-                            initCompanyDetailPage(params.entityId);
-                        } else if (menuType === 'service-packages' && typeof initServiceList === 'function') {
-                            initServiceList();
-                        } else if (menuType === 'service-details' && typeof initServiceDetailPage === 'function') {
-                            initServiceDetailPage(params.serviceId);
-                        } else if (menuType === 'service-edit' && typeof initServiceEditPage === 'function') {
-                            initServiceEditPage(params.serviceId);
-                        } else if (menuType === 'subject-add-new' && typeof initAddNewPage === 'function') {
-                            initAddNewPage(params.profileId);
-                        }
-                    };
-                    document.body.appendChild(script);
-                }
-            })
-            .catch(error => {
-                console.error('Error loading content:', error);
-                mainContent.innerHTML = '<p>Lỗi khi tải nội dung. Vui lòng thử lại.</p>';
-            });
+                    // Load Script
+                    const existingScript = document.querySelector('script[data-content-js]');
+                    if (existingScript) existingScript.remove();
+                    if (scriptPath) {
+                        const script = document.createElement('script');
+                        script.src = scriptPath;
+                        script.setAttribute('data-content-js', menuType);
+                        script.onload = () => {
+                            if (typeof initSearchUserPage === 'function') {
+                                initSearchUserPage(params.entityId);
+                                // Show the modal
+                                const searchUserModal = document.getElementById('searchUserModal');
+                                if (searchUserModal) {
+                                    const modalInstance = new bootstrap.Modal(searchUserModal);
+                                    modalInstance.show();
+                                } else {
+                                    console.error('Search user modal not found in the DOM');
+                                }
+                            }
+                        };
+                        document.body.appendChild(script);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error loading popup:', error);
+                    popupContainer.innerHTML = '<p>Lỗi khi tải popup. Vui lòng thử lại.</p>';
+                });
+        } else {
+            // Existing logic for other pages
+            fetch(pagePath)
+                .then(response => {
+                    if (!response.ok) throw new Error(`Không tìm thấy trang: ${pagePath}`);
+                    return response.text();
+                })
+                .then(data => {
+                    mainContent.innerHTML = data;
+
+                    const existingStyle = document.querySelector('link[data-content-css]');
+                    if (existingStyle) existingStyle.remove();
+                    const existingScript = document.querySelector('script[data-content-js]');
+                    if (existingScript) existingScript.remove();
+
+                    if (cssPath) {
+                        const style = document.createElement('link');
+                        style.rel = 'stylesheet';
+                        style.href = cssPath;
+                        style.setAttribute('data-content-css', menuType);
+                        document.head.appendChild(style);
+                    }
+
+                    if (scriptPath) {
+                        const script = document.createElement('script');
+                        script.src = scriptPath;
+                        script.setAttribute('data-content-js', menuType);
+                        script.onload = () => {
+                            if (window.innerWidth < 768) closeSidebarAndOverlay();
+
+                            if (menuType === 'subject-approval' && typeof initProfileList === 'function') {
+                                initProfileList();
+                            } else if (menuType === 'subject-details' && typeof initDetailPage === 'function') {
+                                initDetailPage(params.profileId);
+                            } else if (menuType === 'company-management' && typeof initCompanyList === 'function') {
+                                initCompanyList();
+                            } else if (menuType === 'company-details' && typeof initCompanyDetailPage === 'function') {
+                                initCompanyDetailPage(params.entityId);
+                            } else if (menuType === 'company-edit' && typeof initCompanyEditPage === 'function') {
+                                initCompanyEditPage(params.entityId);
+                            } else if (menuType === 'service-packages' && typeof initServiceList === 'function') {
+                                initServiceList();
+                            } else if (menuType === 'service-details' && typeof initServiceDetailPage === 'function') {
+                                initServiceDetailPage(params.serviceId);
+                            } else if (menuType === 'service-edit' && typeof initServiceEditPage === 'function') {
+                                initServiceEditPage(params.serviceId);
+                            } else if (menuType === 'subject-add-new' && typeof initAddNewPage === 'function') {
+                                initAddNewPage(params.profileId);
+                            }
+                        };
+                        document.body.appendChild(script);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error loading content:', error);
+                    mainContent.innerHTML = '<p>Lỗi khi tải nội dung. Vui lòng thử lại.</p>';
+                });
+        }
     }
 
     window.loadContent = loadContent;
-
-    // Load shared modules (Popup and Toast)
     loadSharedModules();
 
     const defaultLink = document.querySelector('.sidebar-link[data-menu="home"]');
@@ -232,8 +283,5 @@ document.addEventListener('DOMContentLoaded', () => {
         loadContent('home');
     }
 
-    // Ensure overlay and sidebar are closed on initial load if on mobile
-    if (window.innerWidth < 768) {
-        closeSidebarAndOverlay();
-    }
+    if (window.innerWidth < 768) closeSidebarAndOverlay();
 });

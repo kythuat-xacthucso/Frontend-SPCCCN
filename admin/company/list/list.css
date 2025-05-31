@@ -1,59 +1,26 @@
-/* Card styling */
-#cardGridView .card {
-    margin-bottom: 1rem;
-}
-
 /* Badge styling */
-.badge-active {
-    background-color: #198754;
-    color: white;
-}
-
-.badge-locked {
-    background-color: #dc3545;
-    color: white;
-}
-
-.badge-new {
-    background-color: #0d6efd;
-    color: white;
-}
+.badge-active { background-color: #198754; color: white; }
+.badge-locked { background-color: #dc3545; color: white; }
+.badge-new { background-color: #0d6efd; color: white; }
 
 /* Fixed bottom for mobile */
-.fixed-bottom {
-    bottom: 0;
-    left: 0;
-    right: 0;
-    z-index: 1000;
-}
+.fixed-bottom { bottom: 0; left: 0; right: 0; z-index: 1000; }
 
 /* View toggling */
-#tableView, #cardGridView {
-    display: none;
-}
-
-#tableView.active, #cardGridView.active {
-    display: block;
-}
+#tableView.active, #cardGridView.active { display: block; }
+#tableView, #cardGridView { display: none; }
 
 /* Responsive adjustments */
 @media (max-width: 767.98px) {
-    #tableView {
-        display: none !important;
-    }
-    #cardGridView.active {
-        display: block;
-    }
-    #toggleTableViewBtn, #toggleCardViewBtn {
-        display: none !important;
-    }
+    #tableView { display: none !important; }
+    #cardGridView.active { display: block; }
+    #toggleTableViewBtn, #toggleCardViewBtn { display: none !important; }
 }
 
 @media (min-width: 768px) {
-    #cardGridView.active {
-        display: flex;
-    }
-    .action-buttons {
-        min-width: 200px;
-    }
+    #cardGridView.active { display: flex; }
+    .action-buttons { min-width: 200px; }
 }
+
+/* Card styling */
+#cardGridView .card { margin-bottom: 1rem; }

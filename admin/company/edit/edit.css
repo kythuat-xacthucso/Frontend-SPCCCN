@@ -37,6 +37,19 @@
     align-items: center;
 }
 
+.position-relative {
+    width: fit-content;
+}
+
+.position-absolute {
+    z-index: 10;
+}
+
+.btn-danger.btn-sm, .btn-info.btn-sm {
+    padding: 2px 6px;
+    font-size: 0.8rem;
+}
+
 @media (max-width: 767.98px) {
     .fixed-bottom .btn {
         flex: 1;
