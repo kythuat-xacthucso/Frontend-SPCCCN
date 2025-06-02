@@ -1,41 +1,40 @@
-.card-list .card {
-    margin-bottom: 1rem;
-    border-radius: 0.5rem;
+/* Badge styling */
+.badge-active { background-color: #198754; color: white; }
+.badge-locked { background-color: #dc3545; color: white; }
+
+/* Fixed bottom for mobile */
+.fixed-bottom { bottom: 0; left: 0; right: 0; z-index: 1000; }
+
+/* Content wrapper to isolate layout */
+.content-wrapper {
+    display: block; /* Đảm bảo container cha không bị ảnh hưởng bởi flex */
 }
 
-.card-list .card-body {
-    padding: 1rem;
-}
+/* View toggling */
+#tableView.active, #cardGridView.active { display: block; }
+#tableView, #cardGridView { display: none; }
 
+/* Responsive adjustments */
 @media (max-width: 767.98px) {
-    .card-list .card-title {
-        font-size: 0.875rem; /* 14px */
+    #tableView { display: none !important; }
+    #cardGridView.active { display: block; }
+    #toggleTableViewBtn, #toggleCardViewBtn { display: none !important; }
+    /* Đảm bảo nút Thêm mới không bị đè lên bởi các thành phần khác trên mobile */
+    .d-flex.justify-content-between.align-items-center.mb-4 {
+        flex-wrap: wrap;
+        gap: 0.5rem;
     }
-    .card-list .card-text {
-        font-size: 0.75rem; /* 12px */
+}
+
+@media (min-width: 768px) {
+    #cardGridView.active {
+        display: flex; /* Cần flex để Bootstrap's .row hoạt động đúng */
+        flex-wrap: wrap; /* Đảm bảo các cột wrap xuống dòng */
     }
-    .card-list .badge {
-        font-size: 0.6875rem; /* 11px */
+    #cardGridView .col {
+        width: 50%; /* Chia đều 2 cột */
+        max-width: 50%;
+        box-sizing: border-box; /* Đảm bảo padding/margin không làm vượt kích thước */
     }
-    .card-list .btn-sm {
-        padding: 0.25rem 0.5rem;
-        font-size: 0.75rem; /* 12px */
-    }
-    .form-label {
-        font-size: 0.875rem; /* 14px */
-    }
-    .form-control-sm,
-    .form-select-sm {
-        font-size: 0.75rem; /* 12px */
-    }
-    .btn-sm {
-        font-size: 0.75rem; /* 12px */
-    }
-    .pagination .page-link {
-        font-size: 0.75rem; /* 12px */
-        padding: 0.25rem 0.5rem;
-    }
-    #resultCount {
-        font-size: 0.75rem; /* 12px */
-    }
+    .action-buttons { min-width: 200px; }
 }

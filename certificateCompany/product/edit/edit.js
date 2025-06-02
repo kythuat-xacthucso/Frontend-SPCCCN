@@ -1,176 +1,177 @@
-(function initProductEdit(productId) {
-    const form = document.getElementById('editProductForm');
-    if (!form) {
-        console.error('Form "editProductForm" not found.');
-        return;
-    }
-
-    const confirmBtn = document.getElementById('confirmBtn');
-    const backBtn = document.getElementById('backBtn');
-    const fields = {
-        productName: { element: document.getElementById('productName'), feedbackId: 'productName-feedback', required: true },
-        shortDescription: { element: document.getElementById('shortDescription'), feedbackId: 'shortDescription-feedback', required: true },
-        productGroup: { element: document.getElementById('productGroup'), feedbackId: 'productGroup-feedback', required: true },
-        certificationStandards: { element: document.getElementById('certificationStandards'), feedbackId: 'certificationStandards-feedback', required: true },
-        productImage: { element: document.getElementById('productImage'), feedbackId: 'productImage-feedback', required: false },
-        status: { element: document.getElementById('status'), feedbackId: 'status-feedback', required: true },
-        createdBy: { element: document.getElementById('createdBy'), feedbackId: null, required: false },
-        createdDate: { element: document.getElementById('createdDate'), feedbackId: null, required: false },
-        productImagePreview: { element: document.getElementById('productImagePreview'), feedbackId: null, required: false }
+const initProductEditPage = (productId) => {
+    const elements = {
+        editProductForm: document.getElementById('editProductForm'),
+        productName: document.getElementById('product_name'),
+        productType: document.getElementById('product_type'),
+        description: document.getElementById('description'),
+        certificationStandard: document.getElementById('certification_standard'),
+        createdDate: document.getElementById('created_date'),
+        creator: document.getElementById('creator'),
+        imageUpload: document.getElementById('image_upload'),
+        imagePreview: document.getElementById('image_preview'),
+        previewImage: document.getElementById('preview_image'),
+        removeImageBtn: document.getElementById('remove_image'),
+        saveBtn: document.getElementById('saveBtn'),
+        cancelBtn: document.getElementById('cancelBtn'),
+        imageViewModal: document.getElementById('imageViewModal'),
+        fullSizeImage: document.getElementById('full_size_image'),
     };
 
-    // Kiểm tra các phần tử cần thiết
-    if (!confirmBtn || !backBtn || Object.values(fields).some(field => !field.element)) {
-        console.error('One or more form elements are missing.');
-        return;
-    }
+    // Khởi tạo tooltip
+    document.querySelectorAll('[data-bs-toggle="tooltip"]').forEach(el => new bootstrap.Tooltip(el));
 
-    // Disable confirm button by default
-    confirmBtn.disabled = true;
+    // Format ngày tháng
+    const formatDate = (dateStr) => {
+        const [year, month, day] = dateStr.split('-');
+        return `${day}/${month}/${year}`;
+    };
 
-    // Theo dõi trạng thái tương tác
-    const interactionState = {};
-    Object.keys(fields).forEach(key => interactionState[key] = false);
-
-    // Validation rules
-    const validationRules = {
-        productName: value => value.length > 0,
-        shortDescription: value => value.length > 0,
-        productGroup: value => value !== '',
-        certificationStandards: value => value.length > 0,
-        status: value => value !== '',
-        productImage: () => {
-            const file = fields.productImage.element.files[0];
-            return !file || (file.size <= 2 * 1024 * 1024 && ['image/png', 'image/jpeg', 'image/jpg'].includes(file.type));
+    // Load dữ liệu loại sản phẩm từ API (mock data)
+    const loadProductTypes = async () => {
+        try {
+            const response = await new Promise(resolve =>
+                setTimeout(() => resolve({
+                    ok: true,
+                    json: () => Promise.resolve([
+                        { id: 1, name: 'Thực phẩm' },
+                        { id: 2, name: 'Đồ uống' },
+                        { id: 3, name: 'Sản phẩm điện tử' },
+                    ]),
+                }), 500)
+            );
+            const productTypes = await response.json();
+            elements.productType.innerHTML = '<option value="">Chọn loại sản phẩm</option>' + productTypes.map(type => `<option value="${type.id}">${type.name}</option>`).join('');
+        } catch (error) {
+            console.error('Error loading product types:', error);
         }
     };
 
-    // Validation function
-    const validateField = (field, forceShow = false) => {
-        const { element, feedbackId, required } = field;
-        const value = element.value.trim();
-        const isValid = !required || (validationRules[element.id] ? validationRules[element.id](value) : true);
-        const shouldShowFeedback = forceShow || interactionState[element.id];
-        if (feedbackId) {
-            element.classList.toggle('is-invalid', !isValid && shouldShowFeedback);
-            const feedbackElement = document.getElementById(feedbackId);
-            if (feedbackElement) {
-                feedbackElement.textContent = (isValid || !shouldShowFeedback) ? '' : getErrorMessage(element.id, required);
+    // Load dữ liệu sản phẩm từ API (mock data)
+    const loadProductDetail = async (id) => {
+        try {
+            const response = await new Promise(resolve =>
+                setTimeout(() => resolve({
+                    ok: true,
+                    json: () => Promise.resolve({
+                        id: id,
+                        productName: 'Kombucha Hồng trà - Đào tuyết',
+                        productType: 'Đồ uống',
+                        description: 'Mô tả sản phẩm kombucha.',
+                        certificationStandard: 'ISO 22000',
+                        createdDate: '2025-05-06',
+                        creator: 'Phongigi',
+                        imageUrl: 'https://via.placeholder.com/300x200', // Mock image
+                    }),
+                }), 500)
+            );
+            const product = await response.json();
+            elements.productName.value = product.productName;
+            elements.productType.value = product.productType;
+            elements.description.value = product.description || '';
+            elements.certificationStandard.value = product.certificationStandard || '';
+            elements.createdDate.value = formatDate(product.createdDate);
+            elements.creator.value = product.creator;
+            if (product.imageUrl) {
+                elements.previewImage.src = product.imageUrl;
+                elements.imagePreview.style.display = 'block';
             }
-        }
-        return isValid;
-    };
-
-    // Lấy thông báo lỗi
-    const getErrorMessage = (fieldId, required) => {
-        switch (fieldId) {
-            case 'productName': return 'Vui lòng nhập tên sản phẩm.';
-            case 'shortDescription': return 'Vui lòng nhập mô tả ngắn.';
-            case 'productGroup': return 'Vui lòng chọn nhóm sản phẩm.';
-            case 'certificationStandards': return 'Vui lòng nhập tiêu chuẩn chứng nhận.';
-            case 'status': return 'Vui lòng chọn trạng thái.';
-            case 'productImage': return 'Vui lòng chọn file ảnh (PNG/JPG, max 2MB).';
-            default: return '';
+        } catch (error) {
+            console.error('Error loading product detail:', error);
         }
     };
 
-    // Validate toàn bộ form
-    const validateForm = (forceShowFeedback = false) => {
-        let isValid = true;
-        Object.values(fields).forEach(field => {
-            if (field.feedbackId !== null) { // Chỉ validate các trường có feedback
-                isValid &= validateField(field, forceShowFeedback);
+    // Xử lý upload ảnh
+    const handleImageUpload = () => {
+        elements.imageUpload.addEventListener('change', () => {
+            const file = elements.imageUpload.files[0];
+            if (file) {
+                if (file.size > 2 * 1024 * 1024) {
+                    alert('Kích thước file không được vượt quá 2MB!');
+                    elements.imageUpload.value = '';
+                    return;
+                }
+                if (!['image/jpeg', 'image/png'].includes(file.type)) {
+                    alert('Chỉ chấp nhận file JPG hoặc PNG!');
+                    elements.imageUpload.value = '';
+                    return;
+                }
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    elements.previewImage.src = e.target.result;
+                    elements.imagePreview.style.display = 'block';
+                };
+                reader.readAsDataURL(file);
             }
         });
-        confirmBtn.disabled = !isValid;
-        return isValid;
     };
 
-    // Sample data (replace with API call if needed)
-    const products = [
-        {
-            id: 1,
-            productName: 'Máy giặt Samsung',
-            shortDescription: 'Máy giặt công nghệ inverter tiết kiệm điện.',
-            productGroup: 'Đồ gia dụng',
-            certificationStandards: 'ISO 9001, CE',
-            productImage: 'https://via.placeholder.com/300x200.png?text=Product+Image',
-            status: 'Hoạt động',
-            createdBy: 'Nguyễn Văn A',
-            createdDate: '2025-05-01 10:00'
-        },
-        {
-            id: 2,
-            productName: 'Gạo ST25',
-            shortDescription: 'Gạo ngon nhất Việt Nam.',
-            productGroup: 'Thực phẩm',
-            certificationStandards: 'OCOP, HACCP',
-            productImage: 'https://via.placeholder.com/300x200.png?text=Product+Image',
-            status: 'Chờ duyệt',
-            createdBy: 'Trần Thị B',
-            createdDate: '2025-05-02 14:30'
+    // Xử lý xóa ảnh
+    const handleRemoveImage = () => {
+        elements.removeImageBtn.addEventListener('click', () => {
+            elements.imageUpload.value = '';
+            elements.imagePreview.style.display = 'none';
+            elements.previewImage.src = '';
+        });
+    };
+
+    // Xử lý xem ảnh lớn
+    const handleImageView = () => {
+        elements.previewImage.addEventListener('click', () => {
+            elements.fullSizeImage.src = elements.previewImage.src;
+            const bootstrapModal = new bootstrap.Modal(elements.imageViewModal);
+            bootstrapModal.show();
+        });
+    };
+
+    // Xử lý nút Xác nhận
+    elements.saveBtn.addEventListener('click', () => {
+        if (!elements.productName.value || !elements.productType.value) {
+            alert('Vui lòng điền đầy đủ thông tin bắt buộc!');
+            return;
         }
-    ];
-
-    // Find product by ID and populate form
-    const product = products.find(p => p.id === parseInt(productId)) || products[0];
-    fields.productName.element.value = product.productName;
-    fields.shortDescription.element.value = product.shortDescription;
-    fields.productGroup.element.value = product.productGroup;
-    fields.certificationStandards.element.value = product.certificationStandards;
-    fields.status.element.value = product.status;
-    fields.createdBy.element.textContent = product.createdBy;
-    fields.createdDate.element.textContent = product.createdDate;
-    fields.productImagePreview.element.src = product.productImage;
-
-    // Real-time validation and interaction tracking
-    Object.values(fields).forEach(field => {
-        const { element } = field;
-        if (element && field.feedbackId !== null) {
-            const eventTypes = ['input'];
-            if (element.type === 'file') eventTypes.push('change');
-            if (element.tagName === 'SELECT') eventTypes.push('change');
-            eventTypes.forEach(eventType => {
-                element.addEventListener(eventType, () => {
-                    interactionState[element.id] = true;
-                    validateForm();
+        window.Popup.showApproveConfirm(
+            productId,
+            async (id) => {
+                // Mock API call to update product
+                await new Promise(resolve => setTimeout(resolve, 500));
+                if (window.Toast && typeof window.Toast.showSuccess === 'function') {
+                    window.Toast.showSuccess('Cập nhật sản phẩm thành công!');
+                }
+                elements.editProductForm.style.display = 'none';
+                // Đảm bảo không còn lớp phủ opacity
+                const overlays = document.querySelectorAll('.modal-backdrop, .overlay');
+                overlays.forEach(overlay => overlay.remove());
+                // Đóng tất cả modal nếu còn mở
+                document.querySelectorAll('.modal').forEach(modal => {
+                    const bootstrapModal = bootstrap.Modal.getInstance(modal);
+                    if (bootstrapModal) {
+                        bootstrapModal.hide();
+                    }
                 });
-            });
-        }
-    });
-
-    // Submit form
-    form.addEventListener('submit', (e) => {
-        e.preventDefault();
-        if (validateForm(true)) {
-            const formData = new FormData(form);
-            const updatedData = {
-                id: product.id,
-                productName: formData.get('productName'),
-                shortDescription: formData.get('shortDescription'),
-                productGroup: formData.get('productGroup'),
-                certificationStandards: formData.get('certificationStandards'),
-                productImage: formData.get('productImage'),
-                status: formData.get('status'),
-                createdBy: product.createdBy,
-                createdDate: product.createdDate
-            };
-            console.log('Updated Product Data:', updatedData);
-            // Add logic to submit the form data to a server or Firebase here
-            if (typeof window.loadContent === 'function') {
                 window.loadContent('product-management');
-            } else {
-                console.error('loadContent function not found in layout.js');
-            }
-        }
+            },
+            'Bạn có chắc chắn muốn cập nhật sản phẩm này không?'
+        );
     });
 
-    // Back button
-    backBtn.addEventListener('click', () => {
-        if (typeof window.loadContent === 'function') {
-            window.loadContent('product-management');
-        } else {
-            console.error('loadContent function not found in layout.js');
-        }
+    // Xử lý nút Hủy
+    elements.cancelBtn.addEventListener('click', () => {
+        elements.editProductForm.style.display = 'none';
+        // Đảm bảo không còn lớp phủ opacity
+        const overlays = document.querySelectorAll('.modal-backdrop, .overlay');
+        overlays.forEach(overlay => overlay.remove());
+        window.loadContent('product-management');
     });
-})(typeof productId !== 'undefined' ? productId : null);
+
+    // Khởi tạo các sự kiện
+    handleImageUpload();
+    handleRemoveImage();
+    handleImageView();
+
+    // Load dữ liệu ban đầu
+    loadProductTypes();
+    loadProductDetail(productId);
+};
+
+// Khởi tạo trang khi DOM ready
+document.addEventListener('DOMContentLoaded', () => initProductEditPage(window.productId));

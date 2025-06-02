@@ -1,56 +1,59 @@
 <div class="container-fluid py-3">
-    <h2 class="mb-4">Chi tiết sản phẩm</h2>
-    <div class="row g-3">
-        <!-- Tên sản phẩm -->
-        <div class="col-12">
+    <!-- Full-screen Form for Both Web and Mobile -->
+    <div class="position-fixed top-0 start-0 end-0 bottom-0 bg-white p-3" style="z-index: 1050; overflow-y: auto;" id="productDetailForm">
+        <h5 class="mb-4">Chi tiết sản phẩm</h5>
+        <div class="mb-3">
             <label class="form-label">Tên sản phẩm</label>
-            <p class="form-control-plaintext" id="productName"></p>
+            <input type="text" class="form-control" id="product_name" readonly>
         </div>
-        <!-- Mô tả ngắn -->
-        <div class="col-12">
-            <label class="form-label">Mô tả ngắn</label>
-            <p class="form-control-plaintext" id="shortDescription"></p>
+        <div class="mb-3">
+            <label class="form-label">Loại sản phẩm</label>
+            <input type="text" class="form-control" id="product_type" readonly>
         </div>
-        <!-- Nhóm sản phẩm -->
-        <div class="col-12 col-md-6">
-            <label class="form-label">Nhóm sản phẩm</label>
-            <p class="form-control-plaintext" id="productGroup"></p>
+        <div class="mb-3">
+            <label class="form-label">Mô tả</label>
+            <textarea class="form-control" id="description" rows="3" readonly></textarea>
         </div>
-        <!-- Tiêu chuẩn chứng nhận -->
-        <div class="col-12 col-md-6">
+        <div class="mb-3">
             <label class="form-label">Tiêu chuẩn chứng nhận</label>
-            <p class="form-control-plaintext" id="certificationStandards"></p>
+            <input type="text" class="form-control" id="certification_standard" readonly>
         </div>
-        <!-- Hình ảnh minh họa -->
-        <div class="col-12">
-            <label class="form-label">Hình ảnh minh họa</label>
-            <img id="productImage" class="img-fluid" style="max-width: 300px;" alt="Hình ảnh sản phẩm">
-        </div>
-        <!-- Trạng thái -->
-        <div class="col-12 col-md-6">
+        <div class="mb-3">
             <label class="form-label">Trạng thái</label>
-            <p class="form-control-plaintext" id="status"></p>
+            <input type="text" class="form-control" id="status" readonly>
         </div>
-        <!-- Người tạo -->
-        <div class="col-12 col-md-6">
-            <label class="form-label">Người tạo</label>
-            <p class="form-control-plaintext" id="createdBy"></p>
-        </div>
-        <!-- Thời gian tạo -->
-        <div class="col-12">
+        <div class="mb-3">
             <label class="form-label">Thời gian tạo</label>
-            <p class="form-control-plaintext" id="createdDate"></p>
+            <input type="text" class="form-control" id="created_date" readonly>
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Người tạo</label>
+            <input type="text" class="form-control" id="creator" readonly>
+        </div>
+        <div class="mb-5">
+            <label class="form-label">Ảnh minh họa</label>
+            <div id="image_preview" class="mt-2 position-relative" style="display: none;">
+                <img id="preview_image" class="img-fluid" style="max-width: 100%; cursor: pointer;">
+            </div>
+        </div>
+        <!-- Sticky Buttons -->
+        <div class="position-fixed bottom-0 start-0 end-0 bg-white p-3 border-top" style="z-index: 1060;" id="actionButtons">
+            <!-- Nút sẽ được render động qua JavaScript -->
         </div>
     </div>
-    <!-- Fixed buttons at the bottom -->
-    <div class="fixed-bottom bg-light py-3 border-top" id="actionButtons">
-        <div class="container-fluid">
-            <div class="d-flex justify-content-end gap-2">
-                <button type="button" class="btn btn-secondary" id="backBtn">Quay lại</button>
-                <button type="button" class="btn btn-primary" id="editBtn">Sửa</button>
+
+    <!-- Modal for Viewing Full-size Image -->
+    <div class="modal fade" id="imageViewModal" tabindex="-1" aria-labelledby="imageViewModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="imageViewModalLabel">Xem ảnh</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body text-center">
+                    <img id="full_size_image" class="img-fluid" style="max-height: 70vh;">
+                </div>
             </div>
         </div>
     </div>
-    <!-- Add padding to prevent content from being hidden under fixed buttons -->
-    <div style="height: 80px;"></div>
 </div>

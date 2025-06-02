@@ -1,74 +1,63 @@
 <div class="container-fluid py-3">
-    <h2 class="mb-4">Sửa sản phẩm</h2>
-    <form id="editProductForm" novalidate>
-        <div class="row g-3">
-            <!-- Tên sản phẩm -->
-            <div class="col-12">
-                <label for="productName" class="form-label">Tên sản phẩm <span class="text-danger">*</span></label>
-                <input type="text" class="form-control" id="productName" name="productName" required>
-                <div class="invalid-feedback" id="productName-feedback"></div>
-            </div>
-            <!-- Mô tả ngắn -->
-            <div class="col-12">
-                <label for="shortDescription" class="form-label">Mô tả ngắn <span class="text-danger">*</span></label>
-                <textarea class="form-control" id="shortDescription" name="shortDescription" rows="3" required></textarea>
-                <div class="invalid-feedback" id="shortDescription-feedback"></div>
-            </div>
-            <!-- Nhóm sản phẩm -->
-            <div class="col-12 col-md-6">
-                <label for="productGroup" class="form-label">Nhóm sản phẩm <span class="text-danger">*</span></label>
-                <select class="form-select" id="productGroup" name="productGroup" required>
-                    <option value="">Chọn nhóm sản phẩm</option>
-                    <option value="Đồ gia dụng">Đồ gia dụng</option>
-                    <option value="Thực phẩm">Thực phẩm</option>
-                    <option value="Đồ điện tử">Đồ điện tử</option>
-                </select>
-                <div class="invalid-feedback" id="productGroup-feedback"></div>
-            </div>
-            <!-- Tiêu chuẩn chứng nhận -->
-            <div class="col-12 col-md-6">
-                <label for="certificationStandards" class="form-label">Tiêu chuẩn chứng nhận <span class="text-danger">*</span></label>
-                <input type="text" class="form-control" id="certificationStandards" name="certificationStandards" required>
-                <div class="invalid-feedback" id="certificationStandards-feedback"></div>
-            </div>
-            <!-- Hình ảnh minh họa -->
-            <div class="col-12">
-                <label for="productImage" class="form-label">Hình ảnh minh họa</label>
-                <input type="file" class="form-control" id="productImage" name="productImage" accept=".png,.jpg,.jpeg">
-                <div class="invalid-feedback" id="productImage-feedback"></div>
-                <img id="productImagePreview" class="img-fluid mt-2" style="max-width: 300px;" alt="Hình ảnh hiện tại">
-            </div>
-            <!-- Trạng thái -->
-            <div class="col-12 col-md-6">
-                <label for="status" class="form-label">Trạng thái <span class="text-danger">*</span></label>
-                <select class="form-select" id="status" name="status" required>
-                    <option value="">Chọn trạng thái</option>
-                    <option value="Hoạt động">Hoạt động</option>
-                    <option value="Khóa">Khóa</option>
-                </select>
-                <div class="invalid-feedback" id="status-feedback"></div>
-            </div>
-            <!-- Người tạo -->
-            <div class="col-12 col-md-6">
-                <label class="form-label">Người tạo</label>
-                <p class="form-control-plaintext" id="createdBy"></p>
-            </div>
-            <!-- Thời gian tạo -->
-            <div class="col-12">
-                <label class="form-label">Thời gian tạo</label>
-                <p class="form-control-plaintext" id="createdDate"></p>
+    <!-- Full-screen Form for Both Web and Mobile -->
+    <div class="position-fixed top-0 start-0 end-0 bottom-0 bg-white p-3" style="z-index: 1050; overflow-y: auto;" id="editProductForm">
+        <h5 class="mb-4">Sửa sản phẩm</h5>
+        <div class="mb-3">
+            <label for="product_name" class="form-label">Tên sản phẩm <span class="text-danger">*</span></label>
+            <input type="text" class="form-control" id="product_name" maxlength="100" required>
+        </div>
+        <div class="mb-3">
+            <label for="product_type" class="form-label">Loại sản phẩm <span class="text-danger">*</span></label>
+            <select class="form-select" id="product_type" required data-bs-toggle="tooltip" data-bs-title="Chọn đúng loại hình để phù hợp truy xuất">
+                <option value="">Chọn loại sản phẩm</option>
+                <!-- Dữ liệu sẽ được load từ API qua JavaScript -->
+            </select>
+        </div>
+        <div class="mb-3">
+            <label for="description" class="form-label">Mô tả</label>
+            <textarea class="form-control" id="description" rows="3"></textarea>
+        </div>
+        <div class="mb-3">
+            <label for="certification_standard" class="form-label">Tiêu chuẩn chứng nhận</label>
+            <input type="text" class="form-control" id="certification_standard" data-bs-toggle="tooltip" data-bs-title="Nhập tiêu chuẩn nếu có">
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Thời gian tạo</label>
+            <input type="text" class="form-control" id="created_date" readonly>
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Người tạo</label>
+            <input type="text" class="form-control" id="creator" readonly>
+        </div>
+        <div class="mb-5">
+            <label for="image_upload" class="form-label">Ảnh minh họa</label>
+            <input type="file" class="form-control" id="image_upload" accept="image/jpeg,image/png" data-bs-toggle="tooltip" data-bs-title="JPG/PNG, tối đa 2MB">
+            <div id="image_preview" class="mt-2 position-relative" style="display: none;">
+                <img id="preview_image" class="img-fluid" style="max-width: 100%; cursor: pointer;">
+                <button id="remove_image" class="btn btn-danger btn-sm position-absolute" style="top: 0; right: 0; transform: translate(50%, -50%);">X</button>
             </div>
         </div>
-        <!-- Fixed buttons at the bottom -->
-        <div class="fixed-bottom bg-light py-3 border-top" id="actionButtons">
-            <div class="container-fluid">
-                <div class="d-flex justify-content-end gap-2">
-                    <button type="button" class="btn btn-secondary" id="backBtn">Quay lại</button>
-                    <button type="submit" class="btn btn-primary" id="confirmBtn" disabled>Xác nhận</button>
+        <!-- Sticky Buttons -->
+        <div class="position-fixed bottom-0 start-0 end-0 bg-white p-3 border-top" style="z-index: 1060;">
+            <div class="d-flex gap-2">
+                <button type="button" class="btn btn-secondary w-100" id="cancelBtn">Hủy</button>
+                <button type="button" class="btn btn-primary w-100" id="saveBtn">Xác nhận</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal for Viewing Full-size Image -->
+    <div class="modal fade" id="imageViewModal" tabindex="-1" aria-labelledby="imageViewModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="imageViewModalLabel">Xem ảnh</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body text-center">
+                    <img id="full_size_image" class="img-fluid" style="max-height: 70vh;">
                 </div>
             </div>
         </div>
-        <!-- Add padding to prevent content from being hidden under fixed buttons -->
-        <div style="height: 80px;"></div>
-    </form>
+    </div>
 </div>

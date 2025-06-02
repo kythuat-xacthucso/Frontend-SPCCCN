@@ -1,6 +1,39 @@
-/* Responsive font size */
-@media (max-width: 768px) {
-    h2, label, .form-control, .btn {
-        font-size: 0.9rem !important;
-    }
+/* Full-screen form */
+#addProductForm {
+    box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
+}
+
+#addProductForm .border-top {
+    border-top: 1px solid #dee2e6 !important;
+}
+
+/* Image preview styling */
+#image_preview {
+    position: relative;
+    max-width: 300px; /* Giới hạn chiều rộng ảnh preview */
+}
+
+#image_preview img {
+    max-height: 200px;
+    object-fit: cover;
+    width: 100%;
+}
+
+#image_preview .btn-danger {
+    padding: 0.1rem 0.4rem;
+    font-size: 0.7rem;
+    top: 0; /* Đặt sát mép trên */
+    right: 0; /* Đặt sát mép phải */
+    transform: translate(50%, -50%); /* Điều chỉnh để nút "X" không che mất ảnh */
+}
+
+/* Full-size image modal */
+#imageViewModal .modal-body {
+    padding: 0;
+}
+
+#full_size_image {
+    width: 100%;
+    max-height: 70vh;
+    object-fit: contain;
 }
