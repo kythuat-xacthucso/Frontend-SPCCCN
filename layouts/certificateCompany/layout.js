@@ -87,15 +87,39 @@ document.addEventListener('DOMContentLoaded', () => {
                 },
                 'company-details': {
                     page: '../../certificateCompany/company/detail/detail.html',
-                    css: '',
+                    css: '../../certificateCompany/company/detail/detail.css',
                     script: '../../certificateCompany/company/detail/detail.js',
-                    init: () => typeof initCompanyDetailPage === 'function' && initCompanyDetailPage(params.entityId)
+                    init: () => typeof initCompanyDetailPage === 'function' && initCompanyDetailPage()
                 },
                 'company-add-new': {
                     page: '../../certificateCompany/company/add/add.html',
-                    css: '',
+                    css: '../../certificateCompany/company/add/add.css',
                     script: '../../certificateCompany/company/add/add.js',
                     init: () => typeof initCompanyAddNewPage === 'function' && initCompanyAddNewPage()
+                },
+                'company-edit': {
+                    page: '../../certificateCompany/company/edit/edit.html',
+                    css: '../../certificateCompany/company/edit/edit.css',
+                    script: '../../certificateCompany/company/edit/edit.js',
+                    init: () => typeof initCompanyEditPage === 'function' && initCompanyEditPage(params.entityId)
+                },
+                'nsxkd-management': {
+                    page: '../../certificateCompany/nsxkd/list/list.html',
+                    css: '../../certificateCompany/nsxkd/list/list.css',
+                    script: '../../certificateCompany/nsxkd/list/list.js',
+                    init: () => typeof initNsxkdList === 'function' && initNsxkdList()
+                },
+                'nsxkd-details': {
+                    page: '../../certificateCompany/nsxkd/detail/detail.html',
+                    css: '../../certificateCompany/nsxkd/detail/detail.css',
+                    script: '../../certificateCompany/nsxkd/detail/detail.js',
+                    init: () => typeof initNsxkdDetailPage === 'function' && initNsxkdDetailPage()
+                },
+                'nsxkd-edit': {
+                    page: '../../certificateCompany/nsxkd/edit/edit.html',
+                    css: '../../certificateCompany/nsxkd/edit/edit.css',
+                    script: '../../certificateCompany/nsxkd/edit/edit.js',
+                    init: () => typeof initNsxkdEditPage === 'function' && initNsxkdEditPage(params.entityId)
                 },
                 'internal-users': {
                     page: '../../certificateCompany/user/list/list.html',
@@ -153,7 +177,8 @@ document.addEventListener('DOMContentLoaded', () => {
                     e.preventDefault();
                     document.querySelectorAll('.sidebar-link').forEach(l => l.classList.remove('active'));
                     link.classList.add('active');
-                    loadContent(link.getAttribute('data-menu'));
+                    const menu = link.getAttribute('data-menu');
+                    loadContent(menu);
                     if (window.innerWidth <= 767.98) {
                         sidebar.classList.remove('active');
                         overlay.classList.remove('active');
@@ -182,7 +207,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 administration: `
                     <ul class="nav flex-column">
                         <li class="nav-item">
-                            <a class="nav-link text-dark sidebar-link active" href="#" data-menu="nsxkd-approval">Mời NSXKD</a>
+                            <a class="nav-link text-dark sidebar-link" href="#" data-menu="nsxkd-approval">Mời NSXKD</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-dark sidebar-link active" href="#" data-menu="nsxkd-management">NSXKD</a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link text-dark sidebar-link" href="#" data-menu="internal-users">Nhân viên</a>
@@ -203,6 +231,9 @@ document.addEventListener('DOMContentLoaded', () => {
                     </li>
                     <li class="nav-item">
                         <a class="nav-link text-dark sidebar-link" href="#" data-menu="nsxkd-approval">Mời NSXKD</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-dark sidebar-link" href="#" data-menu="nsxkd-management">NSXKD</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link text-dark sidebar-link" href="#" data-menu="internal-users">Nhân viên</a>

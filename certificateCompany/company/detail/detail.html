@@ -1,0 +1,76 @@
+<div class="container-fluid py-3">
+    <!-- Error Banner -->
+    <div class="alert alert-danger d-none" id="errorBanner"></div>
+
+    <!-- Loading Spinner -->
+    <div class="d-none position-fixed top-50 start-50 translate-middle" id="loadingSpinner">
+        <div class="spinner-border text-primary" role="status"><span class="visually-hidden">Loading...</span></div>
+    </div>
+
+    <!-- Detail Content -->
+    <div class="card">
+        <div class="card-body">
+            <h2 class="card-title mb-4">Chi tiết lời mời liên kết</h2>
+            <div class="row g-3">
+                <!-- Company Info -->
+                <div class="col-12">
+                    <div class="row g-3">
+                        <div class="col-md-4 col-12 text-center">
+                            <label class="form-label">Logo</label>
+                            <img id="companyLogo" class="img-fluid rounded" style="max-height: 150px;" alt="Logo chủ thể">
+                        </div>
+                        <div class="col-md-8 col-12">
+                            <div class="row g-3">
+                                <div class="col-md-6 col-12">
+                                    <label class="form-label">Mã chủ thể</label>
+                                    <input type="text" class="form-control" id="companyCode" readonly>
+                                </div>
+                                <div class="col-md-6 col-12">
+                                    <label class="form-label">Tên chủ thể</label>
+                                    <input type="text" class="form-control" id="companyName" readonly>
+                                </div>
+                                <div class="col-md-6 col-12">
+                                    <label class="form-label">Số điện thoại</label>
+                                    <input type="text" class="form-control" id="phoneNumber" readonly>
+                                </div>
+                                <div class="col-md-6 col-12">
+                                    <label class="form-label">Email</label>
+                                    <input type="text" class="form-control" id="email" readonly>
+                                </div>
+                                <div class="col-12">
+                                    <label class="form-label">Số ĐKKD</label>
+                                    <input type="text" class="form-control" id="businessRegNumber" readonly>
+                                </div>
+                                <div class="col-12">
+                                    <label class="form-label">Ảnh ĐKKD</label>
+                                    <div class="d-flex gap-3 flex-wrap">
+                                        <img id="businessRegImage1" class="img-fluid rounded" style="max-height: 150px;" alt="Ảnh ĐKKD 1">
+                                        <img id="businessRegImage2" class="img-fluid rounded" style="max-height: 150px;" alt="Ảnh ĐKKD 2">
+                                    </div>
+                                </div>
+                                <div class="col-12">
+                                    <label class="form-label">Địa chỉ</label>
+                                    <input type="text" class="form-control" id="address" readonly>
+                                </div>
+                                <div class="col-12">
+                                    <label class="form-label">Ghi chú</label>
+                                    <textarea class="form-control" id="note" rows="4" readonly></textarea>
+                                </div>
+                                <div class="col-12">
+                                    <label class="form-label">Trạng thái</label>
+                                    <input type="text" class="form-control" id="status" readonly>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="col-12 d-flex gap-2 flex-wrap">
+                    <button class="btn btn-outline-secondary" id="backBtn">Quay lại</button>
+                    <button class="btn btn-outline-danger d-none" id="cancelBtn">Hủy lời mời</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

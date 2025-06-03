@@ -1,258 +1,272 @@
-(function () {
-    const companies = [
-        { id: 1, name: 'Công ty TNHH ABC', phone: '0912345678', representative: 'Nguyễn Văn A', createdTime: '2025-05-16 15:00', status: 'Chờ duyệt' },
-        { id: 2, name: 'Công ty CP XYZ', phone: '0987654321', representative: 'Trần Thị B', createdTime: '2025-05-15 09:30', status: 'Đã duyệt' },
-        { id: 3, name: 'Công ty TNHH DEF', phone: '0931234567', representative: 'Lê Văn C', createdTime: '2025-05-14 14:20', status: 'Từ chối' },
-        { id: 4, name: 'Công ty CP GHI', phone: '0978765432', representative: 'Phạm Thị D', createdTime: '2025-05-13 11:10', status: 'Chờ duyệt' },
-        { id: 5, name: 'Công ty TNHH JKL', phone: '0901234567', representative: 'Hoàng Văn E', createdTime: '2025-05-12 10:00', status: 'Đã duyệt' },
-        { id: 6, name: 'Công ty CP MNO', phone: '0945678901', representative: 'Vũ Thị F', createdTime: '2025-05-11 08:45', status: 'Từ chối' }
-    ];
+const initCompanyList = () => {
+    const elements = {
+        tableView: document.getElementById('tableView'),
+        cardGridView: document.getElementById('cardGridView'),
+        companyTableBody: document.getElementById('companyTableBody'),
+        filterStatus: document.getElementById('filter_status'),
+        filterCompanyCode: document.getElementById('filter_company_code'),
+        filterCompanyName: document.getElementById('filter_company_name'),
+        filterPhoneNumber: document.getElementById('filter_phone_number'),
+        filterStatusMobile: document.getElementById('filter_status_mobile'),
+        filterCompanyCodeMobile: document.getElementById('filter_company_code_mobile'),
+        filterCompanyNameMobile: document.getElementById('filter_company_name_mobile'),
+        filterPhoneNumberMobile: document.getElementById('filter_phone_number_mobile'),
+        applyFilterBtn: document.getElementById('applyFilterBtn'),
+        applyFilterMobileBtn: document.getElementById('applyFilterMobileBtn'),
+        clearFilterBtn: document.getElementById('clearFilterBtn'),
+        clearFilterMobileBtn: document.getElementById('clearFilterMobileBtn'),
+        reloadMobileBtn: document.getElementById('reloadMobileBtn'),
+        retryBtn: document.getElementById('retryBtn'),
+        errorBanner: document.getElementById('errorBanner'),
+        emptyState: document.getElementById('emptyState'),
+        pagination: document.getElementById('pagination'),
+        resultCount: document.getElementById('resultCount'),
+        itemsPerPageSelect: document.getElementById('itemsPerPage'),
+        toggleTableViewBtn: document.getElementById('toggleTableViewBtn'),
+        toggleCardViewBtn: document.getElementById('toggleCardViewBtn'),
+        loadingSpinner: document.getElementById('loadingSpinner'),
+        addNewCompanyBtn: document.getElementById('addNewCompanyBtn'),
+    };
 
-    function initCompanyList() {
-        const elements = {
-            tableBody: document.getElementById('entityTableBody'),
-            cardList: document.querySelector('.card-list'),
-            searchName: document.getElementById('searchEntityName'),
-            searchPhone: document.getElementById('searchPhone'),
-            searchStatus: document.getElementById('searchStatus'),
-            searchBtn: document.getElementById('searchBtn'),
-            clearBtn: document.getElementById('clearFilterBtn'),
-            inviteBtn: document.getElementById('inviteBtn'),
-            pagination: document.getElementById('pagination'),
-            resultCount: document.getElementById('resultCount'),
-            itemsPerPage: document.getElementById('itemsPerPage')
+    let companies = [], filteredCompanies = [], itemsPerPage = 10, currentPage = 1, isTableView = true;
+    const statusBadgeClass = {
+        'Chờ duyệt': 'badge-pending',
+        'Đã duyệt': 'badge-approved',
+        'Từ chối': 'badge-rejected',
+        'Đã hủy': 'badge-cancelled'
+    };
+
+    const formatDate = (dateStr) => {
+        const [year, month, day] = dateStr.split('-');
+        return `${day}/${month}/${year}`;
+    };
+
+    // Debounce function
+    const debounce = (func, delay) => {
+        let timeoutId;
+        return (...args) => {
+            clearTimeout(timeoutId);
+            timeoutId = setTimeout(() => func.apply(null, args), delay);
         };
+    };
 
-        let state = {
-            filteredCompanies: [...companies],
-            itemsPerPage: elements.itemsPerPage ? parseInt(elements.itemsPerPage.value) : 10,
-            currentPage: 1
-        };
-
-        function renderTable(data, page) {
-            if (!elements.tableBody) return;
-            elements.tableBody.innerHTML = '';
-            const start = (page - 1) * state.itemsPerPage;
-            const end = start + state.itemsPerPage;
-            const paginatedData = data.slice(start, end);
-
-            const fragment = document.createDocumentFragment();
-            paginatedData.forEach((company, index) => {
-                const row = document.createElement('tr');
-                row.innerHTML = `
-                    <td class="text-center">${start + index + 1}</td>
-                    <td>${company.name}</td>
-                    <td>${company.phone}</td>
-                    <td>${company.representative}</td>
-                    <td>${company.createdTime}</td>
-                    <td><span class="badge ${getStatusClass(company.status)}">${company.status}</span></td>
-                    <td class="text-center">
-                        <button class="btn btn-sm btn-outline-primary view-details-btn" title="Xem chi tiết" data-id="${company.id}">
-                            <i class="bi bi-eye"></i>
-                        </button>
-                        ${company.status === 'Chờ duyệt' ? `
-                            <button class="btn btn-sm btn-outline-danger cancel-invite-btn" title="Hủy lời mời" data-id="${company.id}">
-                                <i class="bi bi-x-circle"></i>
-                            </button>
-                        ` : ''}
-                    </td>
-                `;
-                fragment.appendChild(row);
-            });
-            elements.tableBody.appendChild(fragment);
-
-            renderCards(data, page);
-            renderPagination(data.length);
-            if (elements.resultCount) {
-                elements.resultCount.textContent = `${data.length}/${companies.length} kết quả`;
-            }
-        }
-
-        function renderCards(data, page) {
-            if (!elements.cardList) return;
-            elements.cardList.innerHTML = '';
-            const start = (page - 1) * state.itemsPerPage;
-            const end = start + state.itemsPerPage;
-            const paginatedData = data.slice(start, end);
-
-            const fragment = document.createDocumentFragment();
-            paginatedData.forEach((company) => {
-                const card = document.createElement('div');
-                card.className = 'card';
-                card.innerHTML = `
-                    <div class="card-body">
-                        <h6 class="card-title">${company.name}</h6>
-                        <p class="card-text mb-1"><strong>Số điện thoại:</strong> ${company.phone}</p>
-                        <p class="card-text mb-1"><strong>Người đại diện:</strong> ${company.representative}</p>
-                        <p class="card-text mb-1"><strong>Thời gian:</strong> ${company.createdTime}</p>
-                        <p class="card-text mb-1"><strong>Trạng thái:</strong> <span class="badge ${getStatusClass(company.status)}">${company.status}</span></p>
-                        <div class="d-flex gap-1 mt-2">
-                            <button class="btn btn-sm btn-outline-primary view-details-btn" title="Xem chi tiết" data-id="${company.id}">
-                                <i class="bi bi-eye"></i>
-                            </button>
-                            ${company.status === 'Chờ duyệt' ? `
-                                <button class="btn btn-sm btn-outline-danger cancel-invite-btn" title="Hủy lời mời" data-id="${company.id}">
-                                    <i class="bi bi-x-circle"></i>
-                                </button>
-                            ` : ''}
-                        </div>
-                    </div>
-                `;
-                fragment.appendChild(card);
-            });
-            elements.cardList.appendChild(fragment);
-        }
-
-        function getStatusClass(status) {
-            switch (status) {
-                case 'Chờ duyệt': return 'bg-warning text-dark';
-                case 'Đã duyệt': return 'bg-success';
-                case 'Từ chối': return 'bg-danger';
-                default: return 'bg-secondary';
-            }
-        }
-
-        function renderPagination(totalItems) {
-            if (!elements.pagination) return;
-            elements.pagination.innerHTML = '';
-            const totalPages = Math.ceil(totalItems / state.itemsPerPage);
-            const fragment = document.createDocumentFragment();
-
-            const prevLi = document.createElement('li');
-            prevLi.className = `page-item ${state.currentPage === 1 ? 'disabled' : ''}`;
-            prevLi.innerHTML = `<a class="page-link" href="#" aria-label="Previous"><span aria-hidden="true">«</span></a>`;
-            prevLi.addEventListener('click', (e) => {
-                e.preventDefault();
-                if (state.currentPage > 1) {
-                    state.currentPage--;
-                    renderTable(state.filteredCompanies, state.currentPage);
-                }
-            });
-            fragment.appendChild(prevLi);
-
-            for (let i = 1; i <= totalPages; i++) {
-                const pageLi = document.createElement('li');
-                pageLi.className = `page-item ${i === state.currentPage ? 'active' : ''}`;
-                pageLi.innerHTML = `<a class="page-link" href="#">${i}</a>`;
-                pageLi.addEventListener('click', (e) => {
-                    e.preventDefault();
-                    state.currentPage = i;
-                    renderTable(state.filteredCompanies, state.currentPage);
-                });
-                fragment.appendChild(pageLi);
-            }
-
-            const nextLi = document.createElement('li');
-            nextLi.className = `page-item ${state.currentPage === totalPages ? 'disabled' : ''}`;
-            nextLi.innerHTML = `<a class="page-link" href="#" aria-label="Next"><span aria-hidden="true">»</span></a>`;
-            nextLi.addEventListener('click', (e) => {
-                e.preventDefault();
-                if (state.currentPage < totalPages) {
-                    state.currentPage++;
-                    renderTable(state.filteredCompanies, state.currentPage);
-                }
-            });
-            fragment.appendChild(nextLi);
-
-            elements.pagination.appendChild(fragment);
-        }
-
-        function handleSearch() {
-            const name = elements.searchName?.value.trim().toLowerCase() || '';
-            const phone = elements.searchPhone?.value.trim().toLowerCase() || '';
-            const status = elements.searchStatus?.value || '';
-
-            state.filteredCompanies = companies.filter(company =>
-                (!name || company.name.toLowerCase().includes(name)) &&
-                (!phone || company.phone.includes(phone)) &&
-                (!status || company.status === status)
+    // Fetch companies with mock data
+    const fetchCompanies = async () => {
+        elements.loadingSpinner.classList.remove('d-none');
+        try {
+            await new Promise((resolve) =>
+                setTimeout(() => resolve({
+                    ok: true,
+                    json: () => Promise.resolve([
+                        { id: 1, companyCode: 'CT001', companyName: 'Công ty A', phoneNumber: '0901234567', createdDate: '2025-05-07', status: 'Chờ duyệt' },
+                        { id: 2, companyCode: 'CT002', companyName: 'Công ty B', phoneNumber: '0912345678', createdDate: '2025-05-05', status: 'Đã duyệt' },
+                        { id: 3, companyCode: 'CT003', companyName: 'Công ty C', phoneNumber: '0923456789', createdDate: '2025-05-07', status: 'Chờ duyệt' },
+                        { id: 4, companyCode: 'CT004', companyName: 'Công ty D', phoneNumber: '0934567890', createdDate: '2025-05-07', status: 'Từ chối' },
+                        { id: 5, companyCode: 'CT005', companyName: 'Công ty E', phoneNumber: '0945678901', createdDate: '2025-05-07', status: 'Chờ duyệt' },
+                        { id: 6, companyCode: 'CT006', companyName: 'Công ty F', phoneNumber: '0956789012', createdDate: '2025-05-06', status: 'Đã duyệt' },
+                        { id: 7, companyCode: 'CT007', companyName: 'Công ty G', phoneNumber: '0967890123', createdDate: '2025-01-03', status: 'Chờ duyệt' },
+                        { id: 8, companyCode: 'CT008', companyName: 'Công ty H', phoneNumber: '0978901234', createdDate: '2025-01-03', status: 'Đã hủy' },
+                    ]),
+                }), 1000)
             );
-            state.currentPage = 1;
-            renderTable(state.filteredCompanies, state.currentPage);
+            companies = [
+                { id: 1, companyCode: 'CT001', companyName: 'Công ty A', phoneNumber: '0901234567', createdDate: '2025-05-07', status: 'Chờ duyệt' },
+                { id: 2, companyCode: 'CT002', companyName: 'Công ty B', phoneNumber: '0912345678', createdDate: '2025-05-05', status: 'Đã duyệt' },
+                { id: 3, companyCode: 'CT003', companyName: 'Công ty C', phoneNumber: '0923456789', createdDate: '2025-05-07', status: 'Chờ duyệt' },
+                { id: 4, companyCode: 'CT004', companyName: 'Công ty D', phoneNumber: '0934567890', createdDate: '2025-05-07', status: 'Từ chối' },
+                { id: 5, companyCode: 'CT005', companyName: 'Công ty E', phoneNumber: '0945678901', createdDate: '2025-05-07', status: 'Chờ duyệt' },
+                { id: 6, companyCode: 'CT006', companyName: 'Công ty F', phoneNumber: '0956789012', createdDate: '2025-05-06', status: 'Đã duyệt' },
+                { id: 7, companyCode: 'CT007', companyName: 'Công ty G', phoneNumber: '0967890123', createdDate: '2025-01-03', status: 'Chờ duyệt' },
+                { id: 8, companyCode: 'CT008', companyName: 'Công ty H', phoneNumber: '0978901234', createdDate: '2025-01-03', status: 'Đã hủy' },
+            ];
+            filteredCompanies = [...companies];
+            elements.errorBanner.classList.add('d-none');
+            renderData();
+        } catch (error) {
+            console.error('Fetch error:', error);
+            elements.errorBanner.classList.remove('d-none');
+            elements.emptyState.classList.add('d-none');
+            [elements.companyTableBody, elements.cardGridView, elements.pagination].forEach(el => el && (el.innerHTML = ''));
+        } finally {
+            elements.loadingSpinner.classList.add('d-none');
+        }
+    };
+
+    const updateCompanyStatus = async (companyId, newStatus) => {
+        try {
+            await new Promise((resolve) => setTimeout(resolve, 500));
+            const companyIndex = companies.findIndex(c => c.id === parseInt(companyId));
+            if (companyIndex !== -1) {
+                companies[companyIndex].status = newStatus;
+                filteredCompanies = [...companies];
+                renderData();
+                return true;
+            }
+            return false;
+        } catch (error) {
+            console.error('Error updating company status:', error);
+            return false;
+        }
+    };
+
+    const renderTableRow = (company, index, start) => `
+        <tr>
+            <td class="text-center">${start + index + 1}</td>
+            <td><span data-bs-toggle="tooltip" data-bs-title="Mã chủ thể: ${company.companyCode}\nTên chủ thể: ${company.companyName}">${company.companyCode}</span></td>
+            <td>${company.companyName}</td>
+            <td>${company.phoneNumber}</td>
+            <td>${formatDate(company.createdDate)}</td>
+            <td><span class="badge ${statusBadgeClass[company.status]}">${company.status}</span></td>
+            <td class="text-center action-buttons">
+                <button class="btn btn-sm btn-outline-primary view-details-btn" data-id="${company.id}"><i class="bi bi-eye"></i></button>
+                ${company.status === 'Chờ duyệt' ? `<button class="btn btn-sm btn-outline-danger cancel-btn" data-id="${company.id}"><i class="bi bi-x-circle"></i></button>` : ''}
+            </td>
+        </tr>
+    `;
+
+    const renderCardItem = (company) => `
+        <div class="col">
+            <div class="card">
+                <div class="card-body">
+                    <h6 class="card-title">${company.companyName}</h6>
+                    <p class="card-text mb-1"><strong>Mã chủ thể:</strong> ${company.companyCode}</p>
+                    <p class="card-text mb-1"><strong>Số điện thoại:</strong> ${company.phoneNumber}</p>
+                    <p class="card-text mb-1"><strong>Thời gian tạo:</strong> ${formatDate(company.createdDate)}</p>
+                    <p class="card-text mb-1"><strong>Trạng thái:</strong> <span class="badge ${statusBadgeClass[company.status]}">${company.status}</span></p>
+                    <div class="d-flex gap-2 flex-wrap">
+                        <button class="btn btn-sm btn-outline-primary view-details-btn" data-id="${company.id}"><i class="bi bi-eye"></i> Xem chi tiết</button>
+                        ${company.status === 'Chờ duyệt' ? `<button class="btn btn-sm btn-outline-danger cancel-btn" data-id="${company.id}"><i class="bi bi-x-circle"></i> Hủy lời mời</button>` : ''}
+                    </div>
+                </div>
+            </div>
+        </div>
+    `;
+
+    const renderData = () => {
+        const start = (currentPage - 1) * itemsPerPage;
+        const end = start + itemsPerPage;
+        const paginatedData = filteredCompanies.slice(start, end);
+
+        if (filteredCompanies.length === 0) {
+            elements.emptyState.classList.remove('d-none');
+            [elements.companyTableBody, elements.cardGridView, elements.pagination].forEach(el => el && (el.innerHTML = ''));
+            elements.resultCount.textContent = '0/0 kết quả';
+            return;
+        }
+        elements.emptyState.classList.add('d-none');
+
+        const isDesktopTableView = isTableView && window.innerWidth >= 768;
+        [elements.tableView, elements.cardGridView].forEach(el => {
+            el.classList.toggle('active', el === (isDesktopTableView ? elements.tableView : elements.cardGridView));
+            el.classList.toggle('d-none', !el.classList.contains('active'));
+        });
+
+        if (isDesktopTableView) {
+            elements.companyTableBody.innerHTML = paginatedData.map((company, index) => renderTableRow(company, index, start)).join('');
+        } else {
+            elements.cardGridView.innerHTML = paginatedData.map(renderCardItem).join('');
         }
 
-        function clearFilters() {
-            if (elements.searchName) elements.searchName.value = '';
-            if (elements.searchPhone) elements.searchPhone.value = '';
-            if (elements.searchStatus) elements.searchStatus.value = '';
-            state.filteredCompanies = [...companies];
-            state.currentPage = 1;
-            renderTable(state.filteredCompanies, state.currentPage);
+        renderPagination(filteredCompanies.length);
+        elements.resultCount.textContent = `${filteredCompanies.length}/${companies.length} kết quả`;
+        addActionListeners();
+        initTooltips();
+    };
+
+    const initTooltips = () => document.querySelectorAll('[data-bs-toggle="tooltip"]').forEach(el => new bootstrap.Tooltip(el));
+
+    const renderPagination = (totalItems) => {
+        const totalPages = Math.ceil(totalItems / itemsPerPage);
+        elements.pagination.innerHTML = `
+            <li class="page-item ${currentPage === 1 ? 'disabled' : ''}"><a class="page-link" href="#" aria-label="Previous"><span>«</span></a></li>
+            ${Array.from({ length: totalPages }, (_, i) => `<li class="page-item ${i + 1 === currentPage ? 'active' : ''}"><a class="page-link" href="#">${i + 1}</a></li>`).join('')}
+            <li class="page-item ${currentPage === totalPages ? 'disabled' : ''}"><a class="page-link" href="#" aria-label="Next"><span>»</span></a></li>
+        `;
+        elements.pagination.querySelectorAll('.page-link').forEach(link => link.addEventListener('click', (e) => {
+            e.preventDefault();
+            const targetPage = parseInt(link.textContent) || (link.getAttribute('aria-label') === 'Previous' ? currentPage - 1 : currentPage + 1);
+            if (targetPage >= 1 && targetPage <= totalPages && targetPage !== currentPage) {
+                currentPage = targetPage;
+                renderData();
+            }
+        }));
+    };
+
+    const applyFilters = () => {
+        const status = elements.filterStatus.value || elements.filterStatusMobile.value;
+        const companyCode = (elements.filterCompanyCode.value || elements.filterCompanyCodeMobile.value).trim().toLowerCase();
+        const companyName = (elements.filterCompanyName.value || elements.filterCompanyNameMobile.value).trim().toLowerCase();
+        const phoneNumber = (elements.filterPhoneNumber.value || elements.filterPhoneNumberMobile.value).trim().toLowerCase();
+
+        filteredCompanies = companies.filter(company => {
+            const matchesStatus = !status || company.status === status;
+            const matchesCode = !companyCode || company.companyCode.toLowerCase().includes(companyCode);
+            const matchesName = !companyName || company.companyName.toLowerCase().includes(companyName);
+            const matchesPhone = !phoneNumber || company.phoneNumber.toLowerCase().includes(phoneNumber);
+            return matchesStatus && matchesCode && matchesName && matchesPhone;
+        });
+
+        currentPage = 1;
+        renderData();
+    };
+
+    const clearFilters = () => {
+        [elements.filterStatus, elements.filterCompanyCode, elements.filterCompanyName, elements.filterPhoneNumber,
+        elements.filterStatusMobile, elements.filterCompanyCodeMobile, elements.filterCompanyNameMobile, elements.filterPhoneNumberMobile]
+            .forEach(el => el.value = '');
+        applyFilters();
+    };
+
+    const handleCancel = (companyId) => {
+        if (window.Popup && typeof window.Popup.showApproveConfirm === 'function') {
+            window.Popup.showApproveConfirm(
+                companyId,
+                async (id) => {
+                    const success = await updateCompanyStatus(id, 'Đã hủy');
+                    if (success && window.Toast && typeof window.Toast.showSuccess === 'function') {
+                        window.Toast.showSuccess('Hủy lời mời liên kết thành công!');
+                    }
+                },
+                'Bạn có chắc chắn muốn hủy lời mời liên kết này không?'
+            );
         }
+    };
 
-        function loadDetails(companyId) {
-            if (typeof window.loadContent === 'function') {
-                window.loadContent('company-details', { companyId });
-            } else {
-                console.error('loadContent not found');
-            }
-        }
+    const addActionListeners = () => {
+        // Xử lý sự kiện cho nút Thêm mới
+        elements.addNewCompanyBtn.addEventListener('click', () => {
+            window.loadContent('company-add-new');
+        });
 
-        function cancelInvite(companyId) {
-            if (typeof window.loadContent === 'function') {
-                window.loadContent('company-cancel-invite', { companyId });
-            } else {
-                console.error('loadContent not found');
-            }
-        }
+        document.querySelectorAll('.view-details-btn').forEach(btn => btn.addEventListener('click', () => {
+            const companyId = btn.dataset.id;
+            window.loadContent('company-details', { companyId });
+        }));
 
-        function loadInvitePage() {
-            if (typeof window.loadContent === 'function') {
-                window.loadContent('company-invite');
-            } else {
-                console.error('loadContent not found');
-            }
-        }
+        document.querySelectorAll('.cancel-btn').forEach(btn => btn.addEventListener('click', () => {
+            const companyId = btn.dataset.id;
+            handleCancel(companyId);
+        }));
+    };
 
-        function addEventListeners() {
-            if (elements.searchBtn) {
-                elements.searchBtn.addEventListener('click', handleSearch);
-            }
-            if (elements.clearBtn) {
-                elements.clearBtn.addEventListener('click', clearFilters);
-            }
-            if (elements.inviteBtn) {
-                elements.inviteBtn.addEventListener('click', loadInvitePage);
-            }
-            if (elements.itemsPerPage) {
-                elements.itemsPerPage.addEventListener('change', () => {
-                    state.itemsPerPage = parseInt(elements.itemsPerPage.value);
-                    state.currentPage = 1;
-                    renderTable(state.filteredCompanies, state.currentPage);
-                });
-            }
-
-            elements.tableBody?.addEventListener('click', (e) => {
-                const target = e.target.closest('button');
-                if (!target) return;
-                const companyId = target.dataset.id;
-                if (target.classList.contains('view-details-btn')) {
-                    loadDetails(companyId);
-                } else if (target.classList.contains('cancel-invite-btn')) {
-                    cancelInvite(companyId);
-                }
-            });
-
-            elements.cardList?.addEventListener('click', (e) => {
-                const target = e.target.closest('button');
-                if (!target) return;
-                const companyId = target.dataset.id;
-                if (target.classList.contains('view-details-btn')) {
-                    loadDetails(companyId);
-                } else if (target.classList.contains('cancel-invite-btn')) {
-                    cancelInvite(companyId);
-                }
-            });
-        }
-
-        console.log('list.js loaded, initializing initCompanyList');
-        addEventListeners();
-        renderTable(state.filteredCompanies, state.currentPage);
-    }
-
-    window.initCompanyList = initCompanyList;
-    document.addEventListener('DOMContentLoaded', () => {
-        console.log('DOMContentLoaded, calling initCompanyList');
-        initCompanyList();
+    const debouncedApplyFilters = debounce(applyFilters, 300);
+    [elements.toggleTableViewBtn, elements.toggleCardViewBtn].forEach(btn => btn.addEventListener('click', () => {
+        isTableView = btn === elements.toggleTableViewBtn;
+        renderData();
+    }));
+    [elements.applyFilterBtn, elements.applyFilterMobileBtn].forEach(btn => btn.addEventListener('click', applyFilters));
+    [elements.clearFilterBtn, elements.clearFilterMobileBtn].forEach(btn => btn.addEventListener('click', clearFilters));
+    [elements.reloadMobileBtn, elements.retryBtn].forEach(btn => btn.addEventListener('click', fetchCompanies));
+    elements.itemsPerPageSelect.addEventListener('change', () => {
+        itemsPerPage = parseInt(elements.itemsPerPageSelect.value);
+        currentPage = 1;
+        renderData();
     });
-})();
+    [elements.filterCompanyCode, elements.filterCompanyName, elements.filterPhoneNumber,
+    elements.filterCompanyCodeMobile, elements.filterCompanyNameMobile, elements.filterPhoneNumberMobile]
+        .forEach(el => el.addEventListener('input', debouncedApplyFilters));
+
+    fetchCompanies();
+};
+
+document.addEventListener('DOMContentLoaded', initCompanyList);

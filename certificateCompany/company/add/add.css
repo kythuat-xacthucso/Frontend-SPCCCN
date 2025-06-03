@@ -1,0 +1,22 @@
+/* Ensure images are responsive */
+.img-fluid {
+    max-width: 100%;
+    height: auto;
+}
+
+/* Card styling */
+.card {
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+/* Responsive adjustments */
+@media (max-width: 767.98px) {
+    .card {
+        margin: 0 10px;
+    }
+    .d-flex.gap-3 {
+        flex-direction: column;
+        gap: 1rem;
+    }
+}

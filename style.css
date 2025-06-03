@@ -1,1 +1,31 @@
 /* Add styles here */
+body {
+    font-family: Arial, sans-serif;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    margin: 0;
+    background-color: #f9f9f9;
+  }
+  h1 {
+    margin-bottom: 2rem;
+    color: #333;
+  }
+  .role-button {
+    display: block;
+    width: 300px;
+    padding: 1rem;
+    margin: 0.5rem 0;
+    font-size: 1rem;
+    cursor: pointer;
+    border: none;
+    border-radius: 8px;
+    background-color: #007bff;
+    color: white;
+    transition: background-color 0.3s;
+  }
+  .role-button:hover {
+    background-color: #0056b3;
+  }

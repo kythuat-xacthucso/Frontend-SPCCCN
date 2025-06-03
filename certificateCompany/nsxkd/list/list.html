@@ -1,13 +1,13 @@
 <div class="container-fluid py-3">
     <!-- Error Banner -->
     <div class="alert alert-danger d-none" id="errorBanner">
-        Lỗi khi tải danh sách lời mời liên kết. <button class="btn btn-sm btn-link" id="retryBtn">Thử lại</button>
+        Lỗi khi tải danh sách NSXKD. <button class="btn btn-sm btn-link" id="retryBtn">Thử lại</button>
     </div>
 
     <!-- Empty State -->
     <div class="d-none text-center py-5" id="emptyState">
         <i class="bi bi-inbox fs-1 text-muted"></i>
-        <p class="text-muted mt-3">Hiện chưa có lời mời liên kết nào</p>
+        <p class="text-muted mt-3">Hiện chưa có NSXKD nào</p>
     </div>
 
     <!-- Filter Section (Desktop - Accordion) -->
@@ -19,29 +19,35 @@
             <div id="collapseFilter" class="accordion-collapse collapse show">
                 <div class="accordion-body">
                     <div class="row g-3">
-                        <div class="col-md-3 col-12">
-                            <label class="form-label" for="filter_status">Trạng thái</label>
-                            <select class="form-select" id="filter_status">
-                                <option value="">Tất cả trạng thái</option>
-                                <option value="Chờ duyệt">Chờ duyệt</option>
-                                <option value="Đã duyệt">Đã duyệt</option>
-                                <option value="Từ chối">Từ chối</option>
-                                <option value="Đã hủy">Đã hủy</option>
-                            </select>
+                        <div class="col-md-2 col-12">
+                            <label class="form-label" for="filter_nsxkd_code">Mã NSXKD</label>
+                            <input type="text" class="form-control" id="filter_nsxkd_code" placeholder="Mã NSXKD">
                         </div>
-                        <div class="col-md-3 col-12">
-                            <label class="form-label" for="filter_company_code">Mã chủ thể</label>
-                            <input type="text" class="form-control" id="filter_company_code" placeholder="Mã chủ thể">
+                        <div class="col-md-2 col-12">
+                            <label class="form-label" for="filter_nsxkd_name">Tên NSXKD</label>
+                            <input type="text" class="form-control" id="filter_nsxkd_name" placeholder="Tên NSXKD">
                         </div>
-                        <div class="col-md-3 col-12">
-                            <label class="form-label" for="filter_company_name">Tên chủ thể</label>
-                            <input type="text" class="form-control" id="filter_company_name" placeholder="Tên chủ thể">
+                        <div class="col-md-2 col-12">
+                            <label class="form-label" for="filter_mst">MST</label>
+                            <input type="text" class="form-control" id="filter_mst" placeholder="MST">
                         </div>
-                        <div class="col-md-3 col-12">
+                        <div class="col-md-2 col-12">
                             <label class="form-label" for="filter_phone_number">Số điện thoại</label>
                             <input type="text" class="form-control" id="filter_phone_number" placeholder="Số điện thoại">
                         </div>
-                        <div class="col-md-3 col-12 d-flex align-items-end gap-2">
+                        <div class="col-md-2 col-12">
+                            <label class="form-label" for="filter_email">Email</label>
+                            <input type="text" class="form-control" id="filter_email" placeholder="Email">
+                        </div>
+                        <div class="col-md-2 col-12">
+                            <label class="form-label" for="filter_status">Trạng thái</label>
+                            <select class="form-select" id="filter_status">
+                                <option value="">Tất cả trạng thái</option>
+                                <option value="Đang hoạt động">Đang hoạt động</option>
+                                <option value="Khóa">Khóa</option>
+                            </select>
+                        </div>
+                        <div class="col-md-2 col-12 d-flex align-items-end gap-2">
                             <button class="btn btn-primary w-100" id="applyFilterBtn">Tìm kiếm</button>
                             <button class="btn btn-outline-secondary w-100" id="clearFilterBtn">Xóa bộ lọc</button>
                         </div>
@@ -54,10 +60,9 @@
     <!-- Main Content -->
     <div class="content-wrapper">
         <div class="d-flex justify-content-between align-items-center mb-4">
-            <h2 class="mb-0">Danh sách lời mời liên kết</h2>
+            <h2 class="mb-0">Danh sách NSXKD</h2>
             <div class="d-flex gap-2">
-                <!-- Nút Thêm mới -->
-                <button class="btn btn-primary" id="addNewCompanyBtn"><i class="bi bi-plus-lg me-1"></i> Gửi lời mời mới</button>
+                <!-- Bỏ nút Thêm mới -->
                 <!-- Nút chuyển đổi view (desktop) -->
                 <div class="d-none d-md-flex gap-2">
                     <button class="btn btn-outline-secondary" id="toggleTableViewBtn" title="Chuyển sang Bảng"><i class="bi bi-table"></i></button>
@@ -72,15 +77,17 @@
                 <thead class="table-light">
                     <tr>
                         <th class="text-center col-1">STT</th>
-                        <th class="col-2">Mã chủ thể</th>
-                        <th class="col-3">Tên chủ thể</th>
+                        <th class="col-2">Mã NSXKD</th>
+                        <th class="col-2">Tên NSXKD</th>
+                        <th class="col-2">MST</th>
                         <th class="col-2">Số điện thoại</th>
-                        <th class="col-2">Thời gian tạo</th>
-                        <th class="col-2">Trạng thái</th>
+                        <th class="col-2">Email</th>
+                        <th class="col-1">Thời gian liên kết</th>
+                        <th class="col-1">Trạng thái</th>
                         <th class="text-center col-2">Hành động</th>
                     </tr>
                 </thead>
-                <tbody id="companyTableBody"></tbody>
+                <tbody id="nsxkdTableBody"></tbody>
             </table>
         </div>
 
@@ -115,23 +122,29 @@
                     <label class="form-label" for="filter_status_mobile">Trạng thái</label>
                     <select class="form-select" id="filter_status_mobile">
                         <option value="">Tất cả trạng thái</option>
-                        <option value="Chờ duyệt">Chờ duyệt</option>
-                        <option value="Đã duyệt">Đã duyệt</option>
-                        <option value="Từ chối">Từ chối</option>
-                        <option value="Đã hủy">Đã hủy</option>
+                        <option value="Đang hoạt động">Đang hoạt động</option>
+                        <option value="Khóa">Khóa</option>
                     </select>
                 </div>
                 <div class="mb-3">
-                    <label class="form-label" for="filter_company_code_mobile">Mã chủ thể</label>
-                    <input type="text" class="form-control" id="filter_company_code_mobile" placeholder="Mã chủ thể">
+                    <label class="form-label" for="filter_nsxkd_code_mobile">Mã NSXKD</label>
+                    <input type="text" class="form-control" id="filter_nsxkd_code_mobile" placeholder="Mã NSXKD">
                 </div>
                 <div class="mb-3">
-                    <label class="form-label" for="filter_company_name_mobile">Tên chủ thể</label>
-                    <input type="text" class="form-control" id="filter_company_name_mobile" placeholder="Tên chủ thể">
+                    <label class="form-label" for="filter_nsxkd_name_mobile">Tên NSXKD</label>
+                    <input type="text" class="form-control" id="filter_nsxkd_name_mobile" placeholder="Tên NSXKD">
+                </div>
+                <div class="mb-3">
+                    <label class="form-label" for="filter_mst_mobile">MST</label>
+                    <input type="text" class="form-control" id="filter_mst_mobile" placeholder="MST">
                 </div>
                 <div class="mb-3">
                     <label class="form-label" for="filter_phone_number_mobile">Số điện thoại</label>
                     <input type="text" class="form-control" id="filter_phone_number_mobile" placeholder="Số điện thoại">
+                </div>
+                <div class="mb-3">
+                    <label class="form-label" for="filter_email_mobile">Email</label>
+                    <input type="text" class="form-control" id="filter_email_mobile" placeholder="Email">
                 </div>
                 <div class="d-flex gap-2">
                     <button class="btn btn-primary w-100" id="applyFilterMobileBtn">Áp dụng bộ lọc</button>

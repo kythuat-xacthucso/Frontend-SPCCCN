@@ -1,10 +1,8 @@
 /* Badge styling */
-.badge-pending { background-color: #ffc107; color: black; }
-.badge-approved { background-color: #198754; color: white; }
-.badge-rejected { background-color: #dc3545; color: white; }
-.badge-cancelled { background-color: #6c757d; color: white; }
+.badge-active { background-color: #198754; color: white; }
+.badge-locked { background-color: #dc3545; color: white; }
 
-/* Fixed bottom for mobile */
+/* Fixed bottom for buttons */
 .fixed-bottom { bottom: 0; left: 0; right: 0; z-index: 1000; }
 
 /* Content wrapper to isolate layout */
@@ -21,11 +19,7 @@
     #tableView { display: none !important; }
     #cardGridView.active { display: block; }
     #toggleTableViewBtn, #toggleCardViewBtn { display: none !important; }
-    /* Đảm bảo nút Thêm mới không bị đè lên bởi các thành phần khác trên mobile */
-    .d-flex.justify-content-between.align-items-center.mb-4 {
-        flex-wrap: wrap;
-        gap: 0.5rem;
-    }
+    .fixed-bottom { padding: 1rem !important; }
 }
 
 @media (min-width: 768px) {
@@ -38,5 +32,4 @@
         max-width: 50%;
         box-sizing: border-box; /* Đảm bảo padding/margin không làm vượt kích thước */
     }
-    .action-buttons { min-width: 200px; }
 }

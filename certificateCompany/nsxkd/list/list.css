@@ -1,8 +1,6 @@
 /* Badge styling */
-.badge-pending { background-color: #ffc107; color: black; }
-.badge-approved { background-color: #198754; color: white; }
-.badge-rejected { background-color: #dc3545; color: white; }
-.badge-cancelled { background-color: #6c757d; color: white; }
+.badge-active { background-color: #198754; color: white; }
+.badge-locked { background-color: #dc3545; color: white; }
 
 /* Fixed bottom for mobile */
 .fixed-bottom { bottom: 0; left: 0; right: 0; z-index: 1000; }
