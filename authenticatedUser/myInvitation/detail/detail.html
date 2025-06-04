@@ -1,0 +1,101 @@
+<div class="modal fade" id="detailModal" tabindex="-1" aria-labelledby="detailModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-custom-width">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="detailModalLabel">Chi tiết lời mời liên kết</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="accordion" id="detailAccordion">
+                    <!-- Section 1: Information -->
+                    <div class="accordion-item">
+                        <h2 class="accordion-header" id="infoHeading">
+                            <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#infoCollapse" aria-expanded="true" aria-controls="infoCollapse">
+                                Thông tin cơ bản
+                            </button>
+                        </h2>
+                        <div id="infoCollapse" class="accordion-collapse collapse show" aria-labelledby="infoHeading">
+                            <div class="accordion-body">
+                                <div class="card">
+                                    <div class="card-body section-1">
+                                        <div class="d-flex mb-2">
+                                            <label class="form-label me-2">Mã chủ thể quản lý:</label>
+                                            <p id="managerCode" class="form-control-plaintext mb-0"></p>
+                                        </div>
+                                        <div class="d-flex mb-2">
+                                            <label class="form-label me-2">Tên chủ thể quản lý:</label>
+                                            <p id="managerName" class="form-control-plaintext mb-0"></p>
+                                        </div>
+                                        <div class="d-flex mb-2">
+                                            <label class="form-label me-2">Số điện thoại:</label>
+                                            <p id="phone" class="form-control-plaintext mb-0"></p>
+                                        </div>
+                                        <div class="d-flex mb-2">
+                                            <label class="form-label me-2">Email:</label>
+                                            <p id="email" class="form-control-plaintext mb-0"></p>
+                                        </div>
+                                        <div class="d-flex mb-2">
+                                            <label class="form-label me-2">Số ĐKKD:</label>
+                                            <p id="businessRegNum" class="form-control-plaintext mb-0"></p>
+                                        </div>
+                                        <div class="d-flex mb-2">
+                                            <label class="form-label me-2">Địa chỉ:</label>
+                                            <p id="address" class="form-control-plaintext mb-0"></p>
+                                        </div>
+                                        <div class="d-flex mb-2">
+                                            <label class="form-label me-2">Ghi chú:</label>
+                                            <p id="note" class="form-control-plaintext mb-0"></p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Section 2: Media and Status -->
+                    <div class="accordion-item">
+                        <h2 class="accordion-header" id="mediaHeading">
+                            <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#mediaCollapse" aria-expanded="true" aria-controls="mediaCollapse">
+                                Hình ảnh và trạng thái
+                            </button>
+                        </h2>
+                        <div id="mediaCollapse" class="accordion-collapse collapse show" aria-labelledby="mediaHeading">
+                            <div class="accordion-body">
+                                <div class="card">
+                                    <div class="card-body section-2">
+                                        <div class="text-center mb-3">
+                                            <label class="form-label">Logo:</label>
+                                            <p><img id="logo" src="https://via.placeholder.com/150" alt="Logo" class="img-fluid"></p>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label class="form-label">Ảnh đăng ký kinh doanh:</label>
+                                            <div class="row">
+                                                <div class="col-6">
+                                                    <p><img id="businessRegImg1" src="https://via.placeholder.com/100" alt="Business Reg Img 1" class="img-fluid"></p>
+                                                </div>
+                                                <div class="col-6">
+                                                    <p><img id="businessRegImg2" src="https://via.placeholder.com/100" alt="Business Reg Img 2" class="img-fluid"></p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="d-flex mb-2">
+                                            <label class="form-label me-2">Ngày gửi:</label>
+                                            <p id="date" class="form-control-plaintext mb-0"></p>
+                                        </div>
+                                        <div class="d-flex mb-2">
+                                            <label class="form-label me-2">Trạng thái:</label>
+                                            <p id="status" class="form-control-plaintext mb-0"></p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Quay lại</button>
+            </div>
+        </div>
+    </div>
+</div>

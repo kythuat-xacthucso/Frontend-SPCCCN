@@ -1,0 +1,94 @@
+.modal-custom-width {
+    max-width: 80vw;
+    width: 80vw;
+}
+
+.modal-body .accordion {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.accordion-item {
+    flex: 1;
+    min-width: 0;
+}
+
+@media (min-width: 768px) {
+    .accordion-item {
+        flex: 0 0 auto;
+    }
+    .section-1 {
+        width: 75%;
+        float: left;
+        min-width: 75%; /* Giữ width cố định khi đóng */
+    }
+    .section-2 {
+        width: 100%;
+        float: right;
+        min-width: 25%; /* Giữ width cố định khi đóng */
+    }
+    .accordion-item + .accordion-item {
+        margin-left: 20px; /* Khoảng cách giữa 2 section */
+    }
+}
+
+@media (max-width: 767.98px) {
+    .modal-custom-width {
+        max-width: 96vw;
+        width: 96vw;
+    }
+
+    .modal-body .accordion {
+        display: block;
+    }
+
+    .accordion-item {
+        margin-bottom: 20px;
+    }
+}
+
+.d-flex {
+    align-items: center;
+}
+
+.form-label {
+    font-weight: bold;
+    margin-bottom: 0;
+    min-width: 120px; /* Adjust as needed for alignment */
+}
+
+.form-control-plaintext {
+    margin-bottom: 0;
+    flex-grow: 1;
+}
+
+.modal-body .card-body img {
+    max-width: 100%;
+    height: auto;
+}
+
+.modal-body .section-2 .text-center {
+    text-align: center;
+}
+
+.modal-body .section-2 .row {
+    margin-top: 1rem;
+}
+
+.modal-body .col-6 img {
+    margin-bottom: 0.5rem;
+}
+
+.accordion-item .card {
+    border: none;
+    box-shadow: none;
+}
+
+.accordion-button {
+    font-weight: 600;
+}
+
+.accordion-button:not(.collapsed) {
+    background-color: #f8f9fa;
+}
+

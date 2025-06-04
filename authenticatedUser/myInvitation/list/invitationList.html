@@ -1,0 +1,54 @@
+<div class="modal fade" id="registerSubjectModal" tabindex="-1" aria-labelledby="invitationListModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="invitationListModalLabel">Danh sách lời mời liên kết</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="accordion" id="filterAccordion">
+                    <div class="accordion-item">
+                        <h2 class="accordion-header" id="filterHeading">
+                            <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#filterCollapse" aria-expanded="true" aria-controls="filterCollapse">
+                                Bộ lọc tìm kiếm
+                            </button>
+                        </h2>
+                        <div id="filterCollapse" class="accordion-collapse collapse show" aria-labelledby="filterHeading" data-bs-parent="#filterAccordion">
+                            <div class="accordion-body">
+                                <div class="mb-3">
+                                    <label for="nameFilter" class="form-label">Tên chủ thể</label>
+                                    <input type="text" class="form-control" id="nameFilter" placeholder="Nhập tên chủ thể">
+                                </div>
+                                <div class="mb-3">
+                                    <label for="phoneFilter" class="form-label">Số điện thoại</label>
+                                    <input type="text" class="form-control" id="phoneFilter" placeholder="Nhập số điện thoại">
+                                </div>
+                                <div class="mb-3">
+                                    <label for="statusFilter" class="form-label">Trạng thái</label>
+                                    <select class="form-select" id="statusFilter">
+                                        <option value="">Tất cả</option>
+                                        <option value="Chờ duyệt">Chờ duyệt</option>
+                                        <option value="Chấp nhận">Chấp nhận</option>
+                                        <option value="Từ chối">Từ chối</option>
+                                    </select>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="dateFilter" class="form-label">Ngày gửi</label>
+                                    <input type="date" class="form-control" id="dateFilter">
+                                </div>
+                                <div class="d-flex justify-content-end gap-2">
+                                    <button class="btn btn-primary" id="searchBtn">Tìm kiếm</button>
+                                    <button class="btn btn-secondary" id="clearBtn">Xóa bộ lọc</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div id="invitationList" class="invitation-list mt-3"></div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+            </div>
+        </div>
+    </div>
+</div>

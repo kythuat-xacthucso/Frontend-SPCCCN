@@ -23,6 +23,7 @@ const initNsxkdEditPage = () => {
         cardGridView: document.getElementById('cardGridView'),
         productTableBody: document.getElementById('productTableBody'),
         addProductBtn: document.getElementById('addProductBtn'),
+        filterStatus: document.getElementById('filterStatus'),
         pagination: document.getElementById('pagination'),
         resultCount: document.getElementById('resultCount'),
         itemsPerPageSelect: document.getElementById('itemsPerPage'),
@@ -107,37 +108,32 @@ const initNsxkdEditPage = () => {
 
     const renderNsxkdDetails = () => {
         if (!nsxkd) return;
-        elements.nsxkdCode.value = nsxkd.nsxkdCode;
-        elements.nsxkdName.value = nsxkd.nsxkdName;
-        elements.phoneNumber.value = nsxkd.phoneNumber;
-        elements.email.value = nsxkd.email;
-        elements.mst.value = nsxkd.mst;
-        elements.address.value = nsxkd.address;
-        elements.note.value = nsxkd.note;
+        Object.entries({
+            nsxkdCode: nsxkd.nsxkdCode,
+            nsxkdName: nsxkd.nsxkdName,
+            phoneNumber: nsxkd.phoneNumber,
+            email: nsxkd.email,
+            mst: nsxkd.mst,
+            address: nsxkd.address,
+            note: nsxkd.note,
+            status: nsxkd.status
+        }).forEach(([key, value]) => elements[key].value = value);
 
-        // Logo
-        if (nsxkd.logo) {
-            elements.logoContainer.innerHTML = `<img id="logo" src="${nsxkd.logo}" alt="Logo" style="max-height: 100px; max-width: 100%;">`;
-            elements.removeLogoBtn.style.display = 'block';
-        } else {
-            elements.logoContainer.innerHTML = 'Không có logo';
-            elements.removeLogoBtn.style.display = 'none';
-        }
+        elements.logoContainer.innerHTML = nsxkd.logo
+            ? `<img id="logo" src="${nsxkd.logo}" alt="Logo" style="max-height: 100px; max-width: 100%;">`
+            : 'Không có logo';
+        elements.removeLogoBtn.style.display = nsxkd.logo ? 'block' : 'none';
 
-        // Ảnh ĐKKD
-        if (nsxkd.dkkd && nsxkd.dkkd.length > 0) {
+        if (nsxkd.dkkd?.length) {
             elements.dkkd1.src = nsxkd.dkkd[0] || '';
             elements.dkkd2.src = nsxkd.dkkd[1] || '';
-            elements.removeDkkdBtn1.style.display = nsxkd.dkkd[0] ? 'block' : 'none';
-            elements.removeDkkdBtn2.style.display = nsxkd.dkkd[1] ? 'block' : 'none';
+            elements.removeDkkdBtn1.style.display = !!nsxkd.dkkd[0] ? 'block' : 'none';
+            elements.removeDkkdBtn2.style.display = !!nsxkd.dkkd[1] ? 'block' : 'none';
         } else {
-            elements.dkkd1.src = '';
-            elements.dkkd2.src = '';
-            elements.removeDkkdBtn1.style.display = 'none';
-            elements.removeDkkdBtn2.style.display = 'none';
+            elements.dkkd1.src = elements.dkkd2.src = '';
+            elements.removeDkkdBtn1.style.display = elements.removeDkkdBtn2.style.display = 'none';
         }
 
-        elements.status.value = nsxkd.status;
         elements.linkedDate.textContent = formatDate(nsxkd.linkedDate);
     };
 
@@ -156,12 +152,13 @@ const initNsxkdEditPage = () => {
                     <td>-</td>
                     <td>-</td>
                     <td>-</td>
-                    <td class="text-center">
-                        <button class="btn btn-sm btn-outline-danger remove-product-btn" data-index="${index}"><i class="bi bi-trash"></i></button>
-                    </td>
+                    <td class="text-center"></td>
                 </tr>
             `;
         }
+        const actionButton = product.status === 'Đang hoạt động'
+            ? `<button class="btn btn-sm btn-warning lock-btn" data-index="${index}"><i class="bi bi-lock"></i> Khóa</button>`
+            : `<button class="btn btn-sm btn-success unlock-btn" data-index="${index}"><i class="bi bi-unlock"></i> Mở khóa</button>`;
         return `
             <tr data-index="${index}">
                 <td class="text-center">${start + index + 1}</td>
@@ -170,34 +167,53 @@ const initNsxkdEditPage = () => {
                 <td>${product.productType}</td>
                 <td>${formatDate(product.authDate)}</td>
                 <td><span class="badge ${statusBadgeClass[product.status]}">${product.status}</span></td>
-                <td class="text-center">
-                    <button class="btn btn-sm btn-outline-danger remove-product-btn" data-index="${index}"><i class="bi bi-trash"></i></button>
-                </td>
+                <td class="text-center">${actionButton}</td>
             </tr>
         `;
     };
 
-    const renderCardItem = (product, index) => `
-        <div class="col">
-            <div class="card">
-                <div class="card-body">
-                    <h6 class="card-title">${product.productName}</h6>
-                    <p class="card-text mb-1"><strong>Mã sản phẩm:</strong> ${product.productCode}</p>
-                    <p class="card-text mb-1"><strong>Loại sản phẩm:</strong> ${product.productType}</p>
-                    <p class="card-text mb-1"><strong>Ngày phân quyền:</strong> ${formatDate(product.authDate)}</p>
-                    <p class="card-text mb-1"><strong>Trạng thái:</strong> <span class="badge ${statusBadgeClass[product.status]}">${product.status}</span></p>
-                    <div class="d-flex gap-2 flex-wrap">
-                        <button class="btn btn-sm btn-outline-danger remove-product-btn" data-index="${index}"><i class="bi bi-trash"></i> Xóa</button>
+    const renderCardItem = (product, index) => {
+        if (product.isNew) {
+            return `
+                <div class="col">
+                    <div class="card">
+                        <div class="card-body">
+                            <h6 class="card-title">Sản phẩm mới</h6>
+                            <select class="form-select product-select" data-index="${index}">
+                                <option value="">Chọn sản phẩm</option>
+                                ${availableProducts.map(p => `<option value="${p.id}" data-product='${JSON.stringify(p)}'>${p.productName} (${p.productCode})</option>`).join('')}
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+        return `
+            <div class="col">
+                <div class="card">
+                    <div class="card-body">
+                        <h6 class="card-title">${product.productName}</h6>
+                        <p class="card-text mb-1"><strong>Mã sản phẩm:</strong> ${product.productCode}</p>
+                        <p class="card-text mb-1"><strong>Loại sản phẩm:</strong> ${product.productType}</p>
+                        <p class="card-text mb-1"><strong>Ngày phân quyền:</strong> ${formatDate(product.authDate)}</p>
+                        <p class="card-text mb-1"><strong>Trạng thái:</strong> <span class="badge ${statusBadgeClass[product.status]}">${product.status}</span></p>
+                        <div class="d-flex gap-2 flex-wrap">
+                            ${product.status === 'Đang hoạt động'
+                                ? `<button class="btn btn-sm btn-warning lock-btn" data-index="${index}"><i class="bi bi-lock"></i> Khóa</button>`
+                                : `<button class="btn btn-sm btn-success unlock-btn" data-index="${index}"><i class="bi bi-unlock"></i> Mở khóa</button>`}
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
-    `;
+        `;
+    };
 
     const renderProducts = () => {
         const start = (currentPage - 1) * itemsPerPage;
         const end = start + itemsPerPage;
-        const paginatedData = products.slice(start, end);
+        const filter = elements.filterStatus.value;
+        const filteredProducts = filter ? products.filter(p => p.status === filter) : products;
+        const paginatedData = filteredProducts.slice(start, end);
 
         const isDesktopTableView = isTableView && window.innerWidth >= 768;
         [elements.tableView, elements.cardGridView].forEach(el => {
@@ -207,15 +223,14 @@ const initNsxkdEditPage = () => {
 
         if (isDesktopTableView) {
             elements.productTableBody.innerHTML = paginatedData.map((product, index) => renderTableRow(product, index, start)).join('');
-
-            // Khởi tạo Select2
             initializeSelect2();
         } else {
-            elements.cardGridView.innerHTML = paginatedData.filter(p => !p.isNew).map((product, index) => renderCardItem(product, index)).join('');
+            elements.cardGridView.innerHTML = paginatedData.map((product, index) => renderCardItem(product, index)).join('');
+            initializeSelect2(); // Khởi tạo Select2 cho card view trên mobile
         }
 
-        renderPagination(products.length);
-        elements.resultCount.textContent = `${products.length}/${products.length} kết quả`;
+        renderPagination(filteredProducts.length);
+        elements.resultCount.textContent = `${filteredProducts.length}/${products.length} kết quả`;
         attachEventListeners();
     };
 
@@ -237,7 +252,7 @@ const initNsxkdEditPage = () => {
                     if (productId) {
                         const selectedProduct = availableProducts.find(p => p.id == parseInt(productId));
                         if (selectedProduct) {
-                            products[index] = { ...selectedProduct };
+                            products[index] = { ...selectedProduct, isNew: false };
                             availableProducts = availableProducts.filter(p => p.id != parseInt(productId));
                             renderProducts();
                         }
@@ -248,31 +263,18 @@ const initNsxkdEditPage = () => {
     };
 
     const attachEventListeners = () => {
-        // Xóa sản phẩm
-        document.querySelectorAll('.remove-product-btn').forEach(btn => {
-            btn.removeEventListener('click', handleRemoveProduct);
-            btn.addEventListener('click', handleRemoveProduct);
+        document.querySelectorAll('.lock-btn, .unlock-btn').forEach(btn => {
+            btn.removeEventListener('click', handleToggleStatus);
+            btn.addEventListener('click', handleToggleStatus);
         });
 
-        // Xóa ảnh Logo
         elements.removeLogoBtn.removeEventListener('click', handleRemoveLogo);
         elements.removeLogoBtn.addEventListener('click', handleRemoveLogo);
 
-        // Xóa ảnh ĐKKD
         elements.removeDkkdBtn1.removeEventListener('click', handleRemoveDkkd1);
         elements.removeDkkdBtn1.addEventListener('click', handleRemoveDkkd1);
         elements.removeDkkdBtn2.removeEventListener('click', handleRemoveDkkd2);
         elements.removeDkkdBtn2.addEventListener('click', handleRemoveDkkd2);
-    };
-
-    const handleRemoveProduct = (e) => {
-        const index = parseInt(e.currentTarget.getAttribute('data-index'));
-        const removedProduct = products[index];
-        if (removedProduct && !removedProduct.isNew) {
-            availableProducts.push(removedProduct);
-        }
-        products.splice(index, 1);
-        renderProducts();
     };
 
     const handleRemoveLogo = () => {
@@ -281,7 +283,7 @@ const initNsxkdEditPage = () => {
     };
 
     const handleRemoveDkkd1 = () => {
-        if (nsxkd.dkkd && nsxkd.dkkd.length > 1) {
+        if (nsxkd.dkkd?.length > 1) {
             nsxkd.dkkd[0] = nsxkd.dkkd[1];
             nsxkd.dkkd[1] = null;
         } else {
@@ -291,7 +293,7 @@ const initNsxkdEditPage = () => {
     };
 
     const handleRemoveDkkd2 = () => {
-        if (nsxkd.dkkd && nsxkd.dkkd.length > 1) {
+        if (nsxkd.dkkd?.length > 1) {
             nsxkd.dkkd[1] = null;
         }
         renderNsxkdDetails();
@@ -335,14 +337,11 @@ const initNsxkdEditPage = () => {
     elements.dkkdInput.addEventListener('change', (e) => {
         const files = Array.from(e.target.files).slice(0, 2);
         if (files.length > 0) {
-            const readers = files.map(file => {
+            Promise.all(files.map(file => new Promise(resolve => {
                 const reader = new FileReader();
+                reader.onload = () => resolve(reader.result);
                 reader.readAsDataURL(file);
-                return new Promise(resolve => {
-                    reader.onload = () => resolve(reader.result);
-                });
-            });
-            Promise.all(readers).then(results => {
+            }))).then(results => {
                 nsxkd.dkkd = results;
                 renderNsxkdDetails();
             });
@@ -367,7 +366,7 @@ const initNsxkdEditPage = () => {
 
     elements.addProductBtn.addEventListener('click', () => {
         if (availableProducts.length === 0) {
-            if (window.Toast && typeof window.Toast.showWarning === 'function') {
+            if (window.Toast?.showWarning) {
                 window.Toast.showWarning('Không còn sản phẩm nào để thêm!');
             }
             return;
@@ -376,12 +375,17 @@ const initNsxkdEditPage = () => {
         renderProducts();
     });
 
+    elements.filterStatus.addEventListener('change', () => {
+        currentPage = 1;
+        renderProducts();
+    });
+
     elements.backBtn.addEventListener('click', () => {
         window.loadContent('nsxkd-management');
     });
 
     elements.confirmBtn.addEventListener('click', () => {
-        if (window.Popup && typeof window.Popup.showApproveConfirm === 'function') {
+        if (window.Popup?.showApproveConfirm) {
             window.Popup.showApproveConfirm(
                 null,
                 async () => {
@@ -393,7 +397,7 @@ const initNsxkdEditPage = () => {
                     nsxkd.address = elements.address.value;
                     nsxkd.note = elements.note.value;
                     nsxkd.status = elements.status.value;
-                    if (window.Toast && typeof window.Toast.showSuccess === 'function') {
+                    if (window.Toast?.showSuccess) {
                         window.Toast.showSuccess('Cập nhật thành công!');
                     }
                     setTimeout(() => window.loadContent('nsxkd-management'), 1000);
@@ -402,6 +406,27 @@ const initNsxkdEditPage = () => {
             );
         }
     });
+
+    const handleToggleStatus = (e) => {
+        const index = parseInt(e.currentTarget.getAttribute('data-index'));
+        const product = products[index];
+        const newStatus = product.status === 'Đang hoạt động' ? 'Khóa' : 'Đang hoạt động';
+        const action = newStatus === 'Khóa' ? 'khóa' : 'mở khóa';
+
+        if (window.Popup?.showApproveConfirm) {
+            window.Popup.showApproveConfirm(
+                null,
+                () => {
+                    product.status = newStatus;
+                    renderProducts();
+                    if (window.Toast?.showSuccess) {
+                        window.Toast.showSuccess(`Sản phẩm đã được ${action} thành công!`);
+                    }
+                },
+                `Bạn có chắc chắn muốn ${action} sản phẩm "${product.productName}" không?`
+            );
+        }
+    };
 
     fetchNsxkdDetails();
 };
