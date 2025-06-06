@@ -1,0 +1,44 @@
+body {
+    background-color: #f0f2f5;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+}
+.login-container, .register-container, .forgot-password-container, .reset-password-container {
+    background: white;
+    padding: 2rem;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 400px;
+}
+.zalo-btn {
+    background-color: #0068ff;
+    color: white;
+    border: none;
+}
+.zalo-btn:hover {
+    background-color: #005ce6;
+}
+.google-btn {
+    background-color: #db4437;
+    color: white;
+    border: none;
+}
+.google-btn:hover {
+    background-color: #c1351d;
+}
+.facebook-btn {
+    background-color: #3b5998;
+    color: white;
+    border: none;
+}
+.facebook-btn:hover {
+    background-color: #2f477a;
+}
+.form-control:focus {
+    border-color: #0068ff;
+    box-shadow: 0 0 5px rgba(0, 104, 255, 0.3);
+}
